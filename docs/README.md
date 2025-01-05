@@ -3,7 +3,7 @@ layout: home
 permalink: index.html
 
 # Please update this with your repository name and project title
-repository-name: e20-3yp-Smart-Waste-Management-System
+repository-name: e20-3yp-Smart Waste Management System
 title: Smart Waste Management System: An IoT-Based Solution for Efficient Garbage Sorting and Collection
 ---
 
