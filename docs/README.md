@@ -3,8 +3,8 @@ layout: home
 permalink: index.html
 
 # Please update this with your repository name and project title
-repository-name: eYY-3yp-project-template
-title: Project Template
+repository-name: e20-3yp-Smart-Waste-Management-System
+title: Smart Waste Management System: An IoT-Based Solution for Efficient Garbage Sorting and Collection
 ---
 
 [comment]: # "This is the standard layout for the project, but you can clean this and use your own template"
@@ -14,9 +14,10 @@ title: Project Template
 ---
 
 ## Team
--  eNumber, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
+-  E/20/049, Chanuka B.D.K., [email](mailto:e20049@eng.pdn.ac.lk)
+-  E/20/093, Edirisooriya D.M.B., [email](mailto:e20093@eng.pdn.ac.lk)
+-  E/20/244, Malshan P.G.P., [email](mailto:e20244@eng.pdn.ac.lk)
+-  E/20/271, Nirmani K.G.H., [email](mailto:e20271@eng.pdn.ac.lk)
 
 <!-- Image (photo/drawing of the final hardware) should be here -->
 
@@ -35,7 +36,11 @@ title: Project Template
 
 ## Introduction
 
-Description of the real world problem and solution, impact
+**Problem**: Inefficient waste management leads to overflowing bins, wasted fuel, and missed collection opportunities, affecting both the environment and operational costs.
+
+**Solution**: This IoT-based system automates waste sorting, tracks bin statuses, and optimizes collection routes, improving efficiency and sustainability.
+
+**Impact**: Reduces waste collection costs, minimizes environmental impact, and enhances overall waste management efficiency.
 
 
 ## Solution Architecture
