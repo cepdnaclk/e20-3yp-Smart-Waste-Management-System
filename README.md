@@ -71,7 +71,7 @@ GreenPulse is a smart waste management system designed to optimize garbage colle
 |----------------|------------|
 | **Frontend**   | React (Web), Flutter (Mobile) |
 | **Backend**    | Spring Boot, JWT Authentication |
-| **IoT**        | ESP32, AWS IoT Core (MQTT) |
+| **IoT**        | Raspberry 3B+, AWS IoT Core (MQTT) |
 | **AI/ML**      | Image Processing (Garbage Sorting) |
 | **Cloud**      | AWS EC2, AWS S3, Amazon RDS |
 | **DevOps**     | Docker, GitHub Actions (CI/CD) |
