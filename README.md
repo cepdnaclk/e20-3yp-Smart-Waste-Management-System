@@ -26,7 +26,7 @@ GreenPulse is a smart waste management system designed to optimize garbage colle
 - AI-based garbage segregation using image processing.  
 
 ### **Garbage Collection Route Optimization**  
-- AI-driven route optimization for collection trucks.  
+- Route optimization for collection trucks.  
 - Web dashboard for route monitoring.  
 - IoT sensors send bin status updates in real-time.  
 
