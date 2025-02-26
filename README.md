@@ -23,7 +23,7 @@ GreenPulse is a smart waste management system designed to optimize garbage colle
 ### **Bin Status & Maintenance Monitoring**  
 - Bin owners can monitor fill levels and maintenance needs.  
 - Garbage collectors get alerts for bin maintenance.  
-- AI-based blockage detection using image processing.  
+- AI-based garbage segregation using image processing.  
 
 ### **Garbage Collection Route Optimization**  
 - AI-driven route optimization for collection trucks.  
