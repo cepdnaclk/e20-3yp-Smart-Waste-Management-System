@@ -9,5 +9,4 @@ public class GreenpulseBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GreenpulseBackendApplication.class, args);
 	}
-
 }
