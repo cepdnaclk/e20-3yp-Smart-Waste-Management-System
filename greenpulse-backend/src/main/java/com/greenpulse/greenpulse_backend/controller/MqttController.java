@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MqttController {
 
     @Autowired
-    private MqttPubSubService mqttService;
+    public MqttController(MqttPubSubService mqttPubSubService) {
+    }
 
     @GetMapping("/run")
     public String runMqtt() {
         try {
-            mqttService.run();
             return "MQTT operations completed successfully!";
         } catch (Exception e) {
             return "Error during MQTT operations: " + e.getMessage();

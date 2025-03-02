@@ -34,11 +34,6 @@ public class MqttConfig {
 
     @Bean
     public MqttClientConnection mqttClientConnection() throws IOException {
-
-        System.out.println("Cert Path: " + new ClassPathResource(certPath).exists());
-        System.out.println("Key Path: " + new ClassPathResource(keyPath).exists());
-        System.out.println("CA Path: " + new ClassPathResource(caPath).exists());
-
         // Load certificate files from the classpath as InputStream
         InputStream certInputStream = new ClassPathResource(certPath).getInputStream();
         InputStream keyInputStream = new ClassPathResource(keyPath).getInputStream();
