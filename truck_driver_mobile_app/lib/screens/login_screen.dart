@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:truck_driver_mobile_app/screens/home_page.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -6,10 +7,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Green Pulse"),
-      ),
       body: Container(
         padding: const EdgeInsets.all(20),
         height: double.infinity,
@@ -43,7 +40,7 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    MaterialButton(
+                    TextButton(
                       onPressed: () {},
                       child: const Text("Forgot Password?"),
                     ),
@@ -53,7 +50,13 @@ class LoginScreen extends StatelessWidget {
                   height: 40,
                 ),
                 MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ));
+                  },
                   color: Colors.lightGreen,
                   textColor: Colors.white,
                   padding:
