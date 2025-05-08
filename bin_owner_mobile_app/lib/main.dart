@@ -52,6 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: const Text("Notification"),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.calendar);
+              },
+              child: const Text("Collection Calendar"),
+            ),
           ],
         ),
       ),
