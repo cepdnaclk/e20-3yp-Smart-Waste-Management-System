@@ -45,6 +45,13 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text("Bin Status Page"),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.login);
+              },
+              child: const Text("Log Out"),
+            ),
           ],
         ),
       ),
