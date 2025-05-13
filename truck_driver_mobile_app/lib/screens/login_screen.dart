@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:truck_driver_mobile_app/screens/home_page.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  late String vehicleId;
+  late String password;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,6 +21,9 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(
+              height: 70,
+            ),
             Image.asset(
               "android/assets/images/logo_v1_white.png",
             ),
