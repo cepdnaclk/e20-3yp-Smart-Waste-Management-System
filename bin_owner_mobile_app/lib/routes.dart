@@ -32,6 +32,7 @@ import 'package:bin_owner_mobile_app/widgets/main_layout.dart';
 class AppRoutes {
   static const String home = '/';
   static const String binLevel = '/bin-level';
+
   static const String notifications = '/notifications';
   static const String calendar = '/calendar';
   static const String settings = '/settings';
@@ -39,6 +40,7 @@ class AppRoutes {
   static Map<String, WidgetBuilder> routes = {
     home: (context) => const MainLayout(),
     binLevel: (context) => const BinLevelScreen(),
+
     notifications: (context) => const NotificationScreen(),
     calendar: (context) => const CollectionCalendarScreen(),
     settings: (context) => const SettingsScreen(),
