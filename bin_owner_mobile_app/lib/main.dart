@@ -48,9 +48,17 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.login);
+                Navigator.pushNamed(context, AppRoutes.notifications);
               },
-              child: const Text("Log Out"),
+              child: const Text("Notification"),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.calendar);
+              },
+              child: const Text("Collection Calendar"),
+
             ),
           ],
         ),
