@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:truck_driver_mobile_app/screens/navigation_drawer.dart';
 
 class BinLevelPage extends StatefulWidget {
   const BinLevelPage({super.key});
@@ -40,6 +41,7 @@ class _BinLevelPageState extends State<BinLevelPage> {
       appBar: AppBar(
         title: const Text("Bin Levels"),
       ),
+      drawer: const MyNavigationDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(

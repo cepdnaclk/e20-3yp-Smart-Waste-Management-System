@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:truck_driver_mobile_app/screens/bin_level_page.dart';
 import 'package:truck_driver_mobile_app/screens/navigation_drawer.dart';
 
@@ -63,10 +65,38 @@ class HomePage extends StatelessWidget {
             const SizedBox(
               height: 50,
             ),
-            Container(
-              height: 300,
-              width: double.infinity,
-              color: Colors.green,
+            SizedBox(
+              height: 400,
+              child: FlutterMap(
+                options: MapOptions(
+                  center: LatLng(6.9271, 79.8612),
+                  zoom: 13,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    subdomains: const ['a', 'b', 'c'],
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: LatLng(6.9271, 79.8612),
+                        width: 80,
+                        height: 80,
+                        builder: (ctx) => const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 50,
             ),
             ElevatedButton(
                 onPressed: () {
