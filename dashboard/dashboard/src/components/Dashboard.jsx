@@ -6,8 +6,10 @@ import CollectionDate from './dashboard/CollectionDate';
 import AvailableTrucks from './dashboard/AvailableTrucks';
 import MaintenanceRequests from './dashboard/MaintenanceRequests.jsx';
 import TotalBins from './dashboard/Totalbins.jsx';
-import Map from './dashboard/Map';
 import History from './dashboard/History';
+import '../styles/styles.css';
+import MyMap from '../components/dashboard/MyMap.jsx';
+import 'leaflet/dist/leaflet.css'; // Import Leaflet CSS globally
 
 const Dashboard = () => {
   return (
@@ -17,8 +19,9 @@ const Dashboard = () => {
         <AvailableTrucks />
         <MaintenanceRequests />
         <TotalBins />
-        <Map />
         <History />
+        <MyMap />
+        
       </div>
     </main>
   );

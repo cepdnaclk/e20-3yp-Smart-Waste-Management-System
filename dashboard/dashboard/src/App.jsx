@@ -122,7 +122,7 @@ import Reports from './components/Reports';
 // import UserManagement from './components/UserManagement';
 // import Settings from './components/Settings';
 // import Support from './components/Support';
-import './styles/styles.css';
+
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
