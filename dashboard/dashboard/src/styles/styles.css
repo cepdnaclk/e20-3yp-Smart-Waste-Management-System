@@ -571,3 +571,343 @@ button {
     width: 200px;
   }
 }
+
+
+
+/* Additional CSS for App.jsx functionality - Add to your styles.css */
+
+/* Tab Navigation */
+.app__tabs {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-bg);
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  overflow-x: auto;
+}
+
+.app__tab-button {
+  padding: 16px 24px;
+  font-size: 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--default-transition);
+  position: relative;
+  white-space: nowrap;
+}
+
+.app__tab-button:hover {
+  color: var(--text-light);
+}
+
+.app__tab-button--active {
+  color: var(--primary-color);
+}
+
+.app__tab-button--active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+}
+
+.app__tab-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  padding-left: 16px;
+}
+
+.app__action-button {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--default-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  font-size: 16px;
+  transition: var(--default-transition);
+}
+
+.app__action-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+}
+
+.app__content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Modal Styles */
+.app__modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.app__modal {
+  background-color: var(--card-bg);
+  border-radius: var(--default-radius);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.app__modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.app__modal-header h2 {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.app__modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--default-transition);
+}
+
+.app__modal-close:hover {
+  color: var(--text-light);
+}
+
+.app__modal-content {
+  padding: 20px;
+}
+
+.app__modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.app__modal-delete-confirm {
+  color: var(--text-light);
+  text-align: center;
+  padding: 20px 0;
+}
+
+.app__modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Button Styles */
+.app__button {
+  padding: 8px 16px;
+  border-radius: var(--default-radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--default-transition);
+}
+
+.app__button--primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.app__button--primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.app__button--secondary {
+  background-color: transparent;
+  color: var(--text-light);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app__button--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.app__button--danger {
+  background-color: var(--error-red);
+  color: white;
+  border: none;
+}
+
+.app__button--danger:hover {
+  background-color: #d32f2f;
+}
+
+/* Notifications Panel */
+.app__notifications {
+  position: fixed;
+  top: 64px;
+  right: -320px;
+  width: 320px;
+  max-height: calc(100vh - 64px);
+  background-color: var(--card-bg);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 900;
+  transition: right 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.app__notifications--visible {
+  right: 0;
+}
+
+.app__notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.app__notifications-header h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-light);
+}
+
+.app__notifications-clear {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--default-transition);
+}
+
+.app__notifications-clear:hover:not(:disabled) {
+  color: var(--text-light);
+}
+
+.app__notifications-clear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.app__notifications-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.app__notifications-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.app__notification {
+  display: flex;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.app__notification--warning {
+  border-left: 3px solid var(--warning-amber);
+}
+
+.app__notification--error {
+  border-left: 3px solid var(--error-red);
+}
+
+.app__notification--success {
+  border-left: 3px solid var(--success-green);
+}
+
+.app__notification--info {
+  border-left: 3px solid var(--accent-blue);
+}
+
+.app__notification-content {
+  flex: 1;
+}
+
+.app__notification-message {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.app__notification-time {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.app__notification-dismiss {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: var(--default-transition);
+  height: fit-content;
+}
+
+.app__notification-dismiss:hover {
+  color: var(--text-light);
+}
+
+/* Sidebar collapsed state */
+.sidebar--collapsed {
+  width: 60px;
+}
+
+/* Mobile overlay */
+.app__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 800;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .app__tabs {
+    padding: 0 8px;
+  }
+  
+  .app__tab-button {
+    padding: 16px 12px;
+    font-size: 13px;
+  }
+  
+  .app__tab-actions {
+    padding-left: 8px;
+  }
+  
+  .app__content {
+    padding: 16px;
+  }
+}
