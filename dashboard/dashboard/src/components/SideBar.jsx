@@ -1,91 +1,71 @@
-// src/components/Sidebar.jsx
 import React from 'react';
-import SidebarLink from './SideBarLink';
-import IconWrapper from './IconWrapper';
-import { mockData } from '../data/mockData';
-import {
-  LayoutDashboard, Trash2, Truck, MapPinned, BarChart3, Users, Settings, LifeBuoy, LogOut, CircleUserRound, X, Package
-} from 'lucide-react'; // Package for GreenPulse logo
+import { 
+  LayoutDashboard, 
+  Trash2, 
+  Truck, 
+  LineChart, 
+  BarChart, 
+  Users, 
+  Settings, 
+  HelpCircle 
+} from 'lucide-react';
 
-const Sidebar = ({ sidebarState, toggleSidebar, activeMenu, setActiveMenu, isMobile }) => {
-  const handleMenuClick = (menuName) => {
-    setActiveMenu(menuName);
-    if (isMobile && sidebarState !== 'closed-mobile') { // if mobile and sidebar is open
-      toggleSidebar('force-close-mobile'); // force close on mobile after click
-    }
+const Sidebar = ({ activeTab, setActiveTab }) => {
+  const menuItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+    { id: 'bin-management', label: 'Bin Management', icon: <Trash2 size={20} /> },
+    { id: 'truck-management', label: 'Truck Management', icon: <Truck size={20} /> },
+    { id: 'garbage-collection', label: 'Garbage Collection Monitoring', icon: <LineChart size={20} /> },
+    { id: 'reports', label: 'Reports & Analytics', icon: <BarChart size={20} /> },
+    { id: 'user-management', label: 'User Management', icon: <Users size={20} /> },
+  ];
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
   };
 
-  const navItems = [
-    { name: 'Dashboard', icon: LayoutDashboard },
-    { name: 'Bin Management', icon: Trash2 },
-    { name: 'Truck Management', icon: Truck },
-    { name: 'Monitoring', icon: MapPinned },
-    { name: 'Reports', icon: BarChart3 },
-    { name: 'Users', icon: Users },
-  ];
-
-  const bottomNavItems = [
-    { name: 'Settings', icon: Settings },
-    { name: 'Support', icon: LifeBuoy },
-  ];
-
-  const isEffectivelyCollapsed = !isMobile && sidebarState === 'collapsed-desktop';
-
   return (
-    <aside className={`sidebar ${sidebarState}`}>
-      {isMobile && sidebarState === 'open-mobile' && (
-        <button
-          onClick={() => toggleSidebar('force-close-mobile')}
-          className="sidebar-close-button"
-          aria-label="Close sidebar"
+    <aside className="sidebar">
+      <div className="sidebar__logo">
+        <img src="../public/Logo.png" alt="GreenPulse Logo" className="sidebar__logo-img" />
+       
+      </div>
+      
+      <nav className="sidebar__menu">
+        <ul className="sidebar__menu-list">
+          {menuItems.map((item) => (
+            <li 
+              key={item.id}
+              className={`sidebar__menu-item ${activeTab === item.id ? 'sidebar__menu-item--active' : ''}`}
+              onClick={() => handleTabChange(item.id)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      
+      <div className="sidebar__footer">
+        <div 
+          className={`sidebar__footer-item ${activeTab === 'settings' ? 'sidebar__footer-item--active' : ''}`}
+          onClick={() => handleTabChange('settings')}
         >
-          <IconWrapper IconComponent={X} size={28} />
-        </button>
-      )}
-      <div className="sidebar-content-wrapper">
-        <div className="sidebar-logo-container">
-          <IconWrapper IconComponent={Package} size={isEffectivelyCollapsed ? 36 : 40} className="sidebar-logo-icon" />
-          {!isEffectivelyCollapsed && <span className="sidebar-logo-text">GreenPulse</span>}
+          <Settings size={20} />
+          <span>Settings</span>
         </div>
-
-        <nav className="sidebar-nav">
-          <ul>
-            {navItems.map(item => (
-              <SidebarLink
-                key={item.name}
-                IconComponent={item.icon}
-                text={item.name}
-                isActive={activeMenu === item.name}
-                onClick={() => handleMenuClick(item.name)}
-                isCollapsed={isEffectivelyCollapsed}
-              />
-            ))}
-          </ul>
-        </nav>
-
-        <div className="sidebar-bottom-section">
-           <ul className="sidebar-bottom-nav">
-            {bottomNavItems.map(item => (
-              <SidebarLink
-                key={item.name}
-                IconComponent={item.icon}
-                text={item.name}
-                isActive={activeMenu === item.name}
-                onClick={() => handleMenuClick(item.name)}
-                isCollapsed={isEffectivelyCollapsed}
-              />
-            ))}
-          </ul>
-          <div className="sidebar-user-profile">
-            <IconWrapper IconComponent={CircleUserRound} size={40} className="user-avatar-placeholder" />
-            {!isEffectivelyCollapsed && (
-              <div className="sidebar-user-info">
-                <p className="user-name">{mockData.userName}</p>
-                <p className="user-role">Admin</p>
-              </div>
-            )}
-          </div>
+        <div 
+          className={`sidebar__footer-item ${activeTab === 'support' ? 'sidebar__footer-item--active' : ''}`}
+          onClick={() => handleTabChange('support')}
+        >
+          <HelpCircle size={20} />
+          <span>Support</span>
         </div>
+      </div>
+      
+      <div className="sidebar__user">
+        <div className="sidebar__user-avatar">A</div>
+        <span className="sidebar__user-name">Admin User</span>
       </div>
     </aside>
   );
