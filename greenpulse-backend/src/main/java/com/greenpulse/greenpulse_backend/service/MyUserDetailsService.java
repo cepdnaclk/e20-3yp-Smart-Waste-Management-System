@@ -1,6 +1,6 @@
 package com.greenpulse.greenpulse_backend.service;
 
-import com.greenpulse.greenpulse_backend.repository.UserRepo;
+import com.greenpulse.greenpulse_backend.repository.UserRepository;
 import com.greenpulse.greenpulse_backend.model.UserPrincipal;
 import com.greenpulse.greenpulse_backend.model.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Users user = userRepo.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
         if (user == null) {
             System.out.println("User Not Found");
             throw new UsernameNotFoundException("user not found");
