@@ -1,6 +1,5 @@
-package lk.pdn.ac.lk.config;
+package com.greenpulse.greenpulse_backend.config;
 
-import com.greenpulse.greenpulse_backend.config.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package lk.pdn.ac.lk;
+package com.greenpulse.greenpulse_backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

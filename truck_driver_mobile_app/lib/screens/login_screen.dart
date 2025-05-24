@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:truck_driver_mobile_app/screens/home_page.dart';
+import 'package:truck_driver_mobile_app/widgets/labeled_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,8 +10,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  late String vehicleId;
-  late String password;
+  TextEditingController idController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,15 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
             Form(
                 child: Column(
               children: [
-                TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: "Vehicle ID",
-                      labelStyle: TextStyle(fontSize: 22)),
+                LabeledTextField(
+                  labelText: "Vehicle Id",
+                  controller: idController,
                 ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: "Password",
-                      labelStyle: TextStyle(fontSize: 22)),
+                LabeledTextField(
+                  labelText: "Password",
+                  isPassword: true,
+                  controller: passwordController,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,

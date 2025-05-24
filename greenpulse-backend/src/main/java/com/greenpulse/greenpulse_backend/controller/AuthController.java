@@ -1,7 +1,7 @@
 package com.greenpulse.greenpulse_backend.controller;
-import com.greenpulse.greenpulse_backend.controller.AuthController;
+
+
 import com.greenpulse.greenpulse_backend.model.Users;
-import com.greenpulse.greenpulse_backend.controller.AuthController;
 import com.greenpulse.greenpulse_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

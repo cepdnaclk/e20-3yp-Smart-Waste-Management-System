@@ -1,9 +1,8 @@
 package com.greenpulse.greenpulse_backend.service;
 
-
+import com.greenpulse.greenpulse_backend.repository.UserRepo;
 import com.greenpulse.greenpulse_backend.model.UserPrincipal;
 import com.greenpulse.greenpulse_backend.model.Users;
-import com.greenpulse.greenpulse_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepo;
+    private UserRepo userRepo;
 
 
     @Override

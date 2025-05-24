@@ -1,10 +1,10 @@
 package com.greenpulse.greenpulse_backend.service;
 
 
+import com.greenpulse.greenpulse_backend.repository.RolesRepo;
+import com.greenpulse.greenpulse_backend.repository.UserRepo;
 import com.greenpulse.greenpulse_backend.model.Roles;
 import com.greenpulse.greenpulse_backend.model.Users;
-import com.greenpulse.greenpulse_backend.repository.RolesRepository;
-import com.greenpulse.greenpulse_backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,10 +27,10 @@ public class UserService {
     AuthenticationManager authManager;
 
     @Autowired
-    private UserRepository repo;
+    private UserRepo repo;
 
     @Autowired
-    private RolesRepository rolesRepository;
+    private RolesRepo rolesRepo;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
@@ -90,7 +90,7 @@ public class UserService {
     }
 
     public Roles getRoleByRoleID(Long roleId) {
-        return rolesRepository.findById(roleId)
+        return rolesRepo.findById(roleId)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with id " + roleId));
     }
 
