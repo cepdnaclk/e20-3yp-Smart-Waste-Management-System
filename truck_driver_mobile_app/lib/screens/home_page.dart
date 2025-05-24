@@ -4,9 +4,14 @@ import 'package:latlong2/latlong.dart';
 import 'package:truck_driver_mobile_app/screens/bin_level_page.dart';
 import 'package:truck_driver_mobile_app/screens/navigation_drawer.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     // var loc = [];
