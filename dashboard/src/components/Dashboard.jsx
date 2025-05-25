@@ -20,8 +20,7 @@ const Dashboard = () => {
         <MaintenanceRequests />
         <TotalBins />
         <History />
-        <MyMap />
-        
+        <MyMap />   
       </div>
     </main>
   );

@@ -12,6 +12,7 @@ import TruckManagement from './components/TruckManagement';
 import GarbageCollection from './components/GarbageCollection';
 import Reports from './components/Reports';
 
+
 function App({ onLogout }) {
   // Main state variables
   const [activeMenu, setActiveMenu] = useState('dashboard');
@@ -356,8 +357,8 @@ function App({ onLogout }) {
       
       <div className={`sidebar ${!sidebarOpen ? 'sidebar--collapsed' : ''}`}>
         <Sidebar 
-          activeMenu={activeMenu} 
-          setActiveMenu={handleMenuChange} 
+          activeTab={activeMenu} 
+          setActiveTab={handleMenuChange} 
           isMobile={isMobile}
         />
       </div>
