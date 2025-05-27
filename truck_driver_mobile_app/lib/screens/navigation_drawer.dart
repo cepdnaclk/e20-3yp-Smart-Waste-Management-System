@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:truck_driver_mobile_app/providers/user_provider.dart';
 import 'package:truck_driver_mobile_app/widgets/drawer_tiles.dart';
 import 'package:truck_driver_mobile_app/screens/bin_level_page.dart';
 import 'package:truck_driver_mobile_app/screens/home_page.dart';
@@ -16,10 +18,10 @@ class MyNavigationDrawer extends StatefulWidget {
 
 class _MyNavigationDrawerState extends State<MyNavigationDrawer> {
   String vehicleId = "ABC-xxyy";
-  final String username = "madhurab00";
 
   @override
   Widget build(BuildContext context) {
+    final String? username = Provider.of<UserProvider>(context).username;
     return Drawer(
       backgroundColor: const Color(0xFF1E1E1E),
       child: Column(
@@ -65,7 +67,7 @@ class _MyNavigationDrawerState extends State<MyNavigationDrawer> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              username,
+                              username!,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
