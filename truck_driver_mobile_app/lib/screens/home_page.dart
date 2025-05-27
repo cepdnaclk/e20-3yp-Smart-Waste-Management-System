@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import 'package:truck_driver_mobile_app/providers/user_provider.dart';
 import 'package:truck_driver_mobile_app/screens/bin_level_page.dart';
 import 'package:truck_driver_mobile_app/screens/navigation_drawer.dart';
 
@@ -14,6 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    final String? username = Provider.of<UserProvider>(context).username;
     // var loc = [];
     return Scaffold(
       appBar: AppBar(
@@ -29,9 +32,9 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text(
-              "Welcome user!",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            Text(
+              "Welcome $username!",
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 35,
