@@ -3,6 +3,7 @@ import { Trash2 } from 'lucide-react';
 
 const BinManagement = () => {
   return (
+    <div className='bin-management'>
     <main className="page-content">
       <div className="page-header">
         <Trash2 size={24} />
@@ -89,6 +90,7 @@ const BinManagement = () => {
         </section>
       </div>
     </main>
+    </div>
   );
 };
 

@@ -211,8 +211,7 @@ function App({ onLogout }) {
       case 'truck-management':
         tabs = [
           { id: 'tab1', label: 'Fleet' },
-          { id: 'tab2', label: 'Schedules' },
-          { id: 'tab3', label: 'Maintenance' }
+          { id: 'tab2', label: 'On Route' },
         ];
         break;
       case 'garbage-collection':
