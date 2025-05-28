@@ -31,6 +31,9 @@ public class GreenpulseBackendApplication {
 		System.setProperty("MQTT_TOPIC", dotenv.get("MQTT_TOPIC", ""));
 		System.setProperty("MQTT_PORT", dotenv.get("MQTT_PORT", ""));
 
+		System.setProperty("MAIL_USERNAME", dotenv.get("MAIL_USERNAME", ""));
+		System.setProperty("MAIL_PASSWORD", dotenv.get("MAIL_PASSWORD", ""));
+
 		SpringApplication.run(GreenpulseBackendApplication.class, args);
 	}
 }

@@ -1,8 +1,9 @@
 package com.greenpulse.greenpulse_backend.controller;
 
-import com.greenpulse.greenpulse_backend.dto.AuthenticationRequest;
-import com.greenpulse.greenpulse_backend.dto.AuthenticationResponse;
-import com.greenpulse.greenpulse_backend.dto.RegisterRequest;
+import com.greenpulse.greenpulse_backend.dto.ApiResponse;
+import com.greenpulse.greenpulse_backend.dto.AuthenticationRequestDTO;
+import com.greenpulse.greenpulse_backend.dto.AuthenticationDataDTO;
+import com.greenpulse.greenpulse_backend.dto.RegisterRequestDTO;
 import com.greenpulse.greenpulse_backend.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,15 +22,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+    public ResponseEntity<ApiResponse<AuthenticationDataDTO>> register(
+            @RequestBody RegisterRequestDTO request
     ) {
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request
+    public ResponseEntity<ApiResponse<AuthenticationDataDTO>> authenticate(
+            @RequestBody AuthenticationRequestDTO request
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
