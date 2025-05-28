@@ -1,6 +1,14 @@
 spring:
   application:
     name: greenpulse-backend
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
   datasource:
     url: jdbc:postgresql://${DB_HOST}:5432/${DB_NAME}
