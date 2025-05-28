@@ -92,4 +92,7 @@ const BinManagement = () => {
   );
 };
 
+
+
+
 export default BinManagement;
