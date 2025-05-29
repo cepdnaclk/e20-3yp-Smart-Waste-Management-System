@@ -19,7 +19,7 @@
     <description>Backend service for GreenPulse Smart Waste Management System</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
