@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'GreenPulse',
       theme: customTheme,
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.layout,
       routes: AppRoutes.routes,
     );
   }

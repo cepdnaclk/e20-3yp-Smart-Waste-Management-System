@@ -31,24 +31,22 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 80),
+              // const SizedBox(height: 80),
 
               // Logo and Title
               Column(
                 children: [
-                  Icon(Icons.recycling, size: 80, color: Colors.green),
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Smart Bin Owner',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  FractionallySizedBox(
+                    widthFactor:
+                        0.9, // Adjust between 0.0 to 1.0 to control size
+                    child: Image.asset(
+                      'assets/images/logo_v1_white.png',
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 50),
+              // const SizedBox(height: 50),
 
               // Login Form
               Form(
@@ -135,7 +133,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Don't have an account? "),
-                  TextButton(onPressed: () {}, child: const Text('Register')),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/register');
+                    },
+                    child: const Text('Register'),
+                  ),
                 ],
               ),
             ],
