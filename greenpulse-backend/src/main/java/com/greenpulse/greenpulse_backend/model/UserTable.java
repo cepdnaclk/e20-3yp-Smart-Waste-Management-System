@@ -49,4 +49,9 @@ public class UserTable implements UserDetails {
     public String getPassword() {
         return passwordHash;
     }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
 }
