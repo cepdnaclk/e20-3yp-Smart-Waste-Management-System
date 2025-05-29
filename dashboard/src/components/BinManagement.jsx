@@ -1,97 +1,83 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import {Pencil, Trash2, Plus } from 'lucide-react';
 
 const BinManagement = () => {
   return (
-    <div className='bin-management'>
-    <main className="page-content">
-      <div className="page-header">
-        <Trash2 size={24} />
-        <h1 className="page-title">Bin Management</h1>
-      </div>
-      
-      <div className="page-grid">
-        <section className="card">
-          <h3 className="card__title">Active Bins</h3>
-          <div className="bin-list">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Bin ID</th>
-                  <th>Location</th>
-                  <th>Last Emptied</th>
-                  <th>Status</th>
-                  <th>Fill Level</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>BIN-001</td>
-                  <td>Central Park</td>
-                  <td>15 May 2025</td>
-                  <td>Active</td>
-                  <td>
-                    <div className="progress-bar">
-                      <div className="progress-bar__fill" style={{width: '75%'}}></div>
-                    </div>
-                    <span>75%</span>
-                  </td>
-                  <td>
-                    <button className="btn btn--small">View</button>
-                    <button className="btn btn--small btn--outline">Edit</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>BIN-002</td>
-                  <td>Main Street</td>
-                  <td>14 May 2025</td>
-                  <td>Active</td>
-                  <td>
-                    <div className="progress-bar">
-                      <div className="progress-bar__fill" style={{width: '90%'}}></div>
-                    </div>
-                    <span>90%</span>
-                  </td>
-                  <td>
-                    <button className="btn btn--small">View</button>
-                    <button className="btn btn--small btn--outline">Edit</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>BIN-003</td>
-                  <td>City Hall</td>
-                  <td>16 May 2025</td>
-                  <td>Active</td>
-                  <td>
-                    <div className="progress-bar">
-                      <div className="progress-bar__fill" style={{width: '45%'}}></div>
-                    </div>
-                    <span>45%</span>
-                  </td>
-                  <td>
-                    <button className="btn btn--small">View</button>
-                    <button className="btn btn--small btn--outline">Edit</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+  <div className='Bin-management'>
+        <main className="page-content">
+          <div className="page-header">
+            <Trash2 size={24} />
+            <h1 className="page-title">Truck Management</h1>
           </div>
-        </section>
-        
-        <section className="card">
-          <h3 className="card__title">Bin Distribution Map</h3>
-          <div className="map">
-            {/* Map would go here */}
-            <div className="map-placeholder">
-              <span>Interactive bin locations map would appear here</span>
-            </div>
+          
+          <div className="page-grid">   
+            <section className="card">
+              <div className="card-header">
+                <h3 className="card__title">Active Fleet</h3>
+                <button className="btn btn--primary">
+                  <Plus size={18} />
+                  Add Bin
+                </button>
+              </div>
+              <div className="truck-list">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Bin ID</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Bin-001</td>
+                      <td><span className="status-badge status-badge--active">Unassigned</span></td>
+                      <td>
+                        <div className="action-buttons">
+                          <button className="text-blue-500">
+                            <Pencil size={18} />
+                          </button>
+                          <button className="text-red-500">
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Bin-002</td>
+                      <td><span className="status-badge status-badge--active">Unassigned</span></td>
+                      <td>
+                        <div className="action-buttons">
+                          <button className="text-blue-500">
+                            <Pencil size={18} />
+                          </button>
+                          <button className="text-red-500">
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Bin-003</td>
+                      <td><span className="status-badge status-badge--active">Unassigned</span></td>
+                      <td>
+                        <div className="action-buttons">
+                          <button className="text-blue-500">
+                            <Pencil size={18} />
+                          </button>
+                          <button className="text-red-500">
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
           </div>
-        </section>
-      </div>
-    </main>
-    </div>
-  );
+        </main>
+      </div>)
 };
 
 
