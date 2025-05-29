@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -17,6 +19,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -28,6 +31,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message("User not found")
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -39,6 +43,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -50,6 +55,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -61,6 +67,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -72,6 +79,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -83,6 +91,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -94,6 +103,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -105,6 +115,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -116,6 +127,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -127,6 +139,19 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message("Forbidden: You don't have permission to access this resource.")
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -138,6 +163,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message("An unexpected error occurred")
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
