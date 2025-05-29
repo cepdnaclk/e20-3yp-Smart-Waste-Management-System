@@ -60,7 +60,7 @@ public class AuthenticationService {
             throw new UsernameAlreadyExistsException("Email already exists");
         }
 
-        UserRole userRole = userRoleRepository.findByRole(UserRoleEnum.BIN_OWNER)
+        UserRole userRole = userRoleRepository.findByRole(UserRoleEnum.ROLE_BIN_OWNER)
                 .orElseThrow(() -> new UserRoleNotFoundException("BIN_OWNER role not found"));
 
         UserTable user = new UserTable();
