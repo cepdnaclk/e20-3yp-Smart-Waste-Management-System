@@ -27,7 +27,7 @@ public class TruckInventory {
     @Column(name = "capacity_kg", nullable = false)
     private Long capacityKg;
 
-    @Column(name = "last_maintenance", nullable = false)
+    @Column(name = "last_maintenance")
     private LocalDate lastMaintenance;
 
     @Enumerated(EnumType.STRING)
