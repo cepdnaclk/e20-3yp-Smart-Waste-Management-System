@@ -170,7 +170,7 @@ const RouteManagement = ({ activeTab,onAction }) => {
 
   // Routes Management Tab
   const renderRoutesTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">Routes Management</h3>
         <button 
@@ -262,7 +262,7 @@ const RouteManagement = ({ activeTab,onAction }) => {
 
   // Route Assignment Tab
   const renderAssignmentTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">Route Assignment</h3>
         <p className="card-subtitle">Assign drivers and trucks to routes</p>
@@ -393,7 +393,7 @@ const RouteManagement = ({ activeTab,onAction }) => {
 
   // Map Tab
   const renderMapTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">Route Map</h3>
         <p className="card-subtitle">Visual representation of all routes and their status</p>
@@ -452,13 +452,13 @@ const RouteManagement = ({ activeTab,onAction }) => {
   };
 
   return (
-    <div className="truck-management">
+    <div className="route-management">
       <main className="page-content">
         <div className="page-header">
           <Route size={24} />
           <h1 className="page-title">Route Management</h1>
         </div>
-       <div className="page-grid">   
+       <div>   
           {renderTabContent()}
         </div>
       </main>

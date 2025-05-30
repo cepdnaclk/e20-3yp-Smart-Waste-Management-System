@@ -43,7 +43,7 @@ const BinManagement = ({ activeTab, onAction }) => {
   };
 
   const renderAllBinsTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">All Bins</h3>
         <button 
@@ -115,7 +115,7 @@ const BinManagement = ({ activeTab, onAction }) => {
   );
 
   const renderMaintenanceTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">Maintenance Requests</h3>
         <button 
@@ -177,7 +177,7 @@ const BinManagement = ({ activeTab, onAction }) => {
   );
 
   const renderBinMapTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">Bin Locations</h3>
         <button 

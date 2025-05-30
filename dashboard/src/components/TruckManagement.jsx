@@ -134,7 +134,7 @@ const TruckManagement = ({ activeTab, onAction }) => {
   };
 
   const renderTruckInventoryTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">Truck Inventory</h3>
         <button 
@@ -226,7 +226,7 @@ const TruckManagement = ({ activeTab, onAction }) => {
   );
 
   const renderOnRouteTab = () => (
-    <section className="card">
+    <section className="">
       <div className="card-header">
         <h3 className="card__title">On Route Trucks</h3>
       </div>
