@@ -156,6 +156,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(TruckNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTruckNotFoundException(TruckNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message(ex.getMessage())
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(UsernameNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

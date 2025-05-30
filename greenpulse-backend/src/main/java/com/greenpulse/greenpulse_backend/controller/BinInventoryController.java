@@ -2,6 +2,7 @@ package com.greenpulse.greenpulse_backend.controller;
 
 import com.greenpulse.greenpulse_backend.dto.AddBinRequestDTO;
 import com.greenpulse.greenpulse_backend.dto.ApiResponse;
+import com.greenpulse.greenpulse_backend.dto.ChangeBinStatusRequestDTO;
 import com.greenpulse.greenpulse_backend.dto.ChangeOwnerRequestDTO;
 import com.greenpulse.greenpulse_backend.enums.BinStatusEnum;
 import com.greenpulse.greenpulse_backend.model.BinInventory;
@@ -51,8 +52,8 @@ public class BinInventoryController {
     @PutMapping("/{binId}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<BinInventory> changeStatus(@PathVariable String binId,
-                                                  @RequestParam BinStatusEnum status) {
-        return binService.changeStatus(binId, status);
+                                                  @RequestBody ChangeBinStatusRequestDTO request) {
+        return binService.changeStatus(binId, request.getStatus());
     }
 
     @PutMapping("/{binId}/owner")
