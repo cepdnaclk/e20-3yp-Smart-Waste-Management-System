@@ -6,6 +6,7 @@ import com.greenpulse.greenpulse_backend.dto.AuthenticationDataDTO;
 import com.greenpulse.greenpulse_backend.dto.RegisterRequestDTO;
 import com.greenpulse.greenpulse_backend.service.AuthenticationService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
+    @PreAuthorize("hasRole('BIN_OWNER')")
     public ResponseEntity<ApiResponse<AuthenticationDataDTO>> register(
             @RequestBody RegisterRequestDTO request
     ) {

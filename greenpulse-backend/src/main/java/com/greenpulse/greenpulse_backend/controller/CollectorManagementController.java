@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/admin/collectors")
+@RequestMapping("/api/admin/collectors")
 @PreAuthorize("hasRole('ADMIN')")
 public class CollectorManagementController {
 
