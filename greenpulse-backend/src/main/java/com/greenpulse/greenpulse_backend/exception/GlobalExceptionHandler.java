@@ -7,93 +7,103 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(IllegalArgumentException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUsernameNotFound(UsernameNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 ApiResponse.builder()
                         .success(false)
                         .message("User not found")
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUsernameAlreadyExists(UsernameAlreadyExistsException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(UserRoleNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUserRoleNotFound(UserRoleNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleUserRoleNotFoundException(UserRoleNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(AuthenticationFailedException.class)
-    public ResponseEntity<ApiResponse<Object>> handleAuthFailed(AuthenticationFailedException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleAuthFailedException(AuthenticationFailedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(VerificationCodeNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleVerificationCodeNoteFound(VerificationCodeNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleVerificationCodeNoteFoundException(VerificationCodeNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(PinExpiredException.class)
-    public ResponseEntity<ApiResponse<Object>> handlePinExpired(PinExpiredException ex) {
+    public ResponseEntity<ApiResponse<Object>> handlePinExpiredException(PinExpiredException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(TooSoonException.class)
-    public ResponseEntity<ApiResponse<Object>> handleTooSoon(TooSoonException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleTooSoonException(TooSoonException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -105,28 +115,55 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(BinNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBinNotFound(BinNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleBinNotFoundException(BinNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
 
     @ExceptionHandler(BinAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBinExists(BinAlreadyExistsException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleBinExistsException(BinAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiResponse.builder()
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message("Forbidden: You don't have permission to access this resource.")
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(UsernameNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message(ex.getMessage())
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }
@@ -138,6 +175,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message("An unexpected error occurred")
                         .data(null)
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
     }

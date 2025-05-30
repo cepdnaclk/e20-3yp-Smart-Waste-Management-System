@@ -1,5 +1,8 @@
 package com.greenpulse.greenpulse_backend.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.greenpulse.greenpulse_backend.dto.ApiResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +14,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.time.LocalDateTime;
 
 @Configuration
 @EnableWebSecurity
@@ -29,14 +34,41 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/auth/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
                 )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            ApiResponse<Object> apiResponse = ApiResponse.builder()
+                                    .success(false)
+                                    .message("Unauthorized: Authentication is required.")
+                                    .data(null)
+                                    .timestamp(LocalDateTime.now())  // Add timestamp here
+                                    .build();
+
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write(mapper.writeValueAsString(apiResponse));
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            ApiResponse<Object> apiResponse = ApiResponse.builder()
+                                    .success(false)
+                                    .message("Forbidden: You don't have permission to access this resource.")
+                                    .data(null)
+                                    .timestamp(LocalDateTime.now())  // Add timestamp here
+                                    .build();
+
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write(mapper.writeValueAsString(apiResponse));
+                        })
+                )
+
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
