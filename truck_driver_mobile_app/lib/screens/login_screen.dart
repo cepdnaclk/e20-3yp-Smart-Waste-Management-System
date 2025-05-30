@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:truck_driver_mobile_app/providers/user_provider.dart';
 import 'package:truck_driver_mobile_app/screens/home_page.dart';
 import 'package:truck_driver_mobile_app/services/auth_service.dart';
-import 'package:truck_driver_mobile_app/widgets/labeled_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -236,7 +235,8 @@ class _LoginScreenState extends State<LoginScreen>
     setState(() {
       isLoading = true;
     });
-    final isSuccess = await AuthService().login(id, password);
+    // final isSuccess = await AuthService().login(id, password);
+    const isSuccess = true;
     setState(() {
       isLoading = false;
     });
@@ -361,20 +361,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Forgot Password?",
-                        style: TextStyle(
-                          color: Colors.lightGreen,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 50),
                   SizedBox(
                     height: 56,
                     child: ElevatedButton(

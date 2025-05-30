@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:truck_driver_mobile_app/models/truck.dart';
 import 'package:truck_driver_mobile_app/providers/user_provider.dart';
 import 'package:truck_driver_mobile_app/screens/bin_level_page.dart';
 import 'package:truck_driver_mobile_app/screens/navigation_drawer.dart';
@@ -14,10 +15,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Truck? selectedTruck;
+
+  // Dummy truck data for frontend testing
+  final List<Truck> dummyTrucks = [
+    Truck(id: "Truck 1", registrationNumber: 'LZ-1234'),
+    Truck(id: "Truck 2", registrationNumber: 'LZ-5678'),
+    Truck(id: "Truck 3", registrationNumber: 'LY-9101'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final String? username = Provider.of<UserProvider>(context).username;
-    // var loc = [];
+    final String? assignedTruckId = Provider.of<UserProvider>(context).truckId;
+
+    // Find the assigned truck object from dummy list by ID
+    final Truck? assignedTruck = assignedTruckId == null
+        ? null
+        : dummyTrucks.firstWhere(
+            (truck) => truck.id == assignedTruckId,
+            orElse: () => Truck(id: '', registrationNumber: ''),
+          );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home page"),
@@ -30,27 +49,87 @@ class _HomePageState extends State<HomePage> {
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
               "Welcome $username!",
               style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 35,
-            ),
+            const SizedBox(height: 35),
+
+            // Truck assignment section
+            assignedTruck == null
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Select Your Truck",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+                      DropdownButton<Truck>(
+                        hint: const Text("Select a truck"),
+                        value: selectedTruck,
+                        isExpanded: true,
+                        items: dummyTrucks.map((truck) {
+                          return DropdownMenuItem<Truck>(
+                            value: truck,
+                            child: Text(truck.registrationNumber),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedTruck = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: selectedTruck == null
+                            ? null
+                            : () {
+                                // Assign the selected truck to UserProvider
+                                Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .assignTruck(selectedTruck!.id);
+                                setState(
+                                    () {}); // Refresh UI to hide dropdown and show assigned truck
+                              },
+                        child: const Text("Assign Truck"),
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Assigned Truck",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        assignedTruck!.registrationNumber,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+
+            const SizedBox(height: 50),
+
+            // Assigned Route section (dummy content for now)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.grey.shade700, Colors.grey.shade800],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(15)),
+                gradient: LinearGradient(
+                  colors: [Colors.grey.shade700, Colors.grey.shade800],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(15),
+              ),
               child: const Column(
-                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -70,9 +149,10 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 50,
-            ),
+
+            const SizedBox(height: 50),
+
+            // Map placeholder
             SizedBox(
               height: 400,
               child: FlutterMap(
@@ -103,18 +183,20 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 50,
-            ),
+
+            const SizedBox(height: 50),
+
             ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const BinLevelPage(),
-                      ));
-                },
-                child: const Text("Next location"))
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BinLevelPage(),
+                  ),
+                );
+              },
+              child: const Text("Next location"),
+            ),
           ],
         ),
       ),
