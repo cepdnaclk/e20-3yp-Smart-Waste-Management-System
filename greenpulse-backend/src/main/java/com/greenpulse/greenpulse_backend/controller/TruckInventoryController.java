@@ -25,7 +25,7 @@ public class TruckInventoryController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'COLLECTOR')")
     public ApiResponse<List<TruckInventory>> getTrucks(
             @RequestParam(required = false) TruckStatusEnum status,
             @RequestParam(required = false) Long capacity

@@ -21,7 +21,7 @@ public class TruckInventory {
     @Column(name = "truck_id", nullable = false)
     private Long truckId;
 
-    @Column(name = "registration_number", nullable = false)
+    @Column(name = "registration_number", nullable = false, unique = true)
     private String registrationNumber;
 
     @Column(name = "capacity_kg", nullable = false)
