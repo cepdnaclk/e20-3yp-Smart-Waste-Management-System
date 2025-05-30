@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Object>> handleIllegalArgument(IllegalArgumentException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(
                 ApiResponse.builder()
                         .success(false)
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUsernameNotFound(UsernameNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleUsernameNotFoundException(UsernameNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 ApiResponse.builder()
                         .success(false)
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUsernameAlreadyExists(UsernameAlreadyExistsException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiResponse.builder()
                         .success(false)
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserRoleNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleUserRoleNotFound(UserRoleNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleUserRoleNotFoundException(UserRoleNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 ApiResponse.builder()
                         .success(false)
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationFailedException.class)
-    public ResponseEntity<ApiResponse<Object>> handleAuthFailed(AuthenticationFailedException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleAuthFailedException(AuthenticationFailedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 ApiResponse.builder()
                         .success(false)
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(VerificationCodeNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleVerificationCodeNoteFound(VerificationCodeNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleVerificationCodeNoteFoundException(VerificationCodeNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
                         .success(false)
@@ -85,7 +85,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(PinExpiredException.class)
-    public ResponseEntity<ApiResponse<Object>> handlePinExpired(PinExpiredException ex) {
+    public ResponseEntity<ApiResponse<Object>> handlePinExpiredException(PinExpiredException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
                         .success(false)
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(TooSoonException.class)
-    public ResponseEntity<ApiResponse<Object>> handleTooSoon(TooSoonException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleTooSoonException(TooSoonException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
                         .success(false)
@@ -121,7 +121,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BinNotFoundException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBinNotFound(BinNotFoundException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleBinNotFoundException(BinNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 ApiResponse.builder()
                         .success(false)
@@ -133,7 +133,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BinAlreadyExistsException.class)
-    public ResponseEntity<ApiResponse<Object>> handleBinExists(BinAlreadyExistsException ex) {
+    public ResponseEntity<ApiResponse<Object>> handleBinExistsException(BinAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiResponse.builder()
                         .success(false)
@@ -150,6 +150,18 @@ public class GlobalExceptionHandler {
                 ApiResponse.builder()
                         .success(false)
                         .message("Forbidden: You don't have permission to access this resource.")
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(UsernameNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message(ex.getMessage())
                         .data(null)
                         .timestamp(LocalDateTime.now())
                         .build()
