@@ -21,7 +21,6 @@ const Dashboard = () => {
         <TotalBins />
         <History />
         <MyMap />
-        
       </div>
     </main>
   );
