@@ -60,7 +60,7 @@ public class TruckInventoryService {
 
     public ApiResponse<Void> deleteTruck(Long truckId) {
         TruckInventory truck = truckInventoryRepository.findById(truckId)
-                .orElseThrow(() -> new TruckNotFoundException(truckId));
+                .orElseThrow(() -> new TruckNotFoundException("Truck with ID: " + truckId + " not found"));
 
         truckInventoryRepository.delete(truck);
 
@@ -74,7 +74,7 @@ public class TruckInventoryService {
     @Transactional
     public ApiResponse<TruckInventory> changeStatus(Long truckId, TruckStatusEnum newStatus) {
         TruckInventory truck = truckInventoryRepository.findById(truckId)
-                .orElseThrow(() -> new TruckNotFoundException(truckId));
+                .orElseThrow(() -> new TruckNotFoundException("Truck with ID: " + truckId + " not found"));
 
         if (truck.getStatus() == newStatus) {
             return ApiResponse.<TruckInventory>builder()
