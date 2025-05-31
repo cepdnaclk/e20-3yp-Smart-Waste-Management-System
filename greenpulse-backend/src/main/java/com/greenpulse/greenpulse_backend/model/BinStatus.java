@@ -34,11 +34,7 @@ public class BinStatus {
     @Column(name = "glass_level", nullable = false)
     private Long glassLevel;
 
-    @Column(name = "last_emptied_at", nullable = false)
+    @Column(name = "last_emptied_at")
     private LocalDateTime lastEmptiedAt;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "maintenance_status", nullable = false)
-    private MaintenanceStatusEnum maintenanceStatus;
 }
 

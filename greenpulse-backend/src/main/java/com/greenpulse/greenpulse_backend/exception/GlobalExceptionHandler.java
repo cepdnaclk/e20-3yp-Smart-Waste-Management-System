@@ -168,6 +168,42 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(MqttProcessingException.class)
+    public ResponseEntity<ApiResponse<Object>> handleMqttProcessingException(MqttProcessingException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message(ex.getMessage())
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(BinIdExtractionException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBinIdExtractionException(BinIdExtractionException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message(ex.getMessage())
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(BinStatusNotFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> handleBinStatusNotFoundException(BinStatusNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                ApiResponse.builder()
+                        .success(false)
+                        .message(ex.getMessage())
+                        .data(null)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleUserNotFoundException(UsernameNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

@@ -1,0 +1,7 @@
+package com.greenpulse.greenpulse_backend.repository;
+
+import com.greenpulse.greenpulse_backend.model.BinStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface BinStatusRepository extends JpaRepository<BinStatus, String> {
+}
