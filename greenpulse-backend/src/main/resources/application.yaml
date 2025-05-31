@@ -39,5 +39,7 @@ mqtt:
     path: ${MQTT_CA_PATH}
   endpoint: ${MQTT_ENDPOINT}
   clientId: ${MQTT_CLIENT_ID}
-  topic: ${MQTT_TOPIC}
+  topic:
+    status: ${MQTT_STATUS_TOPIC}
+    location: ${MQTT_LOCATION_TOPIC}
   port: ${MQTT_PORT}

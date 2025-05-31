@@ -22,14 +22,17 @@ import java.util.UUID;
 public class BinInventoryService {
     private final BinInventoryRepository binInventoryRepository;
     private final BinOwnerProfileRepository binOwnerProfileRepository;
+    private final BinStatusService binStatusService;
 
     @Autowired
     public BinInventoryService(
             BinInventoryRepository binInventoryRepository,
-            BinOwnerProfileRepository binOwnerProfileRepository
+            BinOwnerProfileRepository binOwnerProfileRepository,
+            BinStatusService binStatusService
     ) {
         this.binInventoryRepository = binInventoryRepository;
         this.binOwnerProfileRepository = binOwnerProfileRepository;
+        this.binStatusService = binStatusService;
     }
 
     public ApiResponse<List<BinInventory>> getBinsFiltered(BinStatusEnum status, UUID ownerId) {
@@ -53,6 +56,7 @@ public class BinInventoryService {
                 .build();
     }
 
+    @Transactional
     public ApiResponse<BinInventory> addBin(String binId) {
         if (binInventoryRepository.existsById(binId)) {
             throw new BinAlreadyExistsException(binId);
@@ -62,10 +66,14 @@ public class BinInventoryService {
         bin.setBinId(binId);
         bin.setStatus(BinStatusEnum.AVAILABLE); // Default status
 
+        binInventoryRepository.save(bin);
+
+        binStatusService.saveBinStatus(binId);
+
         return ApiResponse.<BinInventory>builder()
                 .success(true)
                 .message("Bin added successfully")
-                .data(binInventoryRepository.save(bin))
+                .data(null)
                 .build();
     }
 
