@@ -28,8 +28,12 @@ public class GreenpulseBackendApplication {
 		System.setProperty("MQTT_CA_PATH", dotenv.get("MQTT_CA_PATH", ""));
 		System.setProperty("MQTT_ENDPOINT", dotenv.get("MQTT_ENDPOINT", ""));
 		System.setProperty("MQTT_CLIENT_ID", dotenv.get("MQTT_CLIENT_ID", ""));
-		System.setProperty("MQTT_TOPIC", dotenv.get("MQTT_TOPIC", ""));
+		System.setProperty("MQTT_STATUS_TOPIC", dotenv.get("MQTT_STATUS_TOPIC", ""));
+		System.setProperty("MQTT_LOCATION_TOPIC", dotenv.get("MQTT_LOCATION_TOPIC", ""));
 		System.setProperty("MQTT_PORT", dotenv.get("MQTT_PORT", ""));
+
+		System.setProperty("MAIL_USERNAME", dotenv.get("MAIL_USERNAME", ""));
+		System.setProperty("MAIL_PASSWORD", dotenv.get("MAIL_PASSWORD", ""));
 
 		SpringApplication.run(GreenpulseBackendApplication.class, args);
 	}

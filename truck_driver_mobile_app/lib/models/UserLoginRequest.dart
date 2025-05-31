@@ -1,8 +1,8 @@
-class UserLogin {
+class UserLoginRequest {
   final String username;
   final String password;
 
-  UserLogin({
+  UserLoginRequest({
     required this.username,
     required this.password,
   });

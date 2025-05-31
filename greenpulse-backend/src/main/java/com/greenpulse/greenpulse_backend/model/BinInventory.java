@@ -29,10 +29,16 @@ public class BinInventory {
     @JoinColumn(name = "owner")
     private BinOwnerProfile owner;
 
-    @Column(name = "assigned_date", nullable = false)
+    @Column(name = "assigned_date")
     private LocalDate assignedDate;
 
-    @Column(name = "location", columnDefinition = "GEOGRAPHY(POINT,4326)", nullable = false)
+    @Column(name = "location", columnDefinition = "GEOGRAPHY(POINT,4326)")
     private Point location;
+
+    public void assignToOwner(BinOwnerProfile newOwner) {
+        this.owner = newOwner;
+        this.status = BinStatusEnum.ASSIGNED;
+        this.assignedDate = LocalDate.now();
+    }
 }
 

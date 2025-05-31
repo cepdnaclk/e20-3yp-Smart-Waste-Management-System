@@ -5,10 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
-    private String token;
+public class ApiResponse<T> {
+    private boolean success;
+    private String message;
+    private T data;
+    private LocalDateTime timestamp = LocalDateTime.now();
 }
