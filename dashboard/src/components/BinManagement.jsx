@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pencil, Trash2, Plus, MapPin, Wrench } from 'lucide-react';
+import { Pencil, Trash2, Plus, MapPin, Wrench,Truck } from 'lucide-react';
 
 const BinManagement = ({ activeTab, onAction }) => {
   // Sample bin data - in a real app, this would come from props or API
@@ -44,8 +44,12 @@ const BinManagement = ({ activeTab, onAction }) => {
 
   const renderAllBinsTab = () => (
     <section className="">
+    <div className="page-header">
+          <Truck size={24} />
+          <h1 className="page-title">All Bins</h1>
+    </div>
       <div className="card-header">
-        <h3 className="card__title">All Bins</h3>
+        <h3 className="card__title"></h3>
         <button 
           className="btn btn--primary"
           onClick={() => onAction('add')}
@@ -113,11 +117,89 @@ const BinManagement = ({ activeTab, onAction }) => {
       </div>
     </section>
   );
-
+  const renderAllActiveBinsTab = () => (
+    <section className="">
+    <div className="page-header">
+          <Truck size={24} />
+          <h1 className="page-title">All Bins</h1>
+    </div>
+      <div className="card-header">
+        <h3 className="card__title"></h3>
+        <button 
+          className="btn btn--primary"
+          onClick={() => onAction('add')}
+        >
+          <Plus size={18} />
+          Add Bin
+        </button>
+      </div>
+      <div className="card-content">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Bin ID</th>
+              <th>Location</th>
+              <th>Fill Level</th>
+              <th>Status</th>
+              <th>Last Collection</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {binData.tab1.map(bin => (
+              <tr key={bin.id}>
+                <td className="font-medium">{bin.id}</td>
+                <td>{bin.location}</td>
+                <td>
+                  <div className="fill-level-container">
+                    <div className={`fill-level-bar ${getFillLevelColor(bin.fillLevel)}`}>
+                      <div 
+                        className="fill-level-progress" 
+                        style={{ width: `${bin.fillLevel}%` }}
+                      ></div>
+                    </div>
+                    <span className="fill-level-text">{bin.fillLevel}%</span>
+                  </div>
+                </td>
+                <td>
+                  <span className={`status-badge ${getStatusColor(bin.status)}`}>
+                    {bin.status.charAt(0).toUpperCase() + bin.status.slice(1)}
+                  </span>
+                </td>
+                <td>{bin.lastCollection}</td>
+                <td>
+                  <div className="action-buttons">
+                    <button 
+                      className="btn-icon btn-icon--primary"
+                      onClick={() => onAction('edit', bin)}
+                      title="Edit Bin"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button 
+                      className="btn-icon btn-icon--danger"
+                      onClick={() => onAction('delete', bin)}
+                      title="Delete Bin"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
   const renderMaintenanceTab = () => (
     <section className="">
+    <div className="page-header">
+          <Truck size={24} />
+          <h1 className="page-title">Maintenance Requests</h1>
+    </div>
       <div className="card-header">
-        <h3 className="card__title">Maintenance Requests</h3>
+        <h3 className="card__title"></h3>
         <button 
           className="btn btn--primary"
           onClick={() => onAction('add')}
@@ -178,8 +260,12 @@ const BinManagement = ({ activeTab, onAction }) => {
 
   const renderBinMapTab = () => (
     <section className="">
+    <div className="page-header">
+          <Truck size={24} />
+          <h1 className="page-title">Bin Locations</h1>
+    </div>
       <div className="card-header">
-        <h3 className="card__title">Bin Locations</h3>
+        <h3 className="card__title"></h3>
         <button 
           className="btn btn--secondary"
           onClick={() => onAction('refresh')}
@@ -217,9 +303,11 @@ const BinManagement = ({ activeTab, onAction }) => {
       case 'tab1':
         return renderAllBinsTab();
       case 'tab2':
-        return renderMaintenanceTab();
-      case 'tab3':
+        return renderAllActiveBinsTab();
+      case 'tab4':
         return renderBinMapTab();
+      case 'tab3':
+        return renderMaintenanceTab();
       default:
         return renderAllBinsTab();
     }
@@ -228,10 +316,6 @@ const BinManagement = ({ activeTab, onAction }) => {
   return (
     <div className="bin-management">
       <main className="page-content">
-        <div className="page-header">
-          <Trash2 size={24} />
-          <h1 className="page-title">Bin Management</h1>
-        </div>
         
         <div className="page-grid">   
           {renderTabContent()}

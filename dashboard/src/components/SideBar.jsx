@@ -16,7 +16,6 @@ const Sidebar = ({ activeMenu, setActiveMenu }) => {
     { id: 'bin-management', label: 'Bin Management', icon: <Trash2 size={20} /> },
     { id: 'truck-management', label: 'Truck Management', icon: <Truck size={20} /> },
     { id: 'route-management', label: 'Route Management', icon: <LineChart size={20} /> },
-    { id: 'reports', label: 'Reports & Analytics', icon: <BarChart size={20} /> },
     { id: 'user-management', label: 'User Management', icon: <Users size={20} /> },
   ];
 

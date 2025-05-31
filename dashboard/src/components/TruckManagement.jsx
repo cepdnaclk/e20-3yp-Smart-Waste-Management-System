@@ -135,8 +135,12 @@ const TruckManagement = ({ activeTab, onAction }) => {
 
   const renderTruckInventoryTab = () => (
     <section className="">
+    <div className="page-header">
+          <Truck size={24} />
+          <h1 className="page-title">Truck Inventory</h1>
+        </div>
       <div className="card-header">
-        <h3 className="card__title">Truck Inventory</h3>
+        <h3 className="card__title"></h3>
         <button 
           className="btn btn--primary"
           onClick={() => onAction('add')}
@@ -227,8 +231,12 @@ const TruckManagement = ({ activeTab, onAction }) => {
 
   const renderOnRouteTab = () => (
     <section className="">
+    <div className="page-header">
+          <Truck size={24} />
+          <h1 className="page-title">On Route Trucks</h1>
+        </div>
       <div className="card-header">
-        <h3 className="card__title">On Route Trucks</h3>
+        <h3 className="card__title"></h3>
       </div>
       <div className="card-content">
         <table className="data-table">
@@ -325,12 +333,7 @@ const TruckManagement = ({ activeTab, onAction }) => {
 
   return (
     <div className="truck-management">
-      <main className="page-content">
-        <div className="page-header">
-          <Truck size={24} />
-          <h1 className="page-title">Truck Management</h1>
-        </div>
-        
+      <main className="page-content">      
         <div className="page-grid">   
           {renderTabContent()}
         </div>

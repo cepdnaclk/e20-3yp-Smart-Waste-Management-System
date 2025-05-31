@@ -171,8 +171,12 @@ const RouteManagement = ({ activeTab,onAction }) => {
   // Routes Management Tab
   const renderRoutesTab = () => (
     <section className="">
+     <div className="page-header">
+          <Route size={24} />
+          <h1 className="page-title">Routes Management</h1>
+        </div>
       <div className="card-header">
-        <h3 className="card__title">Routes Management</h3>
+        <h3 className="card__title"></h3>
         <button 
           className="btn btn--primary"
           onClick={() => onAction && onAction('add')}
@@ -263,8 +267,12 @@ const RouteManagement = ({ activeTab,onAction }) => {
   // Route Assignment Tab
   const renderAssignmentTab = () => (
     <section className="">
+     <div className="page-header">
+          <Route size={24} />
+          <h1 className="page-title">Route Assignment</h1>
+        </div>
       <div className="card-header">
-        <h3 className="card__title">Route Assignment</h3>
+        <h3 className="card__title"></h3>
         <p className="card-subtitle">Assign drivers and trucks to routes</p>
       </div>
       <div className="card-content">
@@ -394,8 +402,12 @@ const RouteManagement = ({ activeTab,onAction }) => {
   // Map Tab
   const renderMapTab = () => (
     <section className="">
+    <div className="page-header">
+          <Route size={24} />
+          <h1 className="page-title">Route Map</h1>
+        </div>
       <div className="card-header">
-        <h3 className="card__title">Route Map</h3>
+        <h3 className="card__title"></h3>
         <p className="card-subtitle">Visual representation of all routes and their status</p>
       </div>
       <div className="card-content">
@@ -454,10 +466,6 @@ const RouteManagement = ({ activeTab,onAction }) => {
   return (
     <div className="route-management">
       <main className="page-content">
-        <div className="page-header">
-          <Route size={24} />
-          <h1 className="page-title">Route Management</h1>
-        </div>
        <div>   
           {renderTabContent()}
         </div>
