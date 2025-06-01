@@ -64,7 +64,7 @@ public class CollectorManagementService {
                 .success(true)
                 .message("Collector created successfully")
                 .data(null)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
@@ -81,7 +81,7 @@ public class CollectorManagementService {
                 .success(true)
                 .message("Collector deleted successfully")
                 .data(null)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 }

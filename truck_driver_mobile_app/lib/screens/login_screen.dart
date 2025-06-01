@@ -237,6 +237,7 @@ class _LoginScreenState extends State<LoginScreen>
       isLoading = true;
     });
     final isSuccess = await AuthService().login(id, password);
+    // const isSuccess = true;
     setState(() {
       isLoading = false;
     });
@@ -358,19 +359,6 @@ class _LoginScreenState extends State<LoginScreen>
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
                             color: Colors.lightGreen, width: 2),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        "Forgot Password?",
-                        style: TextStyle(
-                          color: Colors.lightGreen,
-                          fontSize: 16,
-                        ),
                       ),
                     ),
                   ),

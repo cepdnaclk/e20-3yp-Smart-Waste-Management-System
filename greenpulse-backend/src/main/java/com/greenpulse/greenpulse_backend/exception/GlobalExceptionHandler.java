@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,7 +20,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message("User not found")
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -43,7 +44,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -55,7 +56,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -67,7 +68,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -79,7 +80,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -91,7 +92,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -103,7 +104,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -115,7 +116,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -127,7 +128,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -139,7 +140,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -151,7 +152,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message("Forbidden: You don't have permission to access this resource.")
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -163,7 +164,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -175,7 +176,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -187,7 +188,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -199,7 +200,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -211,7 +212,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(ex.getMessage())
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
@@ -223,7 +224,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message("An unexpected error occurred")
                         .data(null)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()))
                         .build()
         );
     }
