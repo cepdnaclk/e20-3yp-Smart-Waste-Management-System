@@ -1,10 +1,8 @@
-
-
 import React from 'react';
 import { Bell } from 'lucide-react';
 import SearchBar from './SearchBar';
 
-const Header = () => {
+const Header = (props) => {
   return (
     <header className="header">
       <div className="header__welcome">
@@ -13,6 +11,15 @@ const Header = () => {
       </div>
       
       <SearchBar />
+      
+      {/* Logout Button */}
+      <button
+        onClick={props.onLogout} // Use the passed onLogout function
+        className="app__button app__button--logout"
+        type="button"
+      >
+        Logout
+      </button>
       
       <div className="header__notifications">
         <div className="header__notification-icon">

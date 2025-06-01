@@ -137,8 +137,6 @@ function App({ onLogout }) { // onLogout is now passed from main.jsx's AppRouter
 
   // Logout handler - now calls the prop from main.jsx
   const handleLogout = () => {
-    // localStorage.removeItem('token'); // Handled by main.jsx
-    // setIsAuthenticated(false); // Handled by main.jsx
     if (onLogout) onLogout(); // Notify parent component (AppRouter in main.jsx)
   };
 
@@ -380,8 +378,8 @@ function App({ onLogout }) { // onLogout is now passed from main.jsx's AppRouter
           onToggleSidebar={toggleSidebar}
           onToggleNotifications={toggleNotifications}
           notificationCount={notifications.length}
-          onLogout={handleLogout} // This now calls main.jsx's logout
           sidebarOpen={sidebarOpen}
+          onLogout={handleLogout}
         />
         {renderTabHeaders()}
         <div className="app__content">{renderContent()}</div>
