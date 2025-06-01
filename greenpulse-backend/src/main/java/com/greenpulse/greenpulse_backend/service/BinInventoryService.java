@@ -52,7 +52,7 @@ public class BinInventoryService {
                 .success(true)
                 .message("Bins are fetched successfully")
                 .data(bins)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
@@ -97,7 +97,7 @@ public class BinInventoryService {
         return ApiResponse.<BinInventory>builder()
                 .success(true)
                 .message("Bin status updated")
-                .data(bin)
+                .data(null)
                 .build();
     }
 
@@ -114,7 +114,7 @@ public class BinInventoryService {
         return ApiResponse.<BinInventory>builder()
                 .success(true)
                 .message("Bin owner changed")
-                .data(bin)
+                .data(null)
                 .build();
     }
 
@@ -136,7 +136,7 @@ public class BinInventoryService {
                 .success(true)
                 .message("Bin successfully assigned")
                 .data(null)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 }

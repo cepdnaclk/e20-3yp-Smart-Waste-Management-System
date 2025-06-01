@@ -39,7 +39,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
@@ -48,7 +48,7 @@ public class SecurityConfig {
                                     .success(false)
                                     .message("Unauthorized: Authentication is required.")
                                     .data(null)
-                                    .timestamp(LocalDateTime.now())  // Add timestamp here
+                                    .timestamp(LocalDateTime.now().toString())  // Add timestamp here
                                     .build();
 
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -60,7 +60,7 @@ public class SecurityConfig {
                                     .success(false)
                                     .message("Forbidden: You don't have permission to access this resource.")
                                     .data(null)
-                                    .timestamp(LocalDateTime.now())  // Add timestamp here
+                                    .timestamp(LocalDateTime.now().toString())  // Add timestamp here
                                     .build();
 
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

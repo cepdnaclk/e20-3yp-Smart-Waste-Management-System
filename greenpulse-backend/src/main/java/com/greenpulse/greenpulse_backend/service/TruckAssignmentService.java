@@ -62,7 +62,7 @@ public class TruckAssignmentService {
                 .success(true)
                 .message("Truck successfully assigned to collector")
                 .data(null)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 }
