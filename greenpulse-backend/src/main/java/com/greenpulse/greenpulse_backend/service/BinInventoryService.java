@@ -1,6 +1,7 @@
 package com.greenpulse.greenpulse_backend.service;
 
 import com.greenpulse.greenpulse_backend.dto.ApiResponse;
+import com.greenpulse.greenpulse_backend.dto.BinInventoryResponseDTO;
 import com.greenpulse.greenpulse_backend.enums.BinStatusEnum;
 import com.greenpulse.greenpulse_backend.exception.BinAlreadyExistsException;
 import com.greenpulse.greenpulse_backend.exception.BinNotFoundException;
@@ -12,7 +13,6 @@ import com.greenpulse.greenpulse_backend.repository.BinOwnerProfileRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.iot.model.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +55,29 @@ public class BinInventoryService {
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
+
+    public ApiResponse<List<BinInventoryResponseDTO>> fetchUserBins(UUID ownerId) {
+        List<BinInventory> binInventories = binInventoryRepository.findByOwner_UserId(ownerId);
+
+        List<BinInventoryResponseDTO> bins = binInventories.stream()
+                .map(bin -> {
+                    BinInventoryResponseDTO dto = new BinInventoryResponseDTO();
+                    dto.setBinId(bin.getBinId());
+                    dto.setStatus(bin.getStatus());
+                    dto.setAssignedDate(bin.getAssignedDate());
+                    dto.setLocation(bin.getLocation());
+                    return dto;
+                })
+                .toList();
+
+        return ApiResponse.<List<BinInventoryResponseDTO>>builder()
+                .success(true)
+                .message("Bins are fetched successfully")
+                .data(bins)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
 
     @Transactional
     public ApiResponse<BinInventory> addBin(String binId) {

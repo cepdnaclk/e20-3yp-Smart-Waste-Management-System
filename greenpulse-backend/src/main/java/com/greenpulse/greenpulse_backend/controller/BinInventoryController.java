@@ -1,9 +1,6 @@
 package com.greenpulse.greenpulse_backend.controller;
 
-import com.greenpulse.greenpulse_backend.dto.AddBinRequestDTO;
-import com.greenpulse.greenpulse_backend.dto.ApiResponse;
-import com.greenpulse.greenpulse_backend.dto.ChangeBinStatusRequestDTO;
-import com.greenpulse.greenpulse_backend.dto.ChangeOwnerRequestDTO;
+import com.greenpulse.greenpulse_backend.dto.*;
 import com.greenpulse.greenpulse_backend.enums.BinStatusEnum;
 import com.greenpulse.greenpulse_backend.model.BinInventory;
 import com.greenpulse.greenpulse_backend.model.UserTable;
@@ -40,8 +37,8 @@ public class BinInventoryController {
 
     @GetMapping("/fetch")
     @PreAuthorize("hasRole('BIN_OWNER')")
-    public ApiResponse<List<BinInventory>> getBins(@AuthenticationPrincipal UserTable userTable) {
-        return binService.getBinsFiltered(BinStatusEnum.ASSIGNED, userTable.getId());
+    public ApiResponse<List<BinInventoryResponseDTO>> fetchBins(@AuthenticationPrincipal UserTable userTable) {
+        return binService.getBinsFiltered(userTable.getId());
     }
 
     @PostMapping("/add")
