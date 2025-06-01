@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+//@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/bins")
 public class BinInventoryController {
 
@@ -35,6 +36,12 @@ public class BinInventoryController {
             @RequestParam(required = false) UUID ownerId
     ) {
         return binService.getBinsFiltered(status, ownerId);
+    }
+
+    @GetMapping("/fetch")
+    @PreAuthorize("hasRole('BIN_OWNER')")
+    public ApiResponse<List<BinInventory>> getBins(@AuthenticationPrincipal UserTable userTable) {
+        return binService.getBinsFiltered(BinStatusEnum.ASSIGNED, userTable.getId());
     }
 
     @PostMapping("/add")
