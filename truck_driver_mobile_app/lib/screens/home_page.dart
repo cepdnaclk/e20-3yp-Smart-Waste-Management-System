@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   final CameraPosition _initialPosition = const CameraPosition(
     target: LatLng(7.252320531045659, 80.59290477694601),
-    zoom: 18,
+    zoom: 16,
   );
 
   final List<Map<String, dynamic>> dummyBinStops = [
@@ -100,8 +101,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _getOptimizedRoute(Position truckPosition) async {
-    const String apiKey =
-        "AIzaSyDaGvPryIxM5GiAiNtaGUyUaJb1nJYIMSw"; // Replace with your key
+    String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
 
     final origin = '${truckPosition.latitude},${truckPosition.longitude}';
     final waypoints = dummyBinStops.map((bin) {
@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                   final position = await Geolocator.getCurrentPosition();
                   await _getOptimizedRoute(position);
                 },
-                child: const Text("Draw Optimized Route"),
+                child: const Text("Get Optimized Route"),
               ),
               const SizedBox(height: 30),
               ElevatedButton(

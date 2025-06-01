@@ -40,7 +40,7 @@ public class TruckInventoryService {
                 .success(true)
                 .message("Trucks fetched successfully")
                 .data(trucks)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
@@ -54,7 +54,7 @@ public class TruckInventoryService {
                 .success(true)
                 .message("Truck added successfully")
                 .data(truckInventoryRepository.save(truck))
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
@@ -67,7 +67,7 @@ public class TruckInventoryService {
         return ApiResponse.<Void>builder()
                 .success(true)
                 .message("Truck deleted successfully")
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
@@ -81,7 +81,7 @@ public class TruckInventoryService {
                     .success(true)
                     .message("Truck is already in the requested status")
                     .data(truck)
-                    .timestamp(LocalDateTime.now())
+                    .timestamp(LocalDateTime.now().toString())
                     .build();
         }
 
@@ -96,7 +96,7 @@ public class TruckInventoryService {
                 .success(true)
                 .message("Truck status updated")
                 .data(truck)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 }

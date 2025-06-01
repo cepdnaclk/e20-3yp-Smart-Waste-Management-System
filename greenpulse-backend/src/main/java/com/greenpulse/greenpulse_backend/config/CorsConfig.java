@@ -14,10 +14,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173/") // Change to specific origin(s) in production
+                        .allowedOrigins("*") // Change to specific origin(s) in production
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
-                        .allowCredentials(true)
+                        .allowCredentials(false)
                         .maxAge(3600);
             }
         };

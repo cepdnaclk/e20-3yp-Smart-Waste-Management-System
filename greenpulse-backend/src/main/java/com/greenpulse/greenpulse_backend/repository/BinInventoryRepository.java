@@ -15,4 +15,6 @@ public interface BinInventoryRepository extends JpaRepository<BinInventory, Stri
     List<BinInventory> findByStatus(BinStatusEnum status);
 
     List<BinInventory> findByOwner_UserId(UUID ownerId);
+
+    List<BinInventory> getBinOwnerProfileByBinId(String binId);
 }

@@ -236,8 +236,8 @@ class _LoginScreenState extends State<LoginScreen>
     setState(() {
       isLoading = true;
     });
-    // final isSuccess = await AuthService().login(id, password);
-    const isSuccess = true;
+    final isSuccess = await AuthService().login(id, password);
+    // const isSuccess = true;
     setState(() {
       isLoading = false;
     });

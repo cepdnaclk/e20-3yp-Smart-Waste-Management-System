@@ -22,6 +22,7 @@ public class MqttPubSubService {
     private final MqttClientConnection connection;
     private final ObjectMapper objectMapper;
     private final BinStatusService binStatusService;
+    private final BinStatusSocketService binStatusSocketService;
 
     @Value("${mqtt.topic.status}")
     private String statusTopic;
@@ -33,11 +34,13 @@ public class MqttPubSubService {
     public MqttPubSubService(
             MqttClientConnection connection,
             ObjectMapper objectMapper,
-            BinStatusService binStatusService
+            BinStatusService binStatusService,
+            BinStatusSocketService binStatusSocketService
     ) {
         this.connection = connection;
         this.objectMapper = objectMapper;
         this.binStatusService = binStatusService;
+        this.binStatusSocketService = binStatusSocketService;
     }
 
     @PostConstruct
@@ -72,6 +75,10 @@ public class MqttPubSubService {
             statusDto.setBinId(binId);
 
             binStatusService.updateBinLevels(statusDto);
+
+            statusDto.setBinId(binId);
+
+            binStatusSocketService.sendBinStatusToUser(binId, statusDto);
 
             log.info("Successfully processed bin status for bin ID: {}", binId);
 
