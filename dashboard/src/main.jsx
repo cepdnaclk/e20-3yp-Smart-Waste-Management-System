@@ -57,7 +57,7 @@ function AppRouter() {
         }
       />
       {/* Optional: Redirect any other unknown paths to login or app based on auth */}
-      <Route path="*" element={<Navigate to={isAuthenticated ? "/app" : "/"} replace />} />
+      {/* <Route path="*" element={<Navigate to={isAuthenticated ? "/app" : "/"} replace />} /> */}
     </Routes>
   );
 }
