@@ -37,7 +37,7 @@ public class BinInventoryController {
     @GetMapping("/fetch")
     @PreAuthorize("hasRole('BIN_OWNER')")
     public ApiResponse<List<BinInventoryResponseDTO>> fetchBins(@AuthenticationPrincipal UserTable userTable) {
-        return binService.getBinsFiltered(userTable.getId());
+        return binService.fetchUserBins(userTable.getId());
     }
 
     @PostMapping("/add")
