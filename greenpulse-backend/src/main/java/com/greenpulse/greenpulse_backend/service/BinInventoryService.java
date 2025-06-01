@@ -4,6 +4,7 @@ import com.greenpulse.greenpulse_backend.dto.ApiResponse;
 import com.greenpulse.greenpulse_backend.enums.BinStatusEnum;
 import com.greenpulse.greenpulse_backend.exception.BinAlreadyExistsException;
 import com.greenpulse.greenpulse_backend.exception.BinNotFoundException;
+import com.greenpulse.greenpulse_backend.exception.UserNotFoundException;
 import com.greenpulse.greenpulse_backend.model.BinInventory;
 import com.greenpulse.greenpulse_backend.model.BinOwnerProfile;
 import com.greenpulse.greenpulse_backend.repository.BinInventoryRepository;
@@ -11,6 +12,7 @@ import com.greenpulse.greenpulse_backend.repository.BinOwnerProfileRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.iot.model.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,14 +22,17 @@ import java.util.UUID;
 public class BinInventoryService {
     private final BinInventoryRepository binInventoryRepository;
     private final BinOwnerProfileRepository binOwnerProfileRepository;
+    private final BinStatusService binStatusService;
 
     @Autowired
     public BinInventoryService(
             BinInventoryRepository binInventoryRepository,
-            BinOwnerProfileRepository binOwnerProfileRepository
+            BinOwnerProfileRepository binOwnerProfileRepository,
+            BinStatusService binStatusService
     ) {
         this.binInventoryRepository = binInventoryRepository;
         this.binOwnerProfileRepository = binOwnerProfileRepository;
+        this.binStatusService = binStatusService;
     }
 
     public ApiResponse<List<BinInventory>> getBinsFiltered(BinStatusEnum status, UUID ownerId) {
@@ -51,6 +56,7 @@ public class BinInventoryService {
                 .build();
     }
 
+    @Transactional
     public ApiResponse<BinInventory> addBin(String binId) {
         if (binInventoryRepository.existsById(binId)) {
             throw new BinAlreadyExistsException(binId);
@@ -60,10 +66,14 @@ public class BinInventoryService {
         bin.setBinId(binId);
         bin.setStatus(BinStatusEnum.AVAILABLE); // Default status
 
+        binInventoryRepository.save(bin);
+
+        binStatusService.saveBinStatus(binId);
+
         return ApiResponse.<BinInventory>builder()
                 .success(true)
                 .message("Bin added successfully")
-                .data(binInventoryRepository.save(bin))
+                .data(null)
                 .build();
     }
 
@@ -105,6 +115,28 @@ public class BinInventoryService {
                 .success(true)
                 .message("Bin owner changed")
                 .data(bin)
+                .build();
+    }
+
+    public ApiResponse<BinInventory> assignBinToOwner(String binId, UUID userId) {
+        BinInventory bin = binInventoryRepository.findById(binId)
+                .orElseThrow(() -> new BinNotFoundException("Bin not found"));
+
+        if (bin.getOwner() != null) {
+            throw new IllegalStateException("Bin is already assigned to another owner");
+        }
+
+        BinOwnerProfile owner = binOwnerProfileRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Bin owner profile not found"));
+
+        bin.assignToOwner(owner);
+        binInventoryRepository.save(bin);
+
+        return ApiResponse.<BinInventory>builder()
+                .success(true)
+                .message("Bin successfully assigned")
+                .data(null)
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 }
