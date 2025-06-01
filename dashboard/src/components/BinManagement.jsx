@@ -1,3 +1,6 @@
+// 
+
+
 import { Pencil, Trash2, Plus, MapPin, Wrench, Truck } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
@@ -101,6 +104,31 @@ useEffect(() => {
     }
   };
 
+  
+      
+const deleteById = async (id) => {
+    try {
+      const response = await fetch(`/api/bins/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete item with ID: ${id}`);
+      }
+
+      console.log(`Item with ID ${id} deleted successfully.`);
+
+      // Optionally refresh the data list or update state:
+      // refreshData();  // You might call your refresh function here
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
+  
   const renderAllBinsTab = () => {
     if (tab1Loading) {
       return (
@@ -167,15 +195,8 @@ useEffect(() => {
                   <td>
                     <div className="action-buttons">
                       <button 
-                        className="btn-icon btn-icon--primary"
-                        onClick={() => onAction('edit', bin)}
-                        title="Edit Bin"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <button 
                         className="btn-icon btn-icon--danger"
-                        onClick={() => onAction('delete', bin)}
+                        onClick={() => deleteById(bin.binId)}
                         title="Delete Bin"
                       >
                         <Trash2 size={16} />
@@ -285,7 +306,7 @@ useEffect(() => {
                       </button>
                       <button 
                         className="btn-icon btn-icon--danger"
-                        onClick={() => onAction('delete', bin)}
+                        onClick={() => deleteById(bin.binId)}
                         title="Delete Bin"
                       >
                         <Trash2 size={16} />
