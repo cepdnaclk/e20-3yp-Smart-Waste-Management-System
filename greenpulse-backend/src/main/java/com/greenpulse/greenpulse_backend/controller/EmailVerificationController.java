@@ -34,7 +34,7 @@ public class EmailVerificationController {
                 .success(true)
                 .message("Email verification PIN sent successfully")
                 .data(null)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build());
     }
 
@@ -46,7 +46,7 @@ public class EmailVerificationController {
                 .success(true)
                 .message("Email verified successfully")
                 .data(null)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build());
     }
 

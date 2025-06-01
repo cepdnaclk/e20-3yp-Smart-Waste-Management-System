@@ -23,7 +23,6 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasRole('BIN_OWNER')")
     public ResponseEntity<ApiResponse<AuthenticationDataDTO>> register(
             @RequestBody RegisterRequestDTO request
     ) {

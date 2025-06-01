@@ -88,7 +88,7 @@ public class AuthenticationService {
                 .success(true)
                 .message("Registration Successful")
                 .data(new AuthenticationDataDTO(jwtToken))
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
@@ -111,7 +111,7 @@ public class AuthenticationService {
                 .success(true)
                 .message("Login Successful")
                 .data(new AuthenticationDataDTO(jwtToken))
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 }
