@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:truck_driver_mobile_app/models/truck.dart';
 import 'package:truck_driver_mobile_app/providers/user_provider.dart';
@@ -16,20 +18,140 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Truck? selectedTruck;
+  Set<Marker> _binMarkers = {};
+  late GoogleMapController _controller;
+  Set<Polyline> _polylines = {};
+  int _polylineIdCounter = 1;
 
-  // Dummy truck data for frontend testing
+  final CameraPosition _initialPosition = const CameraPosition(
+    target: LatLng(7.252320531045659, 80.59290477694601),
+    zoom: 18,
+  );
+
+  final List<Map<String, dynamic>> dummyBinStops = [
+    {
+      'id': 'bin1',
+      'position': LatLng(7.2558, 80.5941), // Near Engineering Faculty
+    },
+    {
+      'id': 'bin2',
+      'position': LatLng(7.2575, 80.5982), // Near Arts Theatre
+    },
+    {
+      'id': 'bin3',
+      'position': LatLng(7.2587, 80.5920), // Near Sarasavi Uyana Station
+    },
+    {
+      'id': 'bin4',
+      'position': LatLng(7.2562, 80.5900), // Near Gymnasium
+    },
+  ];
+
   final List<Truck> dummyTrucks = [
     Truck(id: "Truck 1", registrationNumber: 'LZ-1234'),
     Truck(id: "Truck 2", registrationNumber: 'LZ-5678'),
     Truck(id: "Truck 3", registrationNumber: 'LY-9101'),
   ];
 
+  void _loadBinMarkers() {
+    final markers = dummyBinStops.map((bin) {
+      return Marker(
+        markerId: MarkerId(bin['id']),
+        position: bin['position'],
+        infoWindow: InfoWindow(title: bin['id']),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+      );
+    }).toSet();
+
+    setState(() {
+      _binMarkers = markers;
+    });
+  }
+
+  List<LatLng> _decodePolyline(String encoded) {
+    List<LatLng> polyline = [];
+    int index = 0, len = encoded.length;
+    int lat = 0, lng = 0;
+
+    while (index < len) {
+      int b, shift = 0, result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lat += dlat;
+
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.codeUnitAt(index++) - 63;
+        result |= (b & 0x1F) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+      lng += dlng;
+
+      polyline.add(LatLng(lat / 1E5, lng / 1E5));
+    }
+
+    return polyline;
+  }
+
+  Future<void> _getOptimizedRoute(Position truckPosition) async {
+    const String apiKey =
+        "AIzaSyDaGvPryIxM5GiAiNtaGUyUaJb1nJYIMSw"; // Replace with your key
+
+    final origin = '${truckPosition.latitude},${truckPosition.longitude}';
+    final waypoints = dummyBinStops.map((bin) {
+      final pos = bin['position'] as LatLng;
+      return '${pos.latitude},${pos.longitude}';
+    }).join('|');
+
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$origin&waypoints=optimize:true|$waypoints&key=$apiKey',
+    );
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['routes'] == null || data['routes'].isEmpty) {
+        print(
+            "No routes found: ${data['status']}, ${data['error_message'] ?? 'No error message'}");
+        return;
+      }
+
+      final points = data['routes'][0]['overview_polyline']['points'];
+      final polylineCoordinates = _decodePolyline(points);
+
+      setState(() {
+        _polylines = {
+          Polyline(
+            polylineId: PolylineId("route_${_polylineIdCounter++}"),
+            color: Colors.blue,
+            width: 5,
+            points: polylineCoordinates,
+          ),
+        };
+      });
+    } else {
+      print("Failed to load directions: ${response.body}");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBinMarkers();
+  }
+
   @override
   Widget build(BuildContext context) {
     final String? username = Provider.of<UserProvider>(context).username;
     final String? assignedTruckId = Provider.of<UserProvider>(context).truckId;
 
-    // Find the assigned truck object from dummy list by ID
     final Truck? assignedTruck = assignedTruckId == null
         ? null
         : dummyTrucks.firstWhere(
@@ -38,166 +160,102 @@ class _HomePageState extends State<HomePage> {
           );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home page"),
-      ),
+      appBar: AppBar(title: const Text("Home Page")),
       drawer: const MyNavigationDrawer(),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        color: Colors.black26,
-        height: double.infinity,
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Welcome $username!",
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 35),
-
-            // Truck assignment section
-            assignedTruck == null
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Select Your Truck",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 10),
-                      DropdownButton<Truck>(
-                        hint: const Text("Select a truck"),
-                        value: selectedTruck,
-                        isExpanded: true,
-                        items: dummyTrucks.map((truck) {
-                          return DropdownMenuItem<Truck>(
-                            value: truck,
-                            child: Text(truck.registrationNumber),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedTruck = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 10),
-                      ElevatedButton(
-                        onPressed: selectedTruck == null
-                            ? null
-                            : () {
-                                // Assign the selected truck to UserProvider
-                                Provider.of<UserProvider>(context,
-                                        listen: false)
-                                    .assignTruck(selectedTruck!.id);
-                                setState(
-                                    () {}); // Refresh UI to hide dropdown and show assigned truck
-                              },
-                        child: const Text("Assign Truck"),
-                      ),
-                    ],
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Assigned Truck",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        assignedTruck!.registrationNumber,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ],
-                  ),
-
-            const SizedBox(height: 50),
-
-            // Assigned Route section (dummy content for now)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.grey.shade700, Colors.grey.shade800],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(15),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Welcome $username!",
+                style:
+                    const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
               ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Assigned Route",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Center(
-                    child: Text(
-                      "Route",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 50),
-
-            // Map placeholder
-            SizedBox(
-              height: 400,
-              child: FlutterMap(
-                options: MapOptions(
-                  center: LatLng(6.9271, 79.8612),
-                  zoom: 13,
-                ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: const ['a', 'b', 'c'],
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      Marker(
-                        point: LatLng(6.9271, 79.8612),
-                        width: 80,
-                        height: 80,
-                        builder: (ctx) => const Icon(
-                          Icons.location_on,
-                          color: Colors.red,
-                          size: 40,
+              const SizedBox(height: 35),
+              assignedTruck == null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("Select Your Truck",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        DropdownButton<Truck>(
+                          hint: const Text("Select a truck"),
+                          value: selectedTruck,
+                          isExpanded: true,
+                          items: dummyTrucks.map((truck) {
+                            return DropdownMenuItem<Truck>(
+                              value: truck,
+                              child: Text(truck.registrationNumber),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedTruck = value;
+                            });
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        ElevatedButton(
+                          onPressed: selectedTruck == null
+                              ? null
+                              : () {
+                                  Provider.of<UserProvider>(context,
+                                          listen: false)
+                                      .assignTruck(selectedTruck!.id);
+                                  setState(() {});
+                                },
+                          child: const Text("Assign Truck"),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("Assigned Truck",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(assignedTruck.registrationNumber,
+                            style: const TextStyle(fontSize: 20)),
+                      ],
+                    ),
+              const SizedBox(height: 40),
+              SizedBox(
+                height: 300,
+                child: GoogleMap(
+                  initialCameraPosition: _initialPosition,
+                  onMapCreated: (controller) {
+                    _controller = controller;
+                  },
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  markers: _binMarkers,
+                  polylines: _polylines,
+                ),
               ),
-            ),
-
-            const SizedBox(height: 50),
-
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const BinLevelPage(),
-                  ),
-                );
-              },
-              child: const Text("Next location"),
-            ),
-          ],
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () async {
+                  final position = await Geolocator.getCurrentPosition();
+                  await _getOptimizedRoute(position);
+                },
+                child: const Text("Draw Optimized Route"),
+              ),
+              const SizedBox(height: 30),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BinLevelPage(),
+                    ),
+                  );
+                },
+                child: const Text("Next location"),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -17,7 +17,7 @@ class MyNavigationDrawer extends StatefulWidget {
 }
 
 class _MyNavigationDrawerState extends State<MyNavigationDrawer> {
-  // String vehicleId = "ABC-xxyy";
+  String vehicleId = "ABC-xxyy";
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class _MyNavigationDrawerState extends State<MyNavigationDrawer> {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    vehicleId!,
+                                    vehicleId ?? "Not Assigned",
                                     style: const TextStyle(
                                       color: Colors.lightGreen,
                                       fontSize: 14,
