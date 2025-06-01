@@ -2,21 +2,66 @@ import React from 'react';
 import { Pencil, Trash2, Plus, MapPin, Wrench,Truck } from 'lucide-react';
 
 const BinManagement = ({ activeTab, onAction }) => {
+
+const [tab1Data, setTab1Data] = useState([]);
+const [tab1Loading, setTab1Loading] = useState(true);
+const [tab1Error, setTab1Error] = useState(null);
+
+const [tab2Data, setTab2Data] = useState([]);
+const [tab2Loading, setTab2Loading] = useState(true);
+const [tab2Error, setTab2Error] = useState(null);
+
+useEffect(() => {
+  fetch('http://localhost:8080/api/bins?status=AVAILABLE')
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to fetch bins');
+      return response.json();
+    })
+    .then(data => {
+      setTab1Data(data);
+      setTab1Loading(false);
+    })
+    .catch(error => {
+      setTab1Error(error.message);
+      setTab1Loading(false);
+    });
+}, []);
+
+useEffect(() => {
+  fetch('http://localhost:8080/api/bins?status=ASSIGNED')
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to fetch maintenance');
+      return response.json();
+    })
+    .then(data => {
+      setTab2Data(data);
+      setTab2Loading(false);
+    })
+    .catch(error => {
+      setTab2Error(error.message);
+      setTab2Loading(false);
+    });
+}, []);
+
+
+
   // Sample bin data - in a real app, this would come from props or API
-  const binData = {
-    tab1: [ // All Bins
-      { id: 'BIN-001', location: '123 Main St', fillLevel: 85, status: 'active', lastCollection: '2024-01-28' },
-      { id: 'BIN-002', location: '456 Oak Ave', fillLevel: 45, status: 'active', lastCollection: '2024-01-27' },
-      { id: 'BIN-003', location: '789 Pine Rd', fillLevel: 92, status: 'maintenance', lastCollection: '2024-01-25' },
-      { id: 'BIN-004', location: '321 Elm St', fillLevel: 67, status: 'active', lastCollection: '2024-01-28' },
-      { id: 'BIN-005', location: '654 Cedar Ln', fillLevel: 23, status: 'inactive', lastCollection: '2024-01-26' }
-    ],
-    tab2: [ // Maintenance
-      { id: 'BIN-003', location: '789 Pine Rd', issue: 'Lid mechanism broken', priority: 'high', reportedDate: '2024-01-29' },
-      { id: 'BIN-007', location: '147 Birch St', issue: 'Sensor malfunction', priority: 'medium', reportedDate: '2024-01-28' },
-      { id: 'BIN-012', location: '258 Maple Dr', issue: 'Physical damage', priority: 'low', reportedDate: '2024-01-27' }
-    ]
-  };
+  // const binData = {
+  //   tab1: [ // All Bins
+  //     { id: 'BIN-001', location: '123 Main St', fillLevel: 85, status: 'active', lastCollection: '2024-01-28' },
+  //     { id: 'BIN-002', location: '456 Oak Ave', fillLevel: 45, status: 'active', lastCollection: '2024-01-27' },
+  //     { id: 'BIN-003', location: '789 Pine Rd', fillLevel: 92, status: 'maintenance', lastCollection: '2024-01-25' },
+  //     { id: 'BIN-004', location: '321 Elm St', fillLevel: 67, status: 'active', lastCollection: '2024-01-28' },
+  //     { id: 'BIN-005', location: '654 Cedar Ln', fillLevel: 23, status: 'inactive', lastCollection: '2024-01-26' }
+  //   ],
+  //   tab2: [ // Maintenance
+  //     { id: 'BIN-003', location: '789 Pine Rd', issue: 'Lid mechanism broken', priority: 'high', reportedDate: '2024-01-29' },
+  //     { id: 'BIN-007', location: '147 Birch St', issue: 'Sensor malfunction', priority: 'medium', reportedDate: '2024-01-28' },
+  //     { id: 'BIN-012', location: '258 Maple Dr', issue: 'Physical damage', priority: 'low', reportedDate: '2024-01-27' }
+  //   ]
+  // };
+
+
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -63,7 +108,7 @@ const BinManagement = ({ activeTab, onAction }) => {
           <thead>
             <tr>
               <th>Bin ID</th>
-              <th>Location</th>
+              <th>Owner</th>
               <th>Fill Level</th>
               <th>Status</th>
               <th>Last Collection</th>
@@ -71,27 +116,17 @@ const BinManagement = ({ activeTab, onAction }) => {
             </tr>
           </thead>
           <tbody>
-            {binData.tab1.map(bin => (
-              <tr key={bin.id}>
+            {data.map(bin => (
+              <tr key={bin.binId}>
                 <td className="font-medium">{bin.id}</td>
-                <td>{bin.location}</td>
-                <td>
-                  <div className="fill-level-container">
-                    <div className={`fill-level-bar ${getFillLevelColor(bin.fillLevel)}`}>
-                      <div 
-                        className="fill-level-progress" 
-                        style={{ width: `${bin.fillLevel}%` }}
-                      ></div>
-                    </div>
-                    <span className="fill-level-text">{bin.fillLevel}%</span>
-                  </div>
-                </td>
+                <td>{bin.owner}</td>
                 <td>
                   <span className={`status-badge ${getStatusColor(bin.status)}`}>
                     {bin.status.charAt(0).toUpperCase() + bin.status.slice(1)}
                   </span>
                 </td>
-                <td>{bin.lastCollection}</td>
+                <td>{bin.assignedDate}</td>
+                <td>{bin.location}</td>
                 <td>
                   <div className="action-buttons">
                     <button 
