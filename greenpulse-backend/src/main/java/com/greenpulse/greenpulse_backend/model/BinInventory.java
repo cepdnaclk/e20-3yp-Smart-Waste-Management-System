@@ -35,6 +35,9 @@ public class BinInventory {
     @Column(name = "location", columnDefinition = "GEOGRAPHY(POINT,4326)")
     private Point location;
 
+    @OneToOne(mappedBy = "bin", cascade = CascadeType.ALL, orphanRemoval = true)
+    private BinStatus binStatus;
+
     public void assignToOwner(BinOwnerProfile newOwner) {
         this.owner = newOwner;
         this.status = BinStatusEnum.ASSIGNED;
