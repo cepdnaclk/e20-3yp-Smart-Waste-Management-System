@@ -8,6 +8,7 @@ import com.greenpulse.greenpulse_backend.exception.BinNotFoundException;
 import com.greenpulse.greenpulse_backend.exception.UserNotFoundException;
 import com.greenpulse.greenpulse_backend.model.BinInventory;
 import com.greenpulse.greenpulse_backend.model.BinOwnerProfile;
+import com.greenpulse.greenpulse_backend.model.BinStatus;
 import com.greenpulse.greenpulse_backend.repository.BinInventoryRepository;
 import com.greenpulse.greenpulse_backend.repository.BinOwnerProfileRepository;
 import jakarta.transaction.Transactional;
@@ -22,17 +23,14 @@ import java.util.UUID;
 public class BinInventoryService {
     private final BinInventoryRepository binInventoryRepository;
     private final BinOwnerProfileRepository binOwnerProfileRepository;
-    private final BinStatusService binStatusService;
 
     @Autowired
     public BinInventoryService(
             BinInventoryRepository binInventoryRepository,
-            BinOwnerProfileRepository binOwnerProfileRepository,
-            BinStatusService binStatusService
+            BinOwnerProfileRepository binOwnerProfileRepository
     ) {
         this.binInventoryRepository = binInventoryRepository;
         this.binOwnerProfileRepository = binOwnerProfileRepository;
-        this.binStatusService = binStatusService;
     }
 
     public ApiResponse<List<BinInventory>> getBinsFiltered(BinStatusEnum status, UUID ownerId) {
@@ -74,7 +72,7 @@ public class BinInventoryService {
                 .success(true)
                 .message("Bins are fetched successfully")
                 .data(bins)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
@@ -85,13 +83,23 @@ public class BinInventoryService {
             throw new BinAlreadyExistsException(binId);
         }
 
-        BinInventory bin = new BinInventory();
-        bin.setBinId(binId);
-        bin.setStatus(BinStatusEnum.AVAILABLE); // Default status
+        BinInventory binInventory = new BinInventory();
+        binInventory.setBinId(binId);
+        binInventory.setStatus(BinStatusEnum.AVAILABLE);
+        binInventory.setAssignedDate(null);
+        binInventory.setLocation(null);
 
-        binInventoryRepository.save(bin);
 
-        binStatusService.saveBinStatus(binId);
+        BinStatus binStatus = new BinStatus();
+        binStatus.setBin(binInventory);
+        binStatus.setPlasticLevel(0L);
+        binStatus.setPaperLevel(0L);
+        binStatus.setGlassLevel(0L);
+        binStatus.setLastEmptiedAt(null);
+
+        binInventory.setBinStatus(binStatus);
+
+        binInventoryRepository.save(binInventory);
 
         return ApiResponse.<BinInventory>builder()
                 .success(true)

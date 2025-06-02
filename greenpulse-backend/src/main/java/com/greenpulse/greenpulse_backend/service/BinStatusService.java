@@ -1,44 +1,68 @@
 package com.greenpulse.greenpulse_backend.service;
 
+import com.greenpulse.greenpulse_backend.dto.ApiResponse;
 import com.greenpulse.greenpulse_backend.dto.BinStatusDTO;
-import com.greenpulse.greenpulse_backend.exception.BinNotFoundException;
 import com.greenpulse.greenpulse_backend.exception.BinStatusNotFoundException;
+import com.greenpulse.greenpulse_backend.exception.UserNotFoundException;
 import com.greenpulse.greenpulse_backend.model.BinInventory;
 import com.greenpulse.greenpulse_backend.model.BinStatus;
+import com.greenpulse.greenpulse_backend.model.UserTable;
 import com.greenpulse.greenpulse_backend.repository.BinInventoryRepository;
 import com.greenpulse.greenpulse_backend.repository.BinStatusRepository;
+import com.greenpulse.greenpulse_backend.repository.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BinStatusService {
 
     private final BinStatusRepository binStatusRepository;
     private final BinInventoryRepository binInventoryRepository;
+    private final UserTableRepository userTableRepository;
 
     @Autowired
     public BinStatusService(
             BinStatusRepository binStatusRepository,
-            BinInventoryRepository binInventoryRepository
+            BinInventoryRepository binInventoryRepository,
+            UserTableRepository userTableRepository
     ) {
         this.binStatusRepository = binStatusRepository;
         this.binInventoryRepository = binInventoryRepository;
+        this.userTableRepository = userTableRepository;
     }
 
-    public void saveBinStatus(String binId) {
-        BinInventory bin = binInventoryRepository.findById(binId)
-                .orElseThrow(() -> new BinNotFoundException(binId));
+    public ApiResponse<BinStatusDTO> getBinStatus(String binId, UUID userId) {
+        BinInventory binInventory = binInventoryRepository.findById(binId)
+                .orElseThrow(() -> new BinStatusNotFoundException(binId));;
 
-        BinStatus binStatus = new BinStatus();
+        UserTable user =  userTableRepository.findById(binInventory.getOwner().getUserId())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        binStatus.setBin(bin);
-        binStatus.setPlasticLevel(0L);
-        binStatus.setPaperLevel(0L);
-        binStatus.setGlassLevel(0L);
+        if(!user.getId().equals(userId)) {
+            throw new UserNotFoundException("User not found for given bin");
+        }
 
-        binStatusRepository.save(binStatus);
+        BinStatus binStatus = binStatusRepository.findById(binId)
+                .orElseThrow(() -> new BinStatusNotFoundException(binId));
+
+        BinStatusDTO binStatusDTO = new BinStatusDTO();
+
+        binStatusDTO.setBinId(binId);
+        binStatusDTO.setPlasticLevel(binStatus.getPlasticLevel());
+        binStatusDTO.setGlassLevel(binStatus.getGlassLevel());
+        binStatusDTO.setPaperLevel(binStatus.getPaperLevel());
+
+        return ApiResponse.<BinStatusDTO>builder()
+                .success(true)
+                .message("Bin status fetched successfully")
+                .data(binStatusDTO)
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+
     }
 
     public void updateBinLevels(BinStatusDTO binStatusDTO) {
