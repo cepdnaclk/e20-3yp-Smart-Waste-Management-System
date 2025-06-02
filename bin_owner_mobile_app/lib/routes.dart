@@ -1,27 +1,3 @@
-// import 'package:bin_owner_mobile_app/main.dart';
-// import 'package:flutter/material.dart';
-// import './screens/bin_level_screen.dart';
-// import './screens/notification.dart';
-// import './screens/calendar.dart';
-// import './screens/settings.dart';
-
-// class AppRoutes {
-//   static const String home = '/home';
-//   static const String binLevel = '/bin-level-screen';
-//   static const String notifications = '/notifications';
-//   static const String calendar = '/calendar';
-//   static const String settings = '/settings';
-
-//   static Map<String, WidgetBuilder> routes = {
-//     home: (context) => MyHomePage(title: 'Home Page'),
-//     binLevel: (context) => BinLevelScreen(),
-//     notifications: (context) => const NotificationScreen(),
-//     calendar: (context) => const CollectionCalendarScreen(),
-//     settings: (context) => const SettingsScreen(),
-//   };
-// }
-
-// lib/routes.dart
 import 'package:flutter/material.dart';
 import 'package:bin_owner_mobile_app/screens/bin_level_screen.dart';
 import 'package:bin_owner_mobile_app/screens/notification.dart';
@@ -32,6 +8,7 @@ import 'package:bin_owner_mobile_app/screens/home_screen.dart';
 import 'package:bin_owner_mobile_app/screens/login_screen.dart';
 import 'package:bin_owner_mobile_app/screens/register_screen.dart';
 import 'package:bin_owner_mobile_app/screens/problem_report_screen.dart';
+import 'package:bin_owner_mobile_app/screens/add_bin_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -44,6 +21,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String report = '/report';
+  static const String addBin = '/addBin';
 
   static Map<String, WidgetBuilder> routes = {
     // home: (context) => const MainLayout(),
@@ -57,5 +35,6 @@ class AppRoutes {
     login: (context) => const LoginScreen(),
     register: (context) => const RegisterScreen(),
     report: (context) => const ProblemReportScreen(),
+    addBin: (context) => const AddBinScreen(),
   };
 }
