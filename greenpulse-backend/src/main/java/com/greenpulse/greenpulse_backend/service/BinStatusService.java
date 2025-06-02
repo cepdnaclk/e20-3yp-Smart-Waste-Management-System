@@ -1,11 +1,8 @@
 package com.greenpulse.greenpulse_backend.service;
 
 import com.greenpulse.greenpulse_backend.dto.BinStatusDTO;
-import com.greenpulse.greenpulse_backend.exception.BinNotFoundException;
 import com.greenpulse.greenpulse_backend.exception.BinStatusNotFoundException;
-import com.greenpulse.greenpulse_backend.model.BinInventory;
 import com.greenpulse.greenpulse_backend.model.BinStatus;
-import com.greenpulse.greenpulse_backend.repository.BinInventoryRepository;
 import com.greenpulse.greenpulse_backend.repository.BinStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,29 +13,12 @@ import java.time.LocalDateTime;
 public class BinStatusService {
 
     private final BinStatusRepository binStatusRepository;
-    private final BinInventoryRepository binInventoryRepository;
 
     @Autowired
     public BinStatusService(
-            BinStatusRepository binStatusRepository,
-            BinInventoryRepository binInventoryRepository
+            BinStatusRepository binStatusRepository
     ) {
         this.binStatusRepository = binStatusRepository;
-        this.binInventoryRepository = binInventoryRepository;
-    }
-
-    public void saveBinStatus(String binId) {
-        BinInventory bin = binInventoryRepository.findById(binId)
-                .orElseThrow(() -> new BinNotFoundException(binId));
-
-        BinStatus binStatus = new BinStatus();
-
-        binStatus.setBin(bin);
-        binStatus.setPlasticLevel(0L);
-        binStatus.setPaperLevel(0L);
-        binStatus.setGlassLevel(0L);
-
-        binStatusRepository.save(binStatus);
     }
 
     public void updateBinLevels(BinStatusDTO binStatusDTO) {
