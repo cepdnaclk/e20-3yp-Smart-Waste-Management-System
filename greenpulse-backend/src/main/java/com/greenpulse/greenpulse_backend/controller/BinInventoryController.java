@@ -28,7 +28,7 @@ public class BinInventoryController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ApiResponse<List<BinInventory>> getBins(
+    public ApiResponse<List<BinInventoryResponseDTO>> getBins(
             @RequestParam(required = false) BinStatusEnum status,
             @RequestParam(required = false) UUID ownerId
     ) {
