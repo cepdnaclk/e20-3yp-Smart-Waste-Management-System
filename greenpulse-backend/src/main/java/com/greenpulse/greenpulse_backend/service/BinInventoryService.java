@@ -72,7 +72,7 @@ public class BinInventoryService {
                 .success(true)
                 .message("Bins are fetched successfully")
                 .data(bins)
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
     }
 
