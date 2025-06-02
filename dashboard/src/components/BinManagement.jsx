@@ -1,71 +1,71 @@
-
-// Complete BinManagement.jsx - Fixed
+// Complete BinManagement.jsx - Corrected
 
 import { Pencil, Trash2, Plus, MapPin, Wrench, Truck } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 
 const BinManagement = ({ activeTab, onAction }) => {
+  const [tab1Data, setTab1Data] = useState([]);
+  const [tab1Loading, setTab1Loading] = useState(true);
+  const [tab1Error, setTab1Error] = useState(null);
 
-const [tab1Data, setTab1Data] = useState([]);
-const [tab1Loading, setTab1Loading] = useState(true);
-const [tab1Error, setTab1Error] = useState(null);
+  const [tab2Data, setTab2Data] = useState([]);
+  const [tab2Loading, setTab2Loading] = useState(true);
+  const [tab2Error, setTab2Error] = useState(null);
+  const [showInput, setShowInput] = useState(false);
+  const [binId, setBinId] = useState(''); // For bin ID input
+  const token = localStorage.getItem('token');
 
-const [tab2Data, setTab2Data] = useState([]);
-const [tab2Loading, setTab2Loading] = useState(true);
-const [tab2Error, setTab2Error] = useState(null);
-const [showInput, setShowInput] = useState(false);
-const [binId, setBinId] = useState(''); // For bin ID input
-const token = localStorage.getItem('token');
-
-useEffect(() => {
-  fetch('/api/bins?status=AVAILABLE', {
-    method: 'GET',
-    headers: {
+  // Fetch available bins (tab1)
+  useEffect(() => {
+    fetch('/api/bins?status=AVAILABLE', {
+      method: 'GET',
+      headers: {
         'Authorization': `Bearer ${token}`
-    }
-  })
-    .then(response => {
-      if (!response.ok) throw new Error('Failed to fetch bins');
-      return response.json();
+      }
     })
-    .then(data => {
-      console.log(data);
-      // Ensure data is an array
-      setTab1Data(Array.isArray(data.data) ? data.data : []);
-      setTab1Loading(false);
-    })
-    .catch(error => {
-      setTab1Error(error.message);
-      setTab1Loading(false);
-      setTab1Data([]); // Set to empty array on error
-    });
-}, [token]);
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch bins');
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        // Ensure data is an array
+        setTab1Data(Array.isArray(data.data) ? data.data : []);
+        setTab1Loading(false);
+      })
+      .catch(error => {
+        setTab1Error(error.message);
+        setTab1Loading(false);
+        setTab1Data([]); // Set to empty array on error
+      });
+  }, [token]);
 
-useEffect(() => {
-  fetch('/api/bins?status=ASSIGNED', {
-    method: 'GET',
-    headers: { 
-      'Authorization': `Bearer ${token}`
-    }
-  })
-    .then(response => {
-      if (!response.ok) throw new Error('Failed to fetch maintenance');
-      return response.json();
+  // Fetch assigned bins (tab2)
+  useEffect(() => {
+    fetch('/api/bins?status=ASSIGNED', {
+      method: 'GET',
+      headers: { 
+        'Authorization': `Bearer ${token}`
+      }
     })
-    .then(data => {
-      console.log(data);
-      // Ensure data is an array
-      setTab2Data(Array.isArray(data.data) ? data.data : []);
-      setTab2Loading(false);
-    })
-    .catch(error => {
-      setTab2Error(error.message);
-      setTab2Loading(false);
-      setTab2Data([]); // Set to empty array on error
-    });
-}, [token]);
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch assigned bins');
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        // Ensure data is an array
+        setTab2Data(Array.isArray(data.data) ? data.data : []);
+        setTab2Loading(false);
+      })
+      .catch(error => {
+        setTab2Error(error.message);
+        setTab2Loading(false);
+        setTab2Data([]); // Set to empty array on error
+      });
+  }, [token]);
 
-  // Sample bin data - in a real app, this would come from props or API
+  // Sample bin data for maintenance tab
   const binData = {
     tab2: [ // Maintenance
       { id: 'BIN-003', location: '789 Pine Rd', issue: 'Lid mechanism broken', priority: 'high', reportedDate: '2024-01-29' },
@@ -126,6 +126,52 @@ useEffect(() => {
     }
   };
 
+  // Corrected refresh function for tab1 data
+  const refreshTab1Data = async () => {
+    setTab1Loading(true);
+    try {
+      const response = await fetch('/api/bins?status=AVAILABLE', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch bins');
+      
+      const data = await response.json();
+      setTab1Data(Array.isArray(data.data) ? data.data : []);
+      setTab1Loading(false);
+    } catch (error) {
+      setTab1Error(error.message);
+      setTab1Loading(false);
+      setTab1Data([]);
+    }
+  };
+
+  // Corrected refresh function for tab2 data
+  const refreshTab2Data = async () => {
+    setTab2Loading(true);
+    try {
+      const response = await fetch('/api/bins?status=ASSIGNED', {
+        method: 'GET',
+        headers: { 
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch assigned bins');
+      
+      const data = await response.json();
+      setTab2Data(Array.isArray(data.data) ? data.data : []);
+      setTab2Loading(false);
+    } catch (error) {
+      setTab2Error(error.message);
+      setTab2Loading(false);
+      setTab2Data([]);
+    }
+  };
+
   // Fixed addBin function
   const addBin = async (binId) => {
     try {
@@ -170,21 +216,9 @@ useEffect(() => {
         throw new Error(`${errorMessage} (Status: ${response.status})`);
       }
 
-      const newBin = await response.json();
-      console.log('New bin added successfully:', newBin);
-
-      // Update the state to include the new bin
-      // Handle different possible response structures
-      if (newBin && newBin.data) {
-        setTab1Data(prevData => [...prevData, newBin.data]);
-      } else if (newBin && newBin.binId) {
-        // If the response is the bin object directly
-        setTab1Data(prevData => [...prevData, newBin]);
-      } else {
-        console.warn('Unexpected response structure:', newBin);
-        // Still refresh the data to be safe
-        // You might want to refetch the data here instead
-      }
+      // After successful addition, refresh the appropriate data
+      await refreshTab1Data();
+      await refreshTab2Data();
       
       // Reset input state
       setBinId('');
@@ -243,47 +277,6 @@ useEffect(() => {
         <div className="card-header">
           <h3 className="card__title"></h3>
           
-          {/* Fixed Add Bin Button and Input */}
-          {showInput ? (
-            <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
-              <input 
-                value={binId}
-                onChange={(e) => setBinId(e.target.value)}
-                placeholder="Enter Bin ID"
-                style={{padding: '8px', borderRadius: '4px', border: '1px solid #ccc'}}
-              />
-              <button 
-                className="btn btn--primary"
-                onClick={() => {
-                  if (binId) {
-                    addBin(binId);
-                  }
-                }}
-              >
-                Confirm
-              </button>
-              <button 
-                className="btn btn--secondary"
-                onClick={() => {
-                  setShowInput(false);
-                  setBinId('');
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <button 
-              className="btn btn--primary"
-              onClick={() => setShowInput(true)}
-            >
-              <Plus size={18} />
-              Add Bin
-            </button>
-          )}
-          
-          {/* Alternative: Simple prompt version */}
-          {/* 
           <button 
             className="btn btn--primary"
             onClick={addBinWithPrompt}
@@ -291,7 +284,6 @@ useEffect(() => {
             <Plus size={18} />
             Add Bin
           </button>
-          */}
         </div>
         <div className="card-content">
           <table className="data-table">
@@ -456,10 +448,10 @@ useEffect(() => {
   
   const renderMaintenanceTab = () => (
     <section className="">
-    <div className="page-header">
-          <Truck size={24} />
-          <h1 className="page-title">Maintenance Requests</h1>
-    </div>
+      <div className="page-header">
+        <Truck size={24} />
+        <h1 className="page-title">Maintenance Requests</h1>
+      </div>
       <div className="card-header">
         <h3 className="card__title"></h3>
         <button 
@@ -522,10 +514,10 @@ useEffect(() => {
 
   const renderBinMapTab = () => (
     <section className="">
-    <div className="page-header">
-          <Truck size={24} />
-          <h1 className="page-title">Bin Locations</h1>
-    </div>
+      <div className="page-header">
+        <Truck size={24} />
+        <h1 className="page-title">Bin Locations</h1>
+      </div>
       <div className="card-header">
         <h3 className="card__title"></h3>
         <button 
