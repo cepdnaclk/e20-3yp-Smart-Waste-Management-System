@@ -1,102 +1,141 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class Bin {
-  final String type;
-  final int fill;
-  final Color color;
-  final IconData icon;
-  final String lastCollected;
-  final String nextFill;
-
-  Bin({
-    required this.type,
-    required this.fill,
-    required this.color,
-    required this.icon,
-    required this.lastCollected,
-    required this.nextFill,
-  });
-
-  factory Bin.fromJson(Map<String, dynamic> json) {
-    // Map the backend data to your Bin model
-    // You'll need to adjust this based on your actual API response
-    IconData getIconForType(String type) {
-      switch (type.toLowerCase()) {
-        case 'plastic':
-          return Icons.recycling;
-        case 'paper':
-          return Icons.description;
-        case 'glass':
-          return Icons.local_drink;
-        default:
-          return Icons.delete;
-      }
-    }
-
-    Color getColorForType(String type) {
-      switch (type.toLowerCase()) {
-        case 'plastic':
-          return const Color.fromARGB(255, 255, 215, 0);
-        case 'paper':
-          return const Color.fromARGB(255, 6, 100, 208);
-        case 'glass':
-          return const Color.fromARGB(255, 0, 128, 0);
-        default:
-          return Colors.grey;
-      }
-    }
-
-    return Bin(
-      type: json['type'] ?? 'Unknown',
-      fill: json['fillLevel'] ?? 0,
-      color: getColorForType(json['type']),
-      icon: getIconForType(json['type']),
-      lastCollected: json['lastCollected'] ?? 'Unknown',
-      nextFill: json['nextFillEstimate'] ?? 'Unknown',
-    );
-  }
-}
+import '../models/bin.dart';
 
 class BinService {
-  final String baseUrl;
+  Future<List<Bin>> fetchBins({
+    required String baseURL,
+    required String token,
+  }) async {
+    final url = '$baseURL/api/bins/fetch';
+    print('🔍 Fetching bins from: $url');
 
-  BinService({required this.baseUrl});
-
-  Future<List<Bin>> fetchBins() async {
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/api/bins'),
-        headers: {'Content-Type': 'application/json'},
-      );
+      final response = await http
+          .get(
+            Uri.parse(url),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          )
+          .timeout(const Duration(seconds: 10)); // Add timeout
+
+      print('Response Status: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((binData) => Bin.fromJson(binData)).toList();
+        final Map<String, dynamic> body = json.decode(response.body);
+
+        // Debug: Print the actual response structure
+        print('Response structure: ${body.keys}');
+
+        if (body['success'] == true && body['data'] != null) {
+          final List<dynamic> data = body['data'];
+          print('Found ${data.length} bins');
+
+          // Debug: Print first bin structure if available
+          if (data.isNotEmpty) {
+            print('First bin structure: ${data[0].keys}');
+          }
+
+          return data.map((binData) => Bin.fromJson(binData)).toList();
+        } else {
+          print('API response success false or no data');
+          print('Success: ${body['success']}');
+          print('Data: ${body['data']}');
+          throw Exception('API response success false or no data');
+        }
       } else {
-        throw Exception('Failed to load bins: ${response.statusCode}');
+        print('HTTP Error: ${response.statusCode}');
+        print('Error body: ${response.body}');
+        throw Exception(
+          'Failed to load bins: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
+      print('Exception in fetchBins: $e');
       throw Exception('Error fetching bins: $e');
     }
   }
 
-  Future<Bin> fetchBinDetails(String binId) async {
+  // To get status for a specific bin
+  Future<Bin> getBinStatus({
+    required String baseURL,
+    required String token,
+    required String binId,
+  }) async {
+    final url = '$baseURL/api/bin/status/fetch/$binId';
+    print('Fetching bin status from: $url');
+
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/api/bins/$binId'),
-        headers: {'Content-Type': 'application/json'},
-      );
+      final response = await http
+          .get(
+            Uri.parse(url),
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+            },
+          )
+          .timeout(const Duration(seconds: 10)); // Add timeout
+
+      print('Bin Status Response: ${response.statusCode}');
+      print('Bin Status Body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        return Bin.fromJson(data);
+        final responseBody = jsonDecode(response.body);
+
+        // Handle different response structures
+        dynamic binData;
+        if (responseBody is Map<String, dynamic>) {
+          if (responseBody.containsKey('data')) {
+            binData = responseBody['data'];
+          } else if (responseBody.containsKey('success') &&
+              responseBody['success'] == true) {
+            binData = responseBody['data'];
+          } else {
+            // Maybe the response is the bin data directly
+            binData = responseBody;
+          }
+        } else {
+          binData = responseBody;
+        }
+
+        print('Bin data structure: ${binData.runtimeType}');
+        if (binData is Map) {
+          print('Bin data keys: ${binData.keys}');
+        }
+
+        return Bin.fromJson(binData);
       } else {
-        throw Exception('Failed to load bin details: ${response.statusCode}');
+        print('Bin Status HTTP Error: ${response.statusCode}');
+        print('Error body: ${response.body}');
+        throw Exception(
+          'Failed to fetch bin status: ${response.statusCode} - ${response.body}',
+        );
       }
     } catch (e) {
-      throw Exception('Error fetching bin details: $e');
+      print('Exception in getBinStatus: $e');
+      throw Exception('Error fetching bin status: $e');
+    }
+  }
+
+  // Helper method to test connectivity
+  Future<bool> testConnection(String baseURL) async {
+    try {
+      final response = await http
+          .get(
+            Uri.parse('$baseURL/api/health'), // or any simple endpoint
+            headers: {'Content-Type': 'application/json'},
+          )
+          .timeout(const Duration(seconds: 5));
+
+      print('Connection test: ${response.statusCode}');
+      return response.statusCode < 500;
+    } catch (e) {
+      print('Connection test failed: $e');
+      return false;
     }
   }
 }
