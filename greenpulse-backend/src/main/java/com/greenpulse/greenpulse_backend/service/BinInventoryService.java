@@ -34,22 +34,33 @@ public class BinInventoryService {
     }
 
     public ApiResponse<List<BinInventory>> getBinsFiltered(BinStatusEnum status, UUID ownerId) {
-        List<BinInventory> bins;
+        List<BinInventory> binInventories;
 
         if (status != null && ownerId != null) {
-            bins = binInventoryRepository.findByStatusAndOwner_UserId(status, ownerId);
+            binInventories = binInventoryRepository.findByStatusAndOwner_UserId(status, ownerId);
         } else if (status != null) {
-            bins = binInventoryRepository.findByStatus(status);
+            binInventories = binInventoryRepository.findByStatus(status);
         } else if (ownerId != null) {
-            bins = binInventoryRepository.findByOwner_UserId(ownerId);
+            binInventories = binInventoryRepository.findByOwner_UserId(ownerId);
         } else {
-            bins = binInventoryRepository.findAll();
+            binInventories = binInventoryRepository.findAll();
         }
+
+        List<BinInventoryResponseDTO> bins = binInventories.stream()
+                .map(bin -> {
+                    BinInventoryResponseDTO dto = new BinInventoryResponseDTO();
+                    dto.setBinId(bin.getBinId());
+                    dto.setStatus(bin.getStatus());
+                    dto.setAssignedDate(bin.getAssignedDate());
+                    dto.setLocation(bin.getLocation());
+                    return dto;
+                })
+                .toList();
 
         return ApiResponse.<List<BinInventory>>builder()
                 .success(true)
                 .message("Bins are fetched successfully")
-                .data(bins)
+                .data(binInventories)
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
