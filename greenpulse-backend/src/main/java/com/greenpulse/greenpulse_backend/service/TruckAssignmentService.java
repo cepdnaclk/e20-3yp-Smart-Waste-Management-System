@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,6 +35,16 @@ public class TruckAssignmentService {
         this.truckInventoryRepository = truckInventoryRepository;
         this.collectorProfileRepository = collectorProfileRepository;
         this.truckAssignmentRepository = truckAssignmentRepository;
+    }
+
+    public ApiResponse<List<TruckAssignment>> getAllTrucksWithCollectors(){
+        List<TruckAssignment> truckAssignment = truckAssignmentRepository.findAll();
+        return ApiResponse.<List<TruckAssignment>>builder()
+                .success(true)
+                .message("Trucks successfully retrieved")
+                .data(truckAssignment)  // Now correctly passing List to List field
+                .timestamp(LocalDateTime.now().toString())
+                .build();
     }
 
     @Transactional

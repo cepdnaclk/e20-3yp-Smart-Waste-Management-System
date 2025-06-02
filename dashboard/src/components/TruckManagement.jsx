@@ -1,107 +1,69 @@
-import React from 'react';
+import React, { useEffect ,useState} from 'react';
 import { Truck, Pencil, Trash2, Plus, Wrench, MapPin, Fuel, Clock } from 'lucide-react';
 import "../styles/TruckManagement.css";
 
 const TruckManagement = ({ activeTab, onAction }) => {
   // Sample truck data - in a real app, this would come from props or API
 
-  const truckData = {
-    tab1: [ // Truck Inventory (All Trucks)
-      { 
-        id: 'TRK-001', 
-        plateNumber: 'ABC-1234', 
-        driver: 'John Smith', 
-        status: 'available', 
-        currentLocation: 'Main Depot',
-        fuelLevel: 75,
-        lastMaintenance: '2024-01-15',
-        capacity: '10 tons',
-        mileage: 45230
-      },
-      { 
-        id: 'TRK-002', 
-        plateNumber: 'XYZ-5678', 
-        driver: 'Sarah Johnson', 
-        status: 'available', 
-        currentLocation: 'North Depot',
-        fuelLevel: 45,
-        lastMaintenance: '2024-01-20',
-        capacity: '8 tons',
-        mileage: 32150
-      },
-      { 
-        id: 'TRK-003', 
-        plateNumber: 'DEF-9012', 
-        driver: 'Mike Wilson', 
-        status: 'maintenance', 
-        currentLocation: 'Service Center',
-        fuelLevel: 30,
-        lastMaintenance: '2024-01-10',
-        capacity: '12 tons',
-        mileage: 67890
-      },
-      { 
-        id: 'TRK-004', 
-        plateNumber: 'GHI-3456', 
-        driver: 'Emily Davis', 
-        status: 'available', 
-        currentLocation: 'South Depot',
-        fuelLevel: 90,
-        lastMaintenance: '2024-01-25',
-        capacity: '10 tons',
-        mileage: 28765
-      },
-      { 
-        id: 'TRK-005', 
-        plateNumber: 'JKL-7890', 
-        driver: 'Robert Brown', 
-        status: 'inactive', 
-        currentLocation: 'Main Depot',
-        fuelLevel: 60,
-        lastMaintenance: '2024-01-12',
-        capacity: '15 tons',
-        mileage: 89234
+  const [tab1Data, setTab1Data] = useState([]);
+  const [tab1Loading, setTab1Loading] = useState(true);
+  const [tab1Error, setTab1Error] = useState(null);
+
+  const [tab2Data, setTab2Data] = useState([]);
+  const [tab2Loading, setTab2Loading] = useState(true);
+  const [tab2Error, setTab2Error] = useState(null);
+  const [showInput, setShowInput] = useState(false);
+  const [binId, setBinId] = useState(''); // For bin ID input
+  const token = localStorage.getItem('token');
+
+  // Fetch available bins (tab1)
+  useEffect(() => {
+    fetch('/api/admin/trucks', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-    ],
-    tab2: [ // On Route Trucks
-      { 
-        id: 'TRK-006', 
-        plateNumber: 'MNO-1234',
-        driver: 'Lisa Garcia',
-        route: 'Route A - Downtown', 
-        progress: 65,
-        estimatedArrival: '14:30',
-        currentLocation: '456 Oak Avenue',
-        fuelLevel: 55,
-        capacity: '10 tons',
-        startTime: '08:00'
-      },
-      { 
-        id: 'TRK-007', 
-        plateNumber: 'PQR-5678',
-        driver: 'David Lee',
-        route: 'Route B - Industrial Zone', 
-        progress: 30,
-        estimatedArrival: '16:15',
-        currentLocation: '789 Pine Street',
-        fuelLevel: 70,
-        capacity: '12 tons',
-        startTime: '09:15'
-      },
-      { 
-        id: 'TRK-008', 
-        plateNumber: 'STU-9012',
-        driver: 'Maria Rodriguez',
-        route: 'Route C - Residential Area', 
-        progress: 85,
-        estimatedArrival: '13:45',
-        currentLocation: '321 Elm Street',
-        fuelLevel: 40,
-        capacity: '8 tons',
-        startTime: '07:30'
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch bins');
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        // Ensure data is an array
+        setTab1Data(Array.isArray(data.data) ? data.data : []);
+        setTab1Loading(false);
+      })
+      .catch(error => {
+        setTab1Error(error.message);
+        setTab1Loading(false);
+        setTab1Data([]); // Set to empty array on error
+      });
+  }, [token]);
+
+ useEffect(() => {
+    fetch('/api/collector/trucks', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-    ]
-  };
+    })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch bins');
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        // Ensure data is an array
+        setTab2Data(Array.isArray(data.data) ? data.data : []);
+        setTab2Loading(false);
+      })
+      .catch(error => {
+        setTab2Error(error.message);
+        setTab2Loading(false);
+        setTab2Data([]); // Set to empty array on error
+      });
+  }, [token]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -155,47 +117,26 @@ const TruckManagement = ({ activeTab, onAction }) => {
             <tr>
               <th>Truck ID</th>
               <th>Plate Number</th>
-              <th>Driver</th>
               <th>Status</th>
-              <th>Current Location</th>
-              <th>Fuel Level</th>
               <th>Last Maintenance</th>
-              <th>Capacity</th>
-              <th>Mileage</th>
+              <th>Capacity(kg)</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {truckData.tab1.map(truck => (
-              <tr key={truck.id}>
-                <td className="font-medium">{truck.id}</td>
-                <td className="font-medium">{truck.plateNumber}</td>
-                <td>{truck.driver}</td>
+            {tab1Data
+            .filter((truck) => truck.status === 'AVAILABLE')
+            .map(truck => (
+              <tr key={truck.truckId}>
+                <td className="font-medium">{truck.truckId}</td>
+                <td className="font-medium">{truck.registrationNumber}</td>
                 <td>
                   <span className={`status-badge ${getStatusColor(truck.status)}`}>
                     {truck.status.charAt(0).toUpperCase() + truck.status.slice(1)}
                   </span>
                 </td>
-                <td>
-                  <div className="location-info">
-                    <MapPin size={14} />
-                    <span>{truck.currentLocation}</span>
-                  </div>
-                </td>
-                <td>
-                  <div className="fuel-level-container">
-                    <div className={`fuel-level-bar ${getFuelLevelColor(truck.fuelLevel)}`}>
-                      <div 
-                        className="fuel-level-progress" 
-                        style={{ width: `${truck.fuelLevel}%` }}
-                      ></div>
-                    </div>
-                    <span className="fuel-level-text">{truck.fuelLevel}%</span>
-                  </div>
-                </td>
                 <td>{truck.lastMaintenance}</td>
-                <td>{truck.capacity}</td>
-                <td>{truck.mileage.toLocaleString()} km</td>
+                <td>{truck.capacityKg}</td>
                 <td>
                   <div className="action-buttons">
                     <button 
@@ -245,22 +186,21 @@ const TruckManagement = ({ activeTab, onAction }) => {
               <th>Truck ID</th>
               <th>Plate Number</th>
               <th>Driver</th>
+              <th>Capacity</th>
+              <th>Status</th>
+              <th>Assigned date</th>
               <th>Route</th>
-              <th>Progress</th>
-              <th>Current Location</th>
-              <th>Fuel Level</th>
-              <th>Est. Arrival</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {truckData.tab2.map(truck => (
-              <tr key={truck.id}>
-                <td className="font-medium">{truck.id}</td>
-                <td className="font-medium">{truck.plateNumber}</td>
-                <td>{truck.driver}</td>
-                <td>{truck.route}</td>
-                <td>
+            {tab2Data.map(assignment => (
+              <tr key={assignment.truck.truckId}>
+                <td className="font-medium">{assignment.truck.truckId}</td>
+                <td className="font-medium">{assignment.truck.registrationNumber}</td>
+                <td>{assignment.collector.name}</td>
+                <td>{assignment.truck.capacityKg}</td>
+                {/* <td>
                   <div className="progress-container">
                     <div className={`progress-bar ${getProgressColor(truck.progress)}`}>
                       <div 
@@ -270,30 +210,14 @@ const TruckManagement = ({ activeTab, onAction }) => {
                     </div>
                     <span className="progress-text">{truck.progress}%</span>
                   </div>
+                </td> */}
+                 <td>
+                  <span className={`status-badge ${getStatusColor(assignment.truck.status)}`}>
+                    {assignment.truck.status.charAt(0).toUpperCase() + assignment.truck.status.slice(1)}
+                  </span>
                 </td>
-                <td>
-                  <div className="location-info">
-                    <MapPin size={14} />
-                    <span>{truck.currentLocation}</span>
-                  </div>
-                </td>
-                <td>
-                  <div className="fuel-level-container">
-                    <div className={`fuel-level-bar ${getFuelLevelColor(truck.fuelLevel)}`}>
-                      <div 
-                        className="fuel-level-progress" 
-                        style={{ width: `${truck.fuelLevel}%` }}
-                      ></div>
-                    </div>
-                    <span className="fuel-level-text">{truck.fuelLevel}%</span>
-                  </div>
-                </td>
-                <td>
-                  <div className="time-info">
-                    <Clock size={14} />
-                    <span>{truck.estimatedArrival}</span>
-                  </div>
-                </td>
+                <td>{assignment.assignedDate}</td>
+                <td>Route</td>
                 <td>
                   <div className="action-buttons">
                     <button 
