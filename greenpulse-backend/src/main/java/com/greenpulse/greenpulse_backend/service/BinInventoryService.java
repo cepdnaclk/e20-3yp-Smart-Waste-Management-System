@@ -33,7 +33,7 @@ public class BinInventoryService {
         this.binOwnerProfileRepository = binOwnerProfileRepository;
     }
 
-    public ApiResponse<List<BinInventory>> getBinsFiltered(BinStatusEnum status, UUID ownerId) {
+    public ApiResponse<List<BinInventoryResponseDTO>> getBinsFiltered(BinStatusEnum status, UUID ownerId) {
         List<BinInventory> binInventories;
 
         if (status != null && ownerId != null) {
@@ -57,10 +57,10 @@ public class BinInventoryService {
                 })
                 .toList();
 
-        return ApiResponse.<List<BinInventory>>builder()
+        return ApiResponse.<List<BinInventoryResponseDTO>>builder()
                 .success(true)
                 .message("Bins are fetched successfully")
-                .data(binInventories)
+                .data(bins)
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
