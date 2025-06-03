@@ -424,6 +424,7 @@ class _LoginScreenState extends State<LoginScreen>
                         const SizedBox(height: 30),
                       ],
                     ),
+
                   ),
                 );
               },
@@ -480,6 +481,7 @@ class _LoginScreenState extends State<LoginScreen>
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 20,
+
           ),
           filled: true,
           fillColor: Colors.transparent,

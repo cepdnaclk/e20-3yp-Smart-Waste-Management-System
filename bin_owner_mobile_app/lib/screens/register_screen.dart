@@ -7,12 +7,14 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:bin_owner_mobile_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
+
 
 class _RegisterScreenState extends State<RegisterScreen>
     with TickerProviderStateMixin {
@@ -57,6 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     _passwordController.dispose();
     super.dispose();
   }
+
 
   void _showSnackBar(String message, {required bool isError}) {
     ScaffoldMessenger.of(context).showSnackBar(
