@@ -1,21 +1,16 @@
 import 'package:bin_owner_mobile_app/services/bin_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-
 import '../models/bin.dart';
 
 class BinLevelScreen extends StatefulWidget {
-  final BinService? binService;
-
-  const BinLevelScreen({super.key, this.binService});
+  const BinLevelScreen({super.key});
 
   @override
   State<BinLevelScreen> createState() => _BinLevelScreenState();
 }
 
 class _BinLevelScreenState extends State<BinLevelScreen> {
-
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final String _baseURL = 'http://10.30.9.93:8080';
   final PageController _pageController = PageController(viewportFraction: 0.85);
@@ -35,13 +30,9 @@ class _BinLevelScreenState extends State<BinLevelScreen> {
   static const Color textSecondaryColor = Color(0xFFB0B0B0);
   static const Color errorColor = Color(0xFFFF5252);
 
-
   @override
   void initState() {
     super.initState();
-    _binService =
-        widget.binService ?? BinService(baseUrl: 'http://localhost:8080');
-    _pageController = PageController(viewportFraction: 0.6, initialPage: 0);
     _fetchBins();
   }
 
@@ -98,7 +89,6 @@ class _BinLevelScreenState extends State<BinLevelScreen> {
       }
 
       setState(() {
-
         _bins = binStatuses;
         _selectedBinId = _bins.isNotEmpty ? _bins[0].binId : null;
       });
@@ -110,7 +100,6 @@ class _BinLevelScreenState extends State<BinLevelScreen> {
       setState(() => _isLoading = false);
     }
   }
-
 
   void _navigateToAddBin() {
     Navigator.pushNamed(context, '/addBin');
