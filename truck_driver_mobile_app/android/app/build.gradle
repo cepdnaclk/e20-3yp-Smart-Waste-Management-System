@@ -5,6 +5,16 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// Load API key from local.properties
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { stream ->
+        localProperties.load(stream)
+    }
+}
+def GOOGLE_MAPS_API_KEY = localProperties.getProperty("google.maps.api.key") ?: ""
+
 android {
     namespace = "com.example.truck_driver_mobile_app"
     compileSdk = flutter.compileSdkVersion
@@ -20,20 +30,18 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.truck_driver_mobile_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Inject API key into string resources
+        resValue "string", "google_maps_api_key", "\"${GOOGLE_MAPS_API_KEY}\""
     }
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
         }
     }

@@ -14,9 +14,11 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("*") // In production, specify your app's domain
+                        .allowedOrigins("*") // Change to specific origin(s) in production
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .allowCredentials(false)
+                        .maxAge(3600);
             }
         };
     }
