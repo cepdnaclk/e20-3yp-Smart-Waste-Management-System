@@ -668,3 +668,98 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/*==================================================*/
+/* CAD Design Section Styles            */
+/*==================================================*/
+
+/* Styles for the main container of the CAD section */
+.cad {
+    padding: 5rem 5%; /* Standard padding, consistent with other sections */
+    background: var(--white); /* Uses the white background variable from your existing styles */
+    /* The main section heading <h2>CAD Design</h2> will automatically inherit styles
+       from your global 'section h2' rule, including centering and the underline. */
+}
+
+/* Styles for the container holding the heading and videos */
+.cad-container {
+    max-width: 1200px; /* Limits content width for better readability, standard size */
+    margin: 0 auto;    /* Centers the container on the page */
+    display: flex;     /* Enables flexbox for layout */
+    flex-wrap: wrap;   /* Allows items (heading, videos) to wrap to new lines as needed */
+    justify-content: center; /* Centers flex items along the main axis (horizontally) */
+                               /* This helps if videos don't fill the whole row */
+    gap: 2rem;         /* Defines the space between the heading and videos, and between videos */
+}
+
+/* Styles for the <h1>My Video</h1> heading within the .cad-container */
+.cad-container h1 {
+    width: 100%;       /* Makes the heading take up the full width of its line */
+    text-align: center;/* Centers the text of the heading */
+    font-size: 1.8rem; /* Sets a font size, slightly smaller than main section titles */
+    color: var(--primary-color); /* Uses your defined primary color for consistency */
+    font-weight: 600;  /* Gives the heading a bit more emphasis */
+    margin-bottom: 0;  /* Removes default bottom margin; spacing is handled by the parent's 'gap' property */
+                       /* Any additional space needed can be adjusted here if the gap isn't sufficient. */
+}
+
+/* Styles for the <video> elements */
+.cad-container video {
+    /* Flex item properties:
+       - flex-grow: 1 (allows video to grow and take available space)
+       - flex-shrink: 1 (allows video to shrink if space is limited)
+       - flex-basis: 48% (aims for two videos side-by-side in the container, accounting for the gap)
+         (e.g., 48% + 48% + 2rem gap fits well within a 100% width)
+    */
+    flex: 1 1 48%;
+
+    max-width: 640px;  /* Caps the video width at 640px (from your HTML attribute)
+                           Ensures videos don't get overly large if flex-grow has a lot of space. */
+    min-width: 280px;  /* Prevents videos from becoming too small before stacking on mobile.
+                           Adjust as needed for your content. */
+    
+    height: auto;      /* CRITICAL: Ensures the video maintains its aspect ratio when its width changes.
+                           This overrides the 'height' attribute in your HTML for responsive scaling. */
+    
+    border-radius: 10px; /* Applies rounded corners, consistent with other elements */
+    box-shadow: var(--shadow); /* Applies a shadow effect, consistent with other elements */
+    background-color: #000; /* Provides a black background before the video loads or if a poster is missing */
+    display: block;    /* Ensures the video behaves like a block element for layout, useful within flex items. */
+}
+
+/*--------------------------------------------------*/
+/* Responsive Adjustments for CAD          */
+/*--------------------------------------------------*/
+
+/* For tablet screens and smaller mobiles */
+@media (max-width: 768px) {
+    .cad-container {
+        gap: 1.5rem; /* Slightly reduce the gap between items for smaller screens */
+    }
+
+    .cad-container h1 {
+        font-size: 1.6rem; /* Decrease font size for the 'My Video' heading */
+         /* If more space is desired below h1 on mobile, you can add a small margin-bottom here: */
+         /* margin-bottom: 0.5rem; */
+    }
+
+    .cad-container video {
+        /* Make videos stack vertically by taking up the full width of the flex line */
+        flex-basis: 100%;
+        /* max-width is already 100% implicitly via flex-basis: 100% on a constrained parent,
+           but explicitly setting ensures it scales down fully if min-width was restrictive. */
+        max-width: 100%;
+    }
+}
+
+/* For very small mobile screens */
+@media (max-width: 480px) {
+    .cad-container h1 {
+        font-size: 1.4rem; /* Further reduce heading font size */
+    }
+
+    .cad-container video {
+        min-width: unset; /* Remove the minimum width constraint if it causes overflow on very small screens.
+                              The video will then shrink to fit the available width (max-width: 100%). */
+    }
+}
