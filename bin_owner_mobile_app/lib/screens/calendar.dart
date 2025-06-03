@@ -51,16 +51,16 @@ class _CollectionCalendarScreenState extends State<CollectionCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Collection Calendar'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _scheduleNewCollection,
-            tooltip: 'Schedule Collection',
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Collection Calendar'),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.add),
+      //       onPressed: _scheduleNewCollection,
+      //       tooltip: 'Schedule Collection',
+      //     ),
+      //   ],
+      // ),
       body: Column(
         children: [
           TableCalendar(
