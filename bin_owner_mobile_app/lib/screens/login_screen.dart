@@ -228,12 +228,28 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ],
                                   ),
+                                  // TextButton(
+                                  //   onPressed: () {
+                                  //     // TODO: Implement forgot password
+                                  //     _showSnackBar(
+                                  //       'Feature coming soon!',
+                                  //       isError: false,
+                                  //     );
+                                  //   },
+                                  //   child: Text(
+                                  //     'Forgot Password?',
+                                  //     style: TextStyle(
+                                  //       color: Colors.green[400],
+                                  //       fontSize: 14,
+                                  //       fontWeight: FontWeight.w500,
+                                  //     ),
+                                  //   ),
+                                  // ),
                                   TextButton(
                                     onPressed: () {
-                                      // TODO: Implement forgot password
-                                      _showSnackBar(
-                                        'Feature coming soon!',
-                                        isError: false,
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/forgot-password',
                                       );
                                     },
                                     child: Text(
@@ -608,7 +624,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final url = Uri.parse('http://10.30.9.93:8080/api/auth/authenticate');
+      final url = Uri.parse('http://192.168.8.144:8080/api/auth/authenticate');
 
       try {
         final response = await http.post(

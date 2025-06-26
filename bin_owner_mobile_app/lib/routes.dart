@@ -9,6 +9,7 @@ import 'package:bin_owner_mobile_app/screens/login_screen.dart';
 import 'package:bin_owner_mobile_app/screens/register_screen.dart';
 import 'package:bin_owner_mobile_app/screens/problem_report_screen.dart';
 import 'package:bin_owner_mobile_app/screens/add_bin_screen.dart';
+import 'package:bin_owner_mobile_app/screens/forgot_password_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -23,6 +24,8 @@ class AppRoutes {
   static const String report = '/report';
   static const String addBin = '/addBin';
 
+  static const String password = '/forgot-password';
+
   static Map<String, WidgetBuilder> routes = {
     // home: (context) => const MainLayout(),
     home: (context) => const HomePage(),
@@ -36,5 +39,6 @@ class AppRoutes {
     register: (context) => const RegisterScreen(),
     report: (context) => const ProblemReportScreen(),
     addBin: (context) => const AddBinScreen(),
+    password: (context) => const ForgotPasswordScreen(),
   };
 }
