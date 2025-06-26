@@ -24,6 +24,7 @@ function AppRouter() {
     localStorage.setItem('token', newToken);
     setToken(newToken);
     setIsAuthenticated(true);
+    alert("login Successful");
     navigate('/app'); // Navigate after successful login
   };
 

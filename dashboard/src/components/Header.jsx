@@ -11,7 +11,7 @@ const Header = (props) => {
       </div>
       
       <SearchBar />
-      
+      <div></div>
       {/* Logout Button */}
       <button
         onClick={props.onLogout} // Use the passed onLogout function
