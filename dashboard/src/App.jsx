@@ -8,6 +8,7 @@ import BinManagement from './components/BinManagement';
 import TruckManagement from './components/TruckManagement';
 import UserManagement from './components/UserManagement';
 import RouteManagement from './components/RouteManagement';
+import Settings from './components/settings'; // Import Settings component
 
 function App({ onLogout }) { // onLogout is now passed from main.jsx's AppRouter
   // Main state variables
@@ -261,8 +262,6 @@ const renderModal = () => {
         ];
       default:
         return [
-          { id: 'tab1', label: 'Overview' },
-          { id: 'tab2', label: 'Details' }
         ];
     }
   };
@@ -341,6 +340,20 @@ const renderModal = () => {
     </div>
   );
 
+  // In App.jsx
+
+// This user object would typically come from an authentication context or API call
+const loggedInUser = {
+  fullName: 'John Doe',
+  email: 'john.doe@example.com',
+  avatar: 'https://i.pravatar.cc/150',
+  role: 'Administrator',
+  memberSince: '2025-01-15', // Using current year
+};
+
+// ... inside the renderContent function
+
+
   // Render content
   const renderContent = () => {
     // ... (your existing renderContent function - no changes needed)
@@ -356,6 +369,8 @@ const renderModal = () => {
         return <RouteManagement {...commonProps} />;
       case 'user-management':
         return <UserManagement {...commonProps} />;
+      case 'settings':
+        return <Settings user={loggedInUser} onLogout={handleLogout} />;
       default: // Fallback to dashboard or an error/empty state component
         return <Dashboard {...commonProps} notifications={notifications} />;
     }
