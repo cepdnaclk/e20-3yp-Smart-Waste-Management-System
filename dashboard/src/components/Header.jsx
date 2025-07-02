@@ -11,15 +11,8 @@ const Header = (props) => {
       </div>
       
       <SearchBar />
-      
+      <div></div>
       {/* Logout Button */}
-      <button
-        onClick={props.onLogout} // Use the passed onLogout function
-        className="app__button app__button--logout"
-        type="button"
-      >
-        Logout
-      </button>
       
       <div className="header__notifications">
         <div className="header__notification-icon">
