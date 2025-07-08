@@ -7,14 +7,12 @@ import 'package:jwt_decode/jwt_decode.dart';
 import 'package:bin_owner_mobile_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
-
 
 class _RegisterScreenState extends State<RegisterScreen>
     with TickerProviderStateMixin {
@@ -59,7 +57,6 @@ class _RegisterScreenState extends State<RegisterScreen>
     _passwordController.dispose();
     super.dispose();
   }
-
 
   void _showSnackBar(String message, {required bool isError}) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -487,7 +484,7 @@ class _RegisterScreenState extends State<RegisterScreen>
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final url = Uri.parse('http://10.30.9.93:8080/api/auth/register');
+      final url = Uri.parse('http://3.1.102.226:8080/api/auth/register');
       final body = jsonEncode({
         'username': _usernameController.text.trim(),
         'password': _passwordController.text,

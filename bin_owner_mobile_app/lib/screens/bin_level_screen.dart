@@ -12,7 +12,7 @@ class BinLevelScreen extends StatefulWidget {
 
 class _BinLevelScreenState extends State<BinLevelScreen> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  final String _baseURL = 'http://10.30.9.93:8080';
+  final String _baseURL = 'http://3.1.102.226:8080';
   final PageController _pageController = PageController(viewportFraction: 0.85);
 
   List<Bin> _bins = [];

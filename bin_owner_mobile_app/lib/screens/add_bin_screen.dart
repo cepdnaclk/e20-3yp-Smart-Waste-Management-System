@@ -99,7 +99,7 @@ class _AddBinScreenState extends State<AddBinScreen>
 
       final response = await http
           .put(
-            Uri.parse('http://10.30.9.93:8080/api/bins/$binId/assign'),
+            Uri.parse('http://3.1.102.226:8080/api/bins/$binId/assign'),
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
