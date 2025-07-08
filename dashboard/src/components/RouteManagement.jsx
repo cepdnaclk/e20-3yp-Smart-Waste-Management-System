@@ -371,14 +371,8 @@ const renderMapTab = () => (
     </div>
 
     <div className="card">
-      <div className="card-header">
-        <h3 className="card-title">Route Visualization</h3>
-        <p className="card-subtitle">A visual representation of all routes and their current status.</p>
-      </div>
       <div className="card-content">
         <div className="map-placeholder">
-          <Navigation size={48} />
-          <h4>Interactive Route Map</h4>
           <MyMapComponent />
           <button className="btn btn-primary">Load Map</button>
         </div>
