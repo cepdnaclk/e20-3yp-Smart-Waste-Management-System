@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Route, Plus, Pencil, Trash2, MapPin, Users, Truck, Clock, Navigation, CheckCircle, XCircle, X } from 'lucide-react';
 import "../styles/RouteManagement.css";
+import MyMapComponent from './dashboard/Maps';
+
 
 // ===================================================================================
 // NOTE: I've added a new modal component and the logic to control it.
@@ -332,57 +334,58 @@ const RouteManagement = ({ activeTab, onAction }) => {
         </section>
     );
 
-    // Map Tab
-    const renderMapTab = () => (
-        // ... your existing renderMapTab function (no changes needed) ...
-        <section className="">
-            <div className="page-header">
-               <Route size={24} />
-               <h1 className="page-title">Route Map</h1>
-            </div>
-            <div className="card-header">
-               <h3 className="card__title"></h3>
-               <p className="card-subtitle">Visual representation of all routes and their status</p>
-            </div>
-            <div className="card-content">
-               <div className="map-container">
-                <div className="map-placeholder">
-                   <Navigation size={48} />
-                   <h4>Interactive Route Map</h4>
-                   <p>Map integration would be implemented here</p>
-                   <button className="btn btn--primary">
-                     Load Map View
-                   </button>
-                </div>
-               </div>
-               
-               <div className="map-legend">
-                <h4 className="legend-title">Route Legend</h4>
-                <div className="legend-grid">
-                   {routeData.map(route => (
-                     <div key={route.id} className="legend-item">
-                        <div className={`legend-color legend-color--${route.priority}`}></div>
-                        <div className="legend-info">
-                         <strong>{route.name}</strong>
-                         <span>{route.distance} • {route.stops} stops</span>
-                         <div className="legend-status">
-                           <span className={`status-badge ${getStatusColor(route.status)}`}>
-                             {route.status}
-                           </span>
-                           {route.isAssigned ? (
-                             <span className="assignment-text assignment-text--assigned">Assigned</span>
-                           ) : (
-                             <span className="assignment-text assignment-text--unassigned">Unassigned</span>
-                           )}
-                         </div>
-                        </div>
-                     </div>
-                   ))}
-                </div>
-               </div>
-            </div>
-        </section>
-    );
+    // // Map Tab
+    // const renderMapTab = () => (
+    //     // ... your existing renderMapTab function (no changes needed) ...
+    //     <section className="">
+    //         <div className="page-header">
+    //            <Route size={24} />
+    //            <h1 className="page-title">Route Map</h1>
+    //         </div>
+    //         <div className="card-header">
+    //            <h3 className="card__title"></h3>
+    //            <p className="card-subtitle">Visual representation of all routes and their status</p>
+    //         </div>
+    //         <div className="card-content">
+    //            <div className="map-container">
+    //             <div className="map-placeholder">
+    //                <Navigation size={48} />
+    //                <h4>Interactive Route Map</h4>
+    //                <p><MyMapComponent ></MyMapComponent></p>
+    //                <button className="btn btn--primary">
+    //                  Load Map View
+    //                </button>
+    //             </div>
+    //            </div>
+    //         </div>
+    //     </section>
+    // );
+
+
+
+const renderMapTab = () => (
+  <section>
+    <div className="page-header">
+      <Route size={24} />
+      <h1 className="page-title">Route Map</h1>
+    </div>
+
+    <div className="card">
+      <div className="card-header">
+        <h3 className="card-title">Route Visualization</h3>
+        <p className="card-subtitle">A visual representation of all routes and their current status.</p>
+      </div>
+      <div className="card-content">
+        <div className="map-placeholder">
+          <Navigation size={48} />
+          <h4>Interactive Route Map</h4>
+          <MyMapComponent />
+          <button className="btn btn-primary">Load Map</button>
+        </div>
+      </div>
+    </div>
+  </section>
+);
 
     const renderTabContent = () => {
         switch (activeTab) {

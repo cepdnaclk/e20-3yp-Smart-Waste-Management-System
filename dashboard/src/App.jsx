@@ -346,7 +346,6 @@ const renderModal = () => {
 const loggedInUser = {
   fullName: 'John Doe',
   email: 'john.doe@example.com',
-  avatar: 'https://i.pravatar.cc/150',
   role: 'Administrator',
   memberSince: '2025-01-15', // Using current year
 };
