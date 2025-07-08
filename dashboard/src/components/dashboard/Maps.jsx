@@ -1,34 +1,33 @@
 import React from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-const apiKey = import.meta.env.API_KEY;
+import { APIProvider, Map, AdvancedMarker } from '@vis.gl/react-google-maps';
 
+// The MyMap component now properly encapsulates all map logic.
+const MyMap = () => {
+  // Retrieve the API key from environment variables.
+  const apiKey = import.meta.env.VITE_Maps_API_KEY;
+  const position = { lat: -25.344, lng: 131.031 };
 
-const containerStyle = {
-  width: '400px',
-  height: '400px'
-};
+  if (!apiKey) {
+    return <div>Error: Missing Google Maps API Key.</div>;
+  }
 
-const center = {
-  lat: -3.1390,
-  lng: 57.4909
-};
-
-const MyMapComponent = () => {
   return (
-    <LoadScript
-      googleMapsApiKey={apiKey}
-      libraries={['places']}
-    >
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={10}
-      >
-        <Marker position={center} />
-        {/* Add more components like markers, info windows, etc. */}
-      </GoogleMap>
-    </LoadScript>
+    // The APIProvider handles loading the Google Maps script.
+    <APIProvider apiKey={apiKey}>
+      <div style={{ height: '100vh', width: '100%' }}>
+        {/* The Map component renders the map. */}
+        <Map
+          defaultZoom={4}
+          defaultCenter={position}
+          mapId="DEMO_MAP_ID" // Use your own Map ID for production
+        >
+          {/* The AdvancedMarker component places a marker. */}
+          <AdvancedMarker position={position} title={'Uluru'} />
+        </Map>
+      </div>
+    </APIProvider>
   );
 };
 
-export default MyMapComponent;
+// Export the component function itself, not the result of calling it.
+export default MyMap;
