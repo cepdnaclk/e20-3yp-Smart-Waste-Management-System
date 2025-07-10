@@ -17,7 +17,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      // appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text('Settings', style: TextStyle(color: Colors.white)),
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -48,12 +56,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onChanged: (value) => setState(() => _notificationsEnabled = value),
             secondary: Icon(Icons.notifications, color: Colors.grey[400]),
           ),
-          _buildListTile(
-            title: 'Language',
-            subtitle: _selectedLanguage,
-            icon: Icons.language,
-            onTap: _changeLanguage,
-          ),
+          // _buildListTile(
+          //   title: 'Language',
+          //   subtitle: _selectedLanguage,
+          //   icon: Icons.language,
+          //   onTap: _changeLanguage,
+          // ),
           const Divider(height: 40),
           // Support Section
           _buildSectionHeader('Support'),
@@ -117,32 +125,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _editProfile() {
-    // TODO: Implement profile editing
     _showComingSoon();
   }
 
   void _changePassword() {
-    // TODO: Implement password change
     _showComingSoon();
   }
 
   void _changeLanguage() {
-    // TODO: Implement language change
     _showComingSoon();
   }
 
   void _openHelpCenter() {
-    // TODO: Implement help center
     _showComingSoon();
   }
 
   void _contactSupport() {
-    // TODO: Implement contact support
     _showComingSoon();
   }
 
   void _showTerms() {
-    // TODO: Implement terms and privacy
     _showComingSoon();
   }
 

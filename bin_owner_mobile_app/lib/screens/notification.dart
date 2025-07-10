@@ -33,16 +33,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_sweep),
-            onPressed: _clearAllNotifications,
-            tooltip: 'Clear all',
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Notifications'),
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.delete_sweep),
+      //       onPressed: _clearAllNotifications,
+      //       tooltip: 'Clear all',
+      //     ),
+      //   ],
+      // ),
       body:
           _notifications.isEmpty
               ? _buildEmptyState()
