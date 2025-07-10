@@ -5,6 +5,7 @@ import com.greenpulse.greenpulse_backend.enums.UserRoleEnum;
 import com.greenpulse.greenpulse_backend.model.UserTable;
 import com.greenpulse.greenpulse_backend.repository.UserTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,13 +22,15 @@ public class UserTableService {
         this.userTableRepository = userTableRepository;
     }
 
-    public ApiResponse<List<UserTable>> getAllUsersByRole(String Role) {
-           List<UserTable> user=userTableRepository.findAllUsersByRole(UserRoleEnum.valueOf(Role));
-            return ApiResponse.<List<UserTable>>builder()
+    public ApiResponse<List<UserTable>> getAllUsers() {
+           List<UserTable> user=userTableRepository.findAll();
+
+           return ApiResponse.<List<UserTable>>builder()
                 .success(true)
-                .message("Bin users fetched successfully")
+                .message("Users fetched successfully")
                 .data(user)
                     .timestamp(LocalDateTime.now().toString())
                 .build();
     }
+
 }

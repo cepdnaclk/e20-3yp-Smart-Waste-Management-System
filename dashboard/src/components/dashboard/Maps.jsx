@@ -41,7 +41,7 @@ const UserMap = () => {
     <div style={{ height: '100vh', width: '100%' }}>
       {error && <div style={{ color: 'orange', textAlign: 'center', padding: '10px' }}>{error}</div>}
       <Map
-        zoom={userLocation ? 12 : 8} // Zoom in if we have the user's location
+        zoom={userLocation ? 24 : 16} // Zoom in if we have the user's location
         center={mapCenter}
         mapId="YOUR_MAP_ID" // Replace with your Map ID
       >
