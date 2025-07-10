@@ -27,6 +27,12 @@ spring:
 #  level:
 #    org.springframework.security: DEBUG
 
+logging:
+  level:
+    root: INFO
+    com.greenpulse.greenpulse_backend: DEBUG # More detailed logs for your code
+    org.springframework.web: DEBUG # Good for debugging web requests
+
 
 jwt:
   secret: ${JWT_SECRET}

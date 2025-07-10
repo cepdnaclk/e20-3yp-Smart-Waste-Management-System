@@ -380,9 +380,9 @@
   align-items: center;
   justify-content: center;
   background: #f9fafb;
-  border: 2px dashed #d1d5db;
+  border: 0.2px dashed #d1d5db;
   border-radius: 8px;
-  padding: 3rem;
+  padding: 1rem;
   text-align: center;
   color: #6b7280;
 }
@@ -395,11 +395,6 @@
 .map-placeholder h4 {
   color: #374151;
   margin: 0 0 0.5rem;
-}
-
-.map-placeholder p {
-  margin: 0 0 1.5rem;
-  font-size: 0.875rem;
 }
 
 /* Map Legend */
