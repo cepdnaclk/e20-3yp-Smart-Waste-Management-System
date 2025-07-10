@@ -34,7 +34,8 @@ const UserMap = () => {
 
   // Define other static locations for additional markers.
   const otherLocation1 = { lat: 7.2906, lng: 80.6337 }; // Kandy
-  const otherLocation2 = { lat: 6.0535, lng: 80.2210 }; // Galle
+  const otherLocation2 = { lat: 6.0535, lng: 80.2210 }; 
+  const otherLocation3=  {lat:7,lng:81};// Galle
 
   return (
     <div style={{ height: '100vh', width: '100%' }}>
@@ -44,16 +45,16 @@ const UserMap = () => {
         center={mapCenter}
         mapId="YOUR_MAP_ID" // Replace with your Map ID
       >
-        {/* Marker 1: Only shows at the user's actual location IF permission is granted */}
         {userLocation && (
-          <AdvancedMarker position={userLocation} title={'Your Location'} />
+          <AdvancedMarker  key='user-location' position={userLocation} title={'Your Location'} />
         )}
 
-        {/* Marker 2: A fixed location */}
-        <AdvancedMarker position={otherLocation1} title={'Kandy'} />
+        <AdvancedMarker key='kandy' position={otherLocation1} title={'Kandy'} />
 
-        {/* Marker 3: Another fixed location */}
-        <AdvancedMarker position={otherLocation2} title={'Galle'} />
+        <AdvancedMarker key='galle' position={otherLocation2} title={'Galle'} />
+
+        <AdvancedMarker key='panideniya' position={otherLocation3} title={'panideniya'} />
+
       </Map>
     </div>
   );
