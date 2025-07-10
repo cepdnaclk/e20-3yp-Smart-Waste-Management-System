@@ -10,6 +10,7 @@ import 'package:bin_owner_mobile_app/screens/register_screen.dart';
 import 'package:bin_owner_mobile_app/screens/problem_report_screen.dart';
 import 'package:bin_owner_mobile_app/screens/add_bin_screen.dart';
 import 'package:bin_owner_mobile_app/screens/forgot_password_screen.dart';
+import 'package:bin_owner_mobile_app/screens/verfication_screen.dart';
 
 class AppRoutes {
   static const String home = '/';
