@@ -99,7 +99,7 @@ class _AddBinScreenState extends State<AddBinScreen>
 
       final response = await http
           .put(
-            Uri.parse('http://10.30.9.93:8080/api/bins/$binId/assign'),
+            Uri.parse('http://3.1.102.226:8080/api/bins/$binId/assign'),
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
@@ -216,7 +216,8 @@ class _AddBinScreenState extends State<AddBinScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: const Color.fromARGB(255, 34, 38, 41),
+
       appBar: _buildAppBar(),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -231,7 +232,14 @@ class _AddBinScreenState extends State<AddBinScreen>
         'Add New Bin',
         style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
       ),
-      backgroundColor: surfaceColor,
+
+      backgroundColor: const Color.from(
+        alpha: 1,
+        red: 0.118,
+        green: 0.118,
+        blue: 0.118,
+      ),
+
       elevation: 0,
       centerTitle: true,
       leading: IconButton(

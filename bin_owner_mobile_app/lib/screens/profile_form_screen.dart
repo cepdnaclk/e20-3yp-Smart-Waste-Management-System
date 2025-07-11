@@ -203,7 +203,7 @@ class _ProfileFormScreenState extends State<ProfileFormScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.30.9.93:8080/api/profile'),
+        Uri.parse('http://3.1.102.226:8080/api/profile'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'id': formatUUID(widget.userId),
