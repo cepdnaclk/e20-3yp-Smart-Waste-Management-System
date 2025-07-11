@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Plus, Pencil, Trash2, MapPin, Users, Truck, Clock, Navigation, CheckCircle, XCircle, X } from 'lucide-react';
 import "../styles/RouteManagement.css";
-import MyMapComponent from './dashboard/Maps';
+import Maps from './dashboard/Maps';
 
 // ===================================================================================
 // NOTE: I've added a new modal component and the logic to control it.
@@ -14,7 +14,7 @@ const AssignmentModal = ({ route, trucks, onConfirm, onClose }) => {
     const [selectedTruckId, setSelectedTruckId] = useState(null);
     
     // Filter for trucks that are not under maintenance or already assigned
-    const availableTrucks = trucks.filter(truck => truck.truck.status === 'available' && !truck.isAssigned);
+    const availableTrucks = trucks.filter(truck => truck.truck.status === 'IN_SERVICE' && !truck.isAssigned);
 
     const handleConfirm = () => {
         if (!selectedTruckId) {
@@ -45,7 +45,7 @@ const AssignmentModal = ({ route, trucks, onConfirm, onClose }) => {
                                 onClick={() => setSelectedTruckId(truckItem.truck.truckId)}
                             >
                                 <div className="assignment-option-info">
-                                    <strong>{truckItem.truck.registrationNumber}</strong> - {truckItem.collector.username}
+                                    <strong>{truckItem.truck.registrationNumber}</strong> - {truckItem.collector.name}
                                     <br />
                                     <small>{truckItem.truck.capacityKg}Kg Capacity</small>
                                 </div>
@@ -107,7 +107,7 @@ const RouteManagement = ({ activeTab, onAction }) => {
             setTruckData([]);
             console.error("Fetch Error:", error);
         });
-    }, [token]); // Dependency array includes token
+    }, []); // Dependency array includes token
 
     const [routeData, setRouteData] = useState([
         // Your sample route data...
@@ -190,7 +190,7 @@ const RouteManagement = ({ activeTab, onAction }) => {
                                     <div className="driver-details">
                                         <div className="driver-info">
                                             <Users size={16} />
-                                            <span>{truckItem.collector.username}</span>
+                                            <span>{truckItem.collector.name}</span>
                                         </div>
                                         <div className="truck-details">
                                             <Truck size={16} />
@@ -332,7 +332,7 @@ const RouteManagement = ({ activeTab, onAction }) => {
         <div className="card">
           <div className="card-content">
             <div className="map-placeholder">
-              <MyMapComponent />
+              <Maps />
               <button className="btn btn-primary">Load Map</button>
             </div>
           </div>
