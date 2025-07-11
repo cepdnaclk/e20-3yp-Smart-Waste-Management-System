@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen>
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 24.0,
-              vertical: 40.0,
+              // vertical: 40.0,
             ),
             child: AnimatedBuilder(
               animation: _animationController,
@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 10),
 
                         // Logo Section with Pulse Animation
                         AnimatedBuilder(
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen>
                           },
                         ),
 
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 20),
 
                         // Login Form
                         Form(
@@ -308,73 +308,6 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                             ],
                           ),
-                        ),
-
-                        const SizedBox(height: 50),
-
-                        // Social Login Section (Optional)
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.white.withOpacity(0.3),
-                                    thickness: 1,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                  ),
-                                  child: Text(
-                                    'or continue with',
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.6),
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Divider(
-                                    color: Colors.white.withOpacity(0.3),
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Social buttons row
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildSocialButton(
-                                    icon: Icons.g_mobiledata,
-                                    label: 'Google',
-                                    onTap:
-                                        () => _showSnackBar(
-                                          'Google login coming soon!',
-                                          isError: false,
-                                        ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: _buildSocialButton(
-                                    icon: Icons.facebook,
-                                    label: 'Facebook',
-                                    onTap:
-                                        () => _showSnackBar(
-                                          'Facebook login coming soon!',
-                                          isError: false,
-                                        ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
                         ),
 
                         const SizedBox(height: 40),
@@ -608,7 +541,11 @@ class _LoginScreenState extends State<LoginScreen>
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
+<<<<<<< Updated upstream
       final url = Uri.parse('http://10.30.9.93:8080/api/auth/authenticate');
+=======
+      final url = Uri.parse('http://3.1.102.226:8080/api/auth/authenticate');
+>>>>>>> Stashed changes
 
       try {
         final response = await http.post(

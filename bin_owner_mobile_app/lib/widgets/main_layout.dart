@@ -179,7 +179,12 @@ class _MainLayoutState extends State<MainLayout>
       ),
       centerTitle: true,
       elevation: 0,
-      backgroundColor: AppConstants.surfaceColor,
+      backgroundColor: const Color.from(
+        alpha: 1,
+        red: 0.118,
+        green: 0.118,
+        blue: 0.118,
+      ),
       actions: [
         // Compact action row with both icons
         Container(

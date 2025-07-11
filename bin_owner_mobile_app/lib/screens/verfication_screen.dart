@@ -36,7 +36,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     });
 
     final url = Uri.parse(
-      'http://10.30.9.93:8080/api/email-verification/verify',
+      'http://3.1.102.226:8080/api/email-verification/verify',
     );
 
     try {
