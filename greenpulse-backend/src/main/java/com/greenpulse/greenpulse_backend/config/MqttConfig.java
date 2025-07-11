@@ -34,27 +34,25 @@ public class MqttConfig {
 
     @Bean
     public MqttClientConnection mqttClientConnection() throws IOException {
-        // Load certificate files from the classpath as InputStream
-        InputStream certInputStream = new ClassPathResource(certPath).getInputStream();
-        InputStream keyInputStream = new ClassPathResource(keyPath).getInputStream();
-        InputStream caInputStream = new ClassPathResource(caPath).getInputStream();
+        // Read certs directly from file paths
+        File certFile = new File(certPath);
+        File keyFile = new File(keyPath);
+        File caFile = new File(caPath);
 
-        // Convert InputStream to temporary files (AWS SDK requires file paths)
-        File certFile = createTempFileFromInputStream(certInputStream, "certificate");
-        File keyFile = createTempFileFromInputStream(keyInputStream, "private-key");
-        File caFile = createTempFileFromInputStream(caInputStream, "ca-cert");
+        try (AwsIotMqttConnectionBuilder builder = AwsIotMqttConnectionBuilder.newMtlsBuilderFromPath(certFile.getAbsolutePath(), keyFile.getAbsolutePath())) {
 
-        AwsIotMqttConnectionBuilder builder = AwsIotMqttConnectionBuilder.newMtlsBuilderFromPath(certFile.getPath(), keyFile.getPath());
-        if (!caPath.isEmpty()) {
-            builder.withCertificateAuthorityFromPath(null, caFile.getPath());
+            if (!caPath.isEmpty()) {
+                builder.withCertificateAuthorityFromPath(null, caFile.getAbsolutePath());
+            }
+
+            builder.withClientId(clientId)
+                    .withEndpoint(endpoint)
+                    .withPort(port)
+                    .withCleanSession(true)
+                    .withProtocolOperationTimeoutMs(60000);
+
+            return builder.build();
         }
-        builder.withClientId(clientId)
-                .withEndpoint(endpoint)
-                .withPort(port)
-                .withCleanSession(true)
-                .withProtocolOperationTimeoutMs(60000);
-
-        return builder.build();
     }
 
     private File createTempFileFromInputStream(InputStream inputStream, String prefix) throws IOException {

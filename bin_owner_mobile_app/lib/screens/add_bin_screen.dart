@@ -217,6 +217,7 @@ class _AddBinScreenState extends State<AddBinScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 34, 38, 41),
+
       appBar: _buildAppBar(),
       body: FadeTransition(
         opacity: _fadeAnimation,
@@ -231,12 +232,14 @@ class _AddBinScreenState extends State<AddBinScreen>
         'Add New Bin',
         style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
       ),
+
       backgroundColor: const Color.from(
         alpha: 1,
         red: 0.118,
         green: 0.118,
         blue: 0.118,
       ),
+
       elevation: 0,
       centerTitle: true,
       leading: IconButton(

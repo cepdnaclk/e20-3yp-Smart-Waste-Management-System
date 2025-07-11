@@ -8,6 +8,7 @@ import BinManagement from './components/BinManagement';
 import TruckManagement from './components/TruckManagement';
 import UserManagement from './components/UserManagement';
 import RouteManagement from './components/RouteManagement';
+import Settings from './components/settings'; // Import Settings component
 
 function App({ onLogout }) { // onLogout is now passed from main.jsx's AppRouter
   // Main state variables
@@ -22,16 +23,7 @@ function App({ onLogout }) { // onLogout is now passed from main.jsx's AppRouter
     { id: 2, type: 'error', message: 'Truck #12 requires maintenance', time: '1 hour ago' }
   ]);
 
-  // Authentication state is removed from here
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Simulate authentication check on mount (removed - handled by main.jsx)
-  // useEffect(() => {
-  //   const token = localStorage.getItem('token');
-  //   if (token) {
-  //     setIsAuthenticated(true);
-  //   }
-  // }, []);
 
   // Media query handler
   const updateMedia = useCallback(() => {
@@ -81,37 +73,7 @@ function App({ onLogout }) { // onLogout is now passed from main.jsx's AppRouter
     setActiveTab(tab);
   };
 
-  // // Handle button actions
-  // const handleButtonAction = (action, data = {}) => {
-  //   switch (action) {
-  //     case 'add':
-  //       setModalState({ open: true, type: 'add', data: null });
-  //       break;
-  //     case 'edit':
-  //       setModalState({ open: true, type: 'edit', data });
-  //       break;
-  //     case 'delete':
-  //       setModalState({ open: true, type: 'delete', data });
-  //       break;
-  //     case 'refresh':
-  //       console.log('Refreshing data for', activeMenu);
-  //       // Add actual data fetching logic here
-  //       break;
-  //     case 'export':
-  //       handleExport();
-  //       break;
-  //     case 'dismiss-notification':
-  //       dismissNotification(data); // data here is notificationId
-  //       break;
-  //     case 'clear-notifications':
-  //       setNotifications([]);
-  //       break;
-  //     default:
-  //       console.log('Unknown action:', action);
-  //   }
-  // };
 
-  // Updated handleButtonAction function in App.js
 
 // Handle button actions
 const handleButtonAction = (action, data = {}) => {
@@ -300,8 +262,6 @@ const renderModal = () => {
         ];
       default:
         return [
-          { id: 'tab1', label: 'Overview' },
-          { id: 'tab2', label: 'Details' }
         ];
     }
   };
@@ -380,82 +340,18 @@ const renderModal = () => {
     </div>
   );
 
-  // Render modal
-  // const renderModal = () => {
-  //   // ... (your existing renderModal function - no changes needed)
-  //   if (!modalState.open) return null;
-  //   const currentEntityName = getEntityName(); // Get current entity name
-  //   const title =
-  //     modalState.type === 'add'
-  //       ? `Add New ${currentEntityName}`
-  //       : modalState.type === 'edit'
-  //       ? `Edit ${currentEntityName}`
-  //       : `Delete ${currentEntityName}`;
-  //   return (
-  //     <div className="app__modal-overlay" onClick={closeModal} role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  //       <div className="app__modal" onClick={(e) => e.stopPropagation()}>
-  //         <div className="app__modal-header">
-  //           <h2 id="modal-title">{title}</h2>
-  //           <button className="app__modal-close" onClick={closeModal} type="button" aria-label="Close modal">
-  //             ×
-  //           </button>
-  //         </div>
-  //         <div className="app__modal-content">
-  //           {modalState.type === 'delete' ? (
-  //             <div className="app__modal-delete-confirm">
-  //               <p>Are you sure you want to delete this {currentEntityName.toLowerCase()}?</p>
-  //               {modalState.data && modalState.data.name && <p><strong>Item: {modalState.data.name}</strong></p>}
-  //               <p>This action cannot be undone.</p>
-  //             </div>
-  //           ) : (
-  //             <div className="app__modal-form">
-  //               {/* TODO: Implement actual forms here based on modalState.type and activeMenu */}
-  //               <p>Form fields for {modalState.type === 'add' ? 'adding' : 'editing'} a {currentEntityName.toLowerCase()} would go here.</p>
-  //               {modalState.type === 'edit' && modalState.data && (
-  //                 <p>Editing item with ID: {modalState.data.id}</p>
-  //               )}
-  //             </div>
-  //           )}
-  //         </div>
-  //         <div className="app__modal-footer">
-  //           <button className="app__button app__button--secondary" onClick={closeModal} type="button">
-  //             Cancel
-  //           </button>
-  //           {modalState.type === 'delete' ? (
-  //             <button
-  //               className="app__button app__button--danger"
-  //               onClick={() => {
-  //                 console.log('Deleting:', modalState.data);
-  //                 // Add actual delete API call here
-  //                 closeModal();
-  //                 // Potentially refresh data after delete
-  //                 handleButtonAction('refresh');
-  //               }}
-  //               type="button"
-  //             >
-  //               Delete
-  //             </button>
-  //           ) : (
-  //             <button
-  //               className="app__button app__button--primary"
-  //               onClick={() =>
-  //                 // TODO: Gather data from actual form fields
-  //                 saveModalData({
-  //                   id: modalState.type === 'edit' && modalState.data ? modalState.data.id : Date.now(), // Ensure modalState.data exists for edit
-  //                   name: 'Sample Data Input', // Replace with actual form data
-  //                   // ... other fields
-  //                 })
-  //               }
-  //               type="button"
-  //             >
-  //               Save
-  //             </button>
-  //           )}
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // };
+  // In App.jsx
+
+// This user object would typically come from an authentication context or API call
+const loggedInUser = {
+  fullName: 'John Doe',
+  email: 'john.doe@example.com',
+  role: 'Administrator',
+  memberSince: '2025-01-15', // Using current year
+};
+
+// ... inside the renderContent function
+
 
   // Render content
   const renderContent = () => {
@@ -472,6 +368,8 @@ const renderModal = () => {
         return <RouteManagement {...commonProps} />;
       case 'user-management':
         return <UserManagement {...commonProps} />;
+      case 'settings':
+        return <Settings user={loggedInUser} onLogout={handleLogout} />;
       default: // Fallback to dashboard or an error/empty state component
         return <Dashboard {...commonProps} notifications={notifications} />;
     }
