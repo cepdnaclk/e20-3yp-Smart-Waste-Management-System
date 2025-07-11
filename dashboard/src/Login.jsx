@@ -15,7 +15,7 @@ const Login = ({ onLoginSuccess }) => { // Accept onLoginSuccess prop
     setError(''); // Clear previous errors
 
     try {
-      const response = await fetch('http://3.1.102.226:8080/api/auth/authenticate', {
+      const response = await fetch('http://localhost:8080/api/auth/authenticate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
