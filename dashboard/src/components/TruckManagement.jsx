@@ -118,7 +118,6 @@ const TruckManagement = ({ activeTab, onAction }) => {
               <th>Truck ID</th>
               <th>Plate Number</th>
               <th>Status</th>
-              <th>Last Maintenance</th>
               <th>Capacity(kg)</th>
               <th>Actions</th>
             </tr>
@@ -135,7 +134,6 @@ const TruckManagement = ({ activeTab, onAction }) => {
                     {truck.status.charAt(0).toUpperCase() + truck.status.slice(1)}
                   </span>
                 </td>
-                <td>{truck.lastMaintenance}</td>
                 <td>{truck.capacityKg}</td>
                 <td>
                   <div className="action-buttons">
