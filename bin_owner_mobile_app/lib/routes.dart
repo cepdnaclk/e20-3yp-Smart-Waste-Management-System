@@ -4,7 +4,6 @@ import 'package:bin_owner_mobile_app/screens/notification.dart';
 import 'package:bin_owner_mobile_app/screens/calendar.dart';
 import 'package:bin_owner_mobile_app/screens/settings.dart';
 import 'package:bin_owner_mobile_app/widgets/main_layout.dart';
-import 'package:bin_owner_mobile_app/screens/home_screen.dart';
 import 'package:bin_owner_mobile_app/screens/login_screen.dart';
 import 'package:bin_owner_mobile_app/screens/register_screen.dart';
 import 'package:bin_owner_mobile_app/screens/problem_report_screen.dart';
@@ -13,7 +12,6 @@ import 'package:bin_owner_mobile_app/screens/forgot_password_screen.dart';
 import 'package:bin_owner_mobile_app/screens/verfication_screen.dart';
 
 class AppRoutes {
-  static const String home = '/';
   static const String layout = '/layout';
   static const String binLevel = '/bin-level';
 
@@ -28,8 +26,6 @@ class AppRoutes {
   static const String password = '/forgot-password';
 
   static Map<String, WidgetBuilder> routes = {
-    // home: (context) => const MainLayout(),
-    home: (context) => const HomePage(),
     layout: (context) => const MainLayout(),
     binLevel: (context) => const BinLevelScreen(),
 
