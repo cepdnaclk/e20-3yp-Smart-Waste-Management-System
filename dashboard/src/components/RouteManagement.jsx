@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Plus, Pencil, Trash2, MapPin, Users, Truck, Clock, Navigation, CheckCircle, XCircle, X } from 'lucide-react';
 import "../styles/RouteManagement.css";
-import Maps from './dashboard/Maps';
+import Maps from './Maps';
 
 // ===================================================================================
 // NOTE: I've added a new modal component and the logic to control it.
@@ -333,7 +333,6 @@ const RouteManagement = ({ activeTab, onAction }) => {
           <div className="card-content">
             <div className="map-placeholder">
               <Maps />
-              <button className="btn btn-primary">Load Map</button>
             </div>
           </div>
         </div>
