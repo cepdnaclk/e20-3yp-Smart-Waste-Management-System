@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:truck_driver_mobile_app/providers/user_provider.dart';
-import 'package:truck_driver_mobile_app/screens/home_page.dart';
+import 'package:truck_driver_mobile_app/screens/auth_wrapper.dart';
 import 'package:truck_driver_mobile_app/services/auth_service.dart';
 import 'package:truck_driver_mobile_app/widgets/labeled_text_field.dart';
 
@@ -14,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
@@ -226,13 +227,10 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
     final id = idController.text.trim();
     final password = passwordController.text.trim();
-
-    if (id.isEmpty || password.isEmpty) {
-      _showErrorBottomSheet("ID or Password can't be empty.");
-      return;
-    }
+    
     setState(() {
       isLoading = true;
     });
@@ -253,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen>
             pageBuilder: (context, animation, secondaryAnimation) =>
                 FadeTransition(
               opacity: animation,
-              child: const HomePage(),
+              child: const AuthWrapper(),
             ),
           ),
         );
@@ -303,65 +301,36 @@ class _LoginScreenState extends State<LoginScreen>
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 50),
-                  TextField(
-                    controller: idController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: "Collector ID",
-                      labelStyle: const TextStyle(color: Colors.white70),
-                      prefixIcon: const Icon(Icons.person_outline,
-                          color: Colors.white70),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                            color: Colors.lightGreen, width: 2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  TextField(
-                    controller: passwordController,
-                    style: const TextStyle(color: Colors.white),
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                      labelStyle: const TextStyle(color: Colors.white70),
-                      prefixIcon:
-                          const Icon(Icons.lock_outline, color: Colors.white70),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.white70,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.white24),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                            color: Colors.lightGreen, width: 2),
-                      ),
-                    ),
-                  ),
+                  Form(
+  key: _formKey,
+  child: Column(
+    children: [
+      LabeledTextField(
+        labelText: "Collector ID",
+        controller: idController,
+        prefixIcon: Icons.person_outline,
+        validator: (value) =>
+            value == null || value.trim().isEmpty ? "Please enter your ID" : null,
+      ),
+      const SizedBox(height: 25),
+      LabeledTextField(
+        labelText: "Password",
+        controller: passwordController,
+        prefixIcon: Icons.lock_outline,
+        obscureText: _obscurePassword,
+        hasSuffixIcon: true,
+        onSuffixTap: () {
+          setState(() {
+            _obscurePassword = !_obscurePassword;
+          });
+        },
+        validator: (value) =>
+            value == null || value.trim().isEmpty ? "Password is required" : null,
+      ),
+    ],
+  ),
+),
+
                   const SizedBox(height: 30),
                   SizedBox(
                     height: 56,
@@ -370,6 +339,7 @@ class _LoginScreenState extends State<LoginScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.lightGreen,
                         disabledBackgroundColor:
+                            // ignore: deprecated_member_use
                             Colors.lightGreen.withOpacity(0.6),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

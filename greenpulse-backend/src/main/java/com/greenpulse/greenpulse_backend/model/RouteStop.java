@@ -32,5 +32,7 @@ public class RouteStop {
 
     @Column(name = "location", columnDefinition = "GEOGRAPHY(POINT,4326)", nullable = false)
     private Point location;
+
+
 }
 
