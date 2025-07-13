@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:bin_owner_mobile_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:bin_owner_mobile_app/enums/verification_type.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
