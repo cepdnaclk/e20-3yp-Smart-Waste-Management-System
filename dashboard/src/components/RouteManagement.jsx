@@ -1,10 +1,7 @@
-// 
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Plus, Pencil, Trash2, MapPin, Users, Truck, Clock, Navigation, CheckCircle, XCircle, X } from 'lucide-react';
 import "../styles/RouteManagement.css";
-import MyMapComponent from './dashboard/Maps';
-
+import Maps from './Maps';
 
 // ===================================================================================
 // NOTE: I've added a new modal component and the logic to control it.
@@ -15,16 +12,18 @@ const AssignmentModal = ({ route, trucks, onConfirm, onClose }) => {
     if (!route) return null;
 
     const [selectedTruckId, setSelectedTruckId] = useState(null);
-
-    const availableTrucks = trucks.filter(truck => !truck.isAssigned && truck.status === 'available');
+    
+    // Filter for trucks that are not under maintenance or already assigned
+    const availableTrucks = trucks.filter(truck => truck.truck.status === 'IN_SERVICE' && !truck.isAssigned);
 
     const handleConfirm = () => {
         if (!selectedTruckId) {
             alert("Please select a truck to assign.");
             return;
         }
-        const truck = trucks.find(t => t.id === selectedTruckId);
-        onConfirm(route.id, truck.id, truck.driver);
+        const truck = trucks.find(t => t.truck.truckId === selectedTruckId);
+        // Pass the entire truck object or specific parts as needed
+        onConfirm(route.id, truck.truck.truckId, truck.collector.username);
     };
 
     return (
@@ -37,20 +36,20 @@ const AssignmentModal = ({ route, trucks, onConfirm, onClose }) => {
                     </button>
                 </div>
                 <div className="modal-body">
-                    <p className="modal-subtitle">Select an available truck from the list below. Only trucks that are 'available' and not already assigned are shown.</p>
+                    <p className="modal-subtitle">Select an available truck from the list below. Only 'available' and unassigned trucks are shown.</p>
                     <div className="modal-options-list">
-                        {availableTrucks.length > 0 ? availableTrucks.map(truck => (
+                        {availableTrucks.length > 0 ? availableTrucks.map(truckItem => (
                             <div
-                                key={truck.id}
-                                className={`modal-option ${selectedTruckId === truck.id ? 'modal-option--selected' : ''}`}
-                                onClick={() => setSelectedTruckId(truck.id)}
+                                key={truckItem.truck.truckId}
+                                className={`modal-option ${selectedTruckId === truckItem.truck.truckId ? 'modal-option--selected' : ''}`}
+                                onClick={() => setSelectedTruckId(truckItem.truck.truckId)}
                             >
                                 <div className="assignment-option-info">
-                                    <strong>{truck.plateNumber}</strong> - {truck.driver}
+                                    <strong>{truckItem.truck.registrationNumber}</strong> - {truckItem.collector.name}
                                     <br />
-                                    <small>{truck.capacity} • {truck.currentLocation}</small>
+                                    <small>{truckItem.truck.capacityKg}Kg Capacity</small>
                                 </div>
-                                {selectedTruckId === truck.id && <CheckCircle size={20} className="selection-checkmark" />}
+                                {selectedTruckId === truckItem.truck.truckId && <CheckCircle size={20} className="selection-checkmark" />}
                             </div>
                         )) : (
                            <p className="modal-empty-state">No available trucks to assign.</p>
@@ -77,11 +76,41 @@ const AssignmentModal = ({ route, trucks, onConfirm, onClose }) => {
 
 
 const RouteManagement = ({ activeTab, onAction }) => {
+    // --- HOOKS MOVED HERE ---
+    const [truckData, setTruckData] = useState([]);
+    const [error, setError] = useState(null); // Initialize error as null
     const [selectedRouteForModal, setSelectedRouteForModal] = useState(null);
+    const token = localStorage.getItem('token'); // Assuming you get the token like this
 
-    // Sample route data
+    // --- FETCH LOGIC MOVED HERE ---
+    useEffect(() => {
+        fetch('/api/collector/trucks', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to fetch truck data');
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetched Truck Data:", data);
+            // Add an 'isAssigned' property to each truck for local state management
+            const trucksWithAssignment = Array.isArray(data.data) 
+                ? data.data.map(t => ({ ...t, isAssigned: false })) 
+                : [];
+            setTruckData(trucksWithAssignment);
+        })
+        .catch(error => {
+            setError(error.message);
+            setTruckData([]);
+            console.error("Fetch Error:", error);
+        });
+    }, []); // Dependency array includes token
+
     const [routeData, setRouteData] = useState([
-        // ... your existing routeData ...
+        // Your sample route data...
         { id: 'R-001', name: 'Downtown Circuit', startLocation: 'Main Depot', endLocation: 'Downtown Hub', distance: '25 km', estimatedTime: '45 min', stops: 8, priority: 'high', status: 'active', assignedTruck: 'TRK-001', assignedDriver: 'John Smith', isAssigned: true },
         { id: 'R-002', name: 'Suburban Loop', startLocation: 'North Depot', endLocation: 'Suburban Center', distance: '18 km', estimatedTime: '35 min', stops: 6, priority: 'medium', status: 'active', assignedTruck: 'TRK-002', assignedDriver: 'Sarah Johnson', isAssigned: true },
         { id: 'R-003', name: 'Industrial Zone', startLocation: 'South Depot', endLocation: 'Industrial Park', distance: '32 km', estimatedTime: '55 min', stops: 12, priority: 'high', status: 'inactive', assignedTruck: null, assignedDriver: null, isAssigned: false },
@@ -89,29 +118,19 @@ const RouteManagement = ({ activeTab, onAction }) => {
         { id: 'R-005', name: 'Airport Express', startLocation: 'Main Depot', endLocation: 'Airport Terminal', distance: '45 km', estimatedTime: '65 min', stops: 3, priority: 'high', status: 'maintenance', assignedTruck: null, assignedDriver: null, isAssigned: false }
     ]);
 
-    // Sample truck data with drivers
-    const [truckData, setTruckData] = useState([
-        // ... your existing truckData ...
-        { id: 'TRK-001', plateNumber: 'ABC-1234', driver: 'John Smith', status: 'available', currentLocation: 'Main Depot', capacity: '10 tons', isAssigned: true },
-        { id: 'TRK-002', plateNumber: 'XYZ-5678', driver: 'Sarah Johnson', status: 'available', currentLocation: 'North Depot', capacity: '8 tons', isAssigned: true },
-        { id: 'TRK-003', plateNumber: 'DEF-9012', driver: 'Mike Wilson', status: 'maintenance', currentLocation: 'Service Center', capacity: '12 tons', isAssigned: false },
-        { id: 'TRK-004', plateNumber: 'GHI-3456', driver: 'Emily Davis', status: 'available', currentLocation: 'South Depot', capacity: '10 tons', isAssigned: false },
-        { id: 'TRK-005', plateNumber: 'JKL-7890', driver: 'Robert Brown', status: 'available', currentLocation: 'Main Depot', capacity: '15 tons', isAssigned: false }
-    ]);
+    // Note: The static truckData state is removed, as we now fetch it.
 
     const getStatusColor = (status) => {
-        // ... your existing getStatusColor function ...
         switch (status) {
             case 'active': return 'status-badge--success';
             case 'inactive': return 'status-badge--warning';
             case 'maintenance': return 'status-badge--danger';
-            case 'available': return 'status-badge--success'; // Added for trucks
+            case 'available': return 'status-badge--success';
             default: return 'status-badge--default';
         }
     };
 
     const getPriorityColor = (priority) => {
-        // ... your existing getPriorityColor function ...
         switch (priority) {
             case 'high': return 'priority--high';
             case 'medium': return 'priority--medium';
@@ -120,159 +139,65 @@ const RouteManagement = ({ activeTab, onAction }) => {
         }
     };
 
-    const handleAssignRoute = (routeId, truckId, driverId) => {
+    const handleAssignRoute = (routeId, truckId, driverName) => {
         // Update Route Data
         setRouteData(prevRoutes =>
             prevRoutes.map(route =>
                 route.id === routeId
-                    ? { ...route, assignedTruck: truckId, assignedDriver: driverId, isAssigned: true }
+                    ? { ...route, assignedTruck: truckId, assignedDriver: driverName, isAssigned: true }
                     : route
             )
         );
         // Update Truck Data
         setTruckData(prevTrucks =>
             prevTrucks.map(truck =>
-                truck.id === truckId
+                truck.truck.truckId === truckId
                     ? { ...truck, isAssigned: true }
                     : truck
             )
         );
         setSelectedRouteForModal(null); // Close the modal
     };
+    
+    // ... (Your other functions like handleUnassignRoute)
 
-    const handleUnassignRoute = (routeId) => {
-        // ... your existing handleUnassignRoute function ...
-        // Note: You may also want to update the corresponding truck's isAssigned status here
-    };
-
-    // Routes Management Tab
-    const renderRoutesTab = () => (
-        // ... your existing renderRoutesTab function (no changes needed) ...
-        <section className="">
-             <div className="page-header">
-                <Route size={24} />
-                <h1 className="page-title">Routes Management</h1>
-             </div>
-             <div className="card-header">
-                <h3 className="card__title"></h3>
-                <button 
-                 className="btn btn--primary"
-                 onClick={() => onAction && onAction('add')}
-                >
-                 <Plus size={18} />
-                 Add Route
-                </button>
-             </div>
-             <div className="card-content">
-                <table className="data-table">
-                 <thead>
-                    <tr>
-                     <th>Route ID</th>
-                     <th>Distance</th>
-                     <th>Stops</th>
-                     <th>Status</th>
-                     <th>Assignment Status</th>
-                     <th>Actions</th>
-                    </tr>
-                 </thead>
-                 <tbody>
-                    {routeData.map(route => (
-                     <tr key={route.id}>
-                        <td className="font-medium">{route.id}</td>
-                        <td>{route.distance}</td>
-                        <td>{route.stops}</td>
-                        <td>
-                         <span className={`status-badge ${getStatusColor(route.status)}`}>
-                            {route.status.charAt(0).toUpperCase() + route.status.slice(1)}
-                         </span>
-                        </td>
-                        <td>
-                         <div className="assignment-status">
-                            {route.isAssigned ? (
-                             <div className="assignment-info">
-                                <CheckCircle size={16} className="assignment-icon assignment-icon--assigned" />
-                                <span className="assignment-text assignment-text--assigned">Assigned</span>
-                             </div>
-                            ) : (
-                             <div className="assignment-info">
-                                <XCircle size={16} className="assignment-icon assignment-icon--unassigned" />
-                                <span className="assignment-text assignment-text--unassigned">Unassigned</span>
-                             </div>
-                            )}
-                         </div>
-                        </td>
-                        <td>
-                         <div className="action-buttons">
-                            <button 
-                             className="btn-icon btn-icon--primary"
-                             onClick={() => onAction && onAction('edit', route)}
-                             title="Edit Route"
-                            >
-                             <Pencil size={16} />
-                            </button>
-                            <button 
-                             className="btn-icon btn-icon--danger"
-                             onClick={() => onAction && onAction('delete', route)}
-                             title="Delete Route"
-                            >
-                             <Trash2 size={16} />
-                            </button>
-                         </div>
-                        </td>
-                     </tr>
-                    ))}
-                 </tbody>
-                </table>
-             </div>
-        </section>
-    );
-
-    // Route Assignment Tab
+    // Your render functions (renderRoutesTab, renderAssignmentTab, etc.) remain here
+    // Make sure to handle the new `truckData` structure in `renderAssignmentTab`
+    // Example fix for `renderAssignmentTab`:
     const renderAssignmentTab = () => (
         <section className="">
             <div className="page-header">
-                <Route size={24} />
+                <Users size={24} />
                 <h1 className="page-title">Route Assignment</h1>
-            </div>
-            <div className="card-header">
-                <h3 className="card__title"></h3>
-                <p className="card-subtitle">Assign available trucks to unassigned routes.</p>
             </div>
             <div className="card-content">
                 <div className="assignment-container">
-                    {/* Drivers and Trucks Section */}
                     <div className="assignment-section">
-                        <h4 className="section-title">
-                            <Users size={20} />
-                            Drivers & Trucks Status
-                        </h4>
+                        <h4 className="section-title"><Truck size={20} /> Drivers & Trucks Status</h4>
                         <div className="driver-truck-grid">
-                            {truckData.map(truck => (
-                                <div key={truck.id} className={`driver-truck-card ${truck.isAssigned ? 'driver-truck-card--assigned' : ''}`}>
+                            {error && <p className="error-message">Error: {error}</p>}
+                            {truckData.map(truckItem => (
+                                <div key={truckItem.truck.truckId} className={`driver-truck-card ${truckItem.isAssigned ? 'driver-truck-card--assigned' : ''}`}>
                                     <div className="driver-truck-header">
                                         <div className="truck-info">
-                                            <h5 className="truck-plate">{truck.plateNumber}</h5>
-                                            <span className="truck-id">{truck.id}</span>
+                                            <h5 className="truck-plate">{truckItem.truck.registrationNumber}</h5>
+                                            <span className="truck-id">{truckItem.truck.truckId}</span>
                                         </div>
-                                        <span className={`status-badge ${getStatusColor(truck.status)}`}>
-                                            {truck.status}
+                                        <span className={`status-badge ${getStatusColor(truckItem.truck.status)}`}>
+                                            {truckItem.truck.status}
                                         </span>
                                     </div>
                                     <div className="driver-details">
                                         <div className="driver-info">
                                             <Users size={16} />
-                                            <span>{truck.driver}</span>
+                                            <span>{truckItem.collector.name}</span>
                                         </div>
                                         <div className="truck-details">
                                             <Truck size={16} />
-                                            <span>{truck.capacity}</span>
-                                        </div>
-                                        <div className="location-info">
-                                            <MapPin size={16} />
-                                            <span>{truck.currentLocation}</span>
+                                            <span>{truckItem.truck.capacityKg} Kg</span>
                                         </div>
                                     </div>
-                                    {truck.isAssigned && (
+                                    {truckItem.isAssigned && (
                                         <div className="assignment-badge">
                                             <CheckCircle size={14} />
                                             <span>Currently Assigned</span>
@@ -283,18 +208,13 @@ const RouteManagement = ({ activeTab, onAction }) => {
                         </div>
                     </div>
 
-                    {/* Available Routes Section */}
                     <div className="assignment-section">
-                        <h4 className="section-title">
-                            <Route size={20} />
-                            Available Routes to Assign
-                        </h4>
+                        <h4 className="section-title"><Route size={20} /> Available Routes to Assign</h4>
                         <div className="available-routes">
                             {routeData.filter(route => !route.isAssigned && route.status !== 'maintenance').map(route => (
                                 <div
                                     key={route.id}
                                     className="route-assignment-card"
-                                    // CHANGE: On click, we now open the modal
                                     onClick={() => setSelectedRouteForModal(route)}
                                 >
                                     <div className="route-header">
@@ -304,93 +224,127 @@ const RouteManagement = ({ activeTab, onAction }) => {
                                         </span>
                                     </div>
                                     <div className="route-details">
-                                        {/* Simplified details for brevity, you can keep your original structure */}
-                                        <div className="route-stat">
-                                            <Navigation size={14} />
-                                            <span>{route.distance}</span>
-                                        </div>
-                                        <div className="route-stat">
-                                            <Clock size={14} />
-                                            <span>{route.estimatedTime}</span>
-                                        </div>
-                                        <div className="route-stat">
-                                            <MapPin size={14} />
-                                            <span>{route.stops} stops</span>
-                                        </div>
+                                        <div className="route-stat"><Navigation size={14} /><span>{route.distance}</span></div>
+                                        <div className="route-stat"><Clock size={14} /><span>{route.estimatedTime}</span></div>
+                                        <div className="route-stat"><MapPin size={14} /><span>{route.stops} stops</span></div>
                                     </div>
                                     <div className="card-footer-action">
-                                        <button className="btn btn--primary btn--small">
-                                           Assign Truck
-                                        </button>
+                                        <button className="btn btn--primary btn--small">Assign Truck</button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
-
-                {/* REMOVED: The old assignment panel is no longer needed. */}
             </div>
         </section>
     );
 
-    // // Map Tab
-    // const renderMapTab = () => (
-    //     // ... your existing renderMapTab function (no changes needed) ...
-    //     <section className="">
-    //         <div className="page-header">
-    //            <Route size={24} />
-    //            <h1 className="page-title">Route Map</h1>
-    //         </div>
-    //         <div className="card-header">
-    //            <h3 className="card__title"></h3>
-    //            <p className="card-subtitle">Visual representation of all routes and their status</p>
-    //         </div>
-    //         <div className="card-content">
-    //            <div className="map-container">
-    //             <div className="map-placeholder">
-    //                <Navigation size={48} />
-    //                <h4>Interactive Route Map</h4>
-    //                <p><MyMapComponent ></MyMapComponent></p>
-    //                <button className="btn btn--primary">
-    //                  Load Map View
-    //                </button>
-    //             </div>
-    //            </div>
-    //         </div>
-    //     </section>
-    // );
+    const renderRoutesTab = () => (
+    // ... your renderRoutesTab JSX
+    <section className="">
+             <div className="page-header">
+                <Route size={24} />
+                <h1 className="page-title">Routes Management</h1>
+             </div>
+             <div className="card-header">
+                <h3 className="card__title"></h3>
+                <button 
+                   className="btn btn--primary"
+                   onClick={() => onAction && onAction('add')}
+                >
+                   <Plus size={18} />
+                   Add Route
+                </button>
+             </div>
+             <div className="card-content">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Route ID</th>
+                      <th>Distance</th>
+                      <th>Stops</th>
+                      <th>Status</th>
+                      <th>Assignment Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {routeData.map(route => (
+                      <tr key={route.id}>
+                        <td className="font-medium">{route.id}</td>
+                        <td>{route.distance}</td>
+                        <td>{route.stops}</td>
+                        <td>
+                          <span className={`status-badge ${getStatusColor(route.status)}`}>
+                             {route.status.charAt(0).toUpperCase() + route.status.slice(1)}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="assignment-status">
+                             {route.isAssigned ? (
+                               <div className="assignment-info">
+                                  <CheckCircle size={16} className="assignment-icon assignment-icon--assigned" />
+                                  <span className="assignment-text assignment-text--assigned">Assigned</span>
+                               </div>
+                             ) : (
+                               <div className="assignment-info">
+                                  <XCircle size={16} className="assignment-icon assignment-icon--unassigned" />
+                                  <span className="assignment-text assignment-text--unassigned">Unassigned</span>
+                               </div>
+                             )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="action-buttons">
+                             <button 
+                               className="btn-icon btn-icon--primary"
+                               onClick={() => onAction && onAction('edit', route)}
+                               title="Edit Route"
+                             >
+                               <Pencil size={16} />
+                             </button>
+                             <button 
+                               className="btn-icon btn-icon--danger"
+                               onClick={() => onAction && onAction('delete', route)}
+                               title="Delete Route"
+                             >
+                               <Trash2 size={16} />
+                             </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+             </div>
+          </section>
+    );
 
-
-
-const renderMapTab = () => (
-  <section>
-    <div className="page-header">
-      <Route size={24} />
-      <h1 className="page-title">Route Map</h1>
-    </div>
-
-    <div className="card">
-      <div className="card-content">
-        <div className="map-placeholder">
-          <MyMapComponent />
-          <button className="btn btn-primary">Load Map</button>
+    const renderMapTab = () => (
+    // ... your renderMapTab JSX
+         <section>
+        <div className="page-header">
+          <Route size={24} />
+          <h1 className="page-title">Route Map</h1>
         </div>
-      </div>
-    </div>
-  </section>
-);
+    
+        <div className="card">
+          <div className="card-content">
+            <div className="map-placeholder">
+              <Maps />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
 
     const renderTabContent = () => {
         switch (activeTab) {
-            case 'tab1':
-                return renderRoutesTab();
-            case 'tab2':
-                return renderAssignmentTab();
-            case 'tab3':
-                return renderMapTab();
-            default:
-                return renderRoutesTab();
+            case 'tab1': return renderRoutesTab();
+            case 'tab2': return renderAssignmentTab();
+            case 'tab3': return renderMapTab();
+            default: return renderRoutesTab();
         }
     };
 
@@ -401,7 +355,6 @@ const renderMapTab = () => (
                     {renderTabContent()}
                 </div>
             </main>
-            {/* ADDED: Render the modal when a route is selected */}
             <AssignmentModal
                 route={selectedRouteForModal}
                 trucks={truckData}
