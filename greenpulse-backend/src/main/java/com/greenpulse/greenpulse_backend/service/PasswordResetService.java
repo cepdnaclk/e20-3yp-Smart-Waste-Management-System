@@ -8,6 +8,8 @@ import com.greenpulse.greenpulse_backend.repository.PasswordResetTokenRepository
 import com.greenpulse.greenpulse_backend.repository.UserTableRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +24,21 @@ public class PasswordResetService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService; // Add JWT service
 
     @Autowired
     public PasswordResetService(
             UserTableRepository userTableRepository,
             PasswordResetTokenRepository passwordResetTokenRepository,
             EmailService emailService,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService // Inject JWT service
     ) {
         this.userTableRepository = userTableRepository;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Transactional
@@ -47,15 +52,15 @@ public class PasswordResetService {
             // Generate 6-digit PIN
             String pin = generateSixDigitPin();
 
-            // Generate session token for this reset session
-            String sessionToken = UUID.randomUUID().toString();
+            // Generate JWT token instead of UUID - this is the key change
+            String jwtToken = jwtService.generateToken(user);
 
             // Save token and PIN to database
             PasswordResetToken resetToken = PasswordResetToken.builder()
                     .user(user)
-                    .token(sessionToken)
+                    .token(jwtToken) // Store JWT token
                     .pin(pin)
-                    .expiresAt(LocalDateTime.now().plusMinutes(10)) // 10 minutes for PIN
+                    .expiresAt(LocalDateTime.now().plusMinutes(10))
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -71,25 +76,35 @@ public class PasswordResetService {
             }
 
             return PasswordResetResponseDTO.builder()
-                    .sessionToken(sessionToken)
+                    .sessionToken(jwtToken) // Return JWT token
                     .email(email)
-                    .expiresIn(10 * 60 * 1000L) // 10 minutes in milliseconds
+                    .expiresIn(10 * 60 * 1000L)
                     .build();
         }
 
-        // Return dummy response for security (don't reveal if email exists)
+        // Return dummy response for security
         return PasswordResetResponseDTO.builder()
-                .sessionToken("dummy-token")
+                .sessionToken(generateDummyJwtToken()) // Generate dummy JWT
                 .email(email)
                 .expiresIn(10 * 60 * 1000L)
                 .build();
     }
 
     @Transactional
-    public PasswordResetResponseDTO verifyResetPin(String sessionToken, String pin, String email) {
-        // Find the reset token record
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByTokenAndPin(sessionToken, pin)
-                .orElseThrow(() -> new InvalidPinException("Invalid PIN or session token"));
+    public PasswordResetResponseDTO verifyResetPin(String pin, String email) {
+        // Get authenticated user from Spring Security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserTable authenticatedUser = (UserTable) authentication.getPrincipal();
+
+        // Verify email matches authenticated user
+        if (!authenticatedUser.getUsername().equals(email)) {
+            throw new InvalidPinException("Email mismatch");
+        }
+
+        // Find the reset token record for this user
+        PasswordResetToken resetToken = passwordResetTokenRepository
+                .findByUserAndPin(authenticatedUser, pin)
+                .orElseThrow(() -> new InvalidPinException("Invalid PIN"));
 
         // Check if token is expired
         if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
@@ -97,59 +112,65 @@ public class PasswordResetService {
             throw new InvalidPinException("Reset session has expired");
         }
 
-        // Verify email matches
-        if (!resetToken.getUser().getUsername().equals(email)) {
-            throw new InvalidPinException("Email mismatch");
-        }
-
-        // Generate verified token for password reset
-        String verifiedToken = UUID.randomUUID().toString();
-        resetToken.setToken(verifiedToken);
+        // Generate new JWT token for password reset phase
+        String verifiedJwtToken = jwtService.generateToken(authenticatedUser);
+        resetToken.setToken(verifiedJwtToken);
         resetToken.setPin(null); // Clear PIN after verification
-        resetToken.setExpiresAt(LocalDateTime.now().plusMinutes(5)); // 5 minutes to complete reset
+        resetToken.setExpiresAt(LocalDateTime.now().plusMinutes(5));
         passwordResetTokenRepository.save(resetToken);
 
         return PasswordResetResponseDTO.builder()
-                .verifiedToken(verifiedToken)
+                .verifiedToken(verifiedJwtToken) // Return new JWT token
                 .email(email)
-                .expiresIn(5 * 60 * 1000L) // 5 minutes in milliseconds
+                .expiresIn(5 * 60 * 1000L)
                 .build();
     }
 
-    @Transactional
-    public void resetPassword(String verifiedToken, String newPassword) {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(verifiedToken)
-                .orElseThrow(() -> new InvalidPinException("Invalid verification token"));
+@Transactional
+public void resetPassword(String newPassword) {
+    // Get authenticated user from Spring Security context
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Check if token is expired
-        if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-            passwordResetTokenRepository.delete(resetToken);
-            throw new InvalidPinException("Verification token has expired");
-        }
-
-        // Ensure this is a verified token (PIN should be null)
-        if (resetToken.getPin() != null) {
-            throw new InvalidPinException("Token not verified");
-        }
-
-        // Update password
-        UserTable user = resetToken.getUser();
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
-        userTableRepository.save(user);
-
-        // Clean up token
-        passwordResetTokenRepository.delete(resetToken);
+    if (authentication == null || !authentication.isAuthenticated()) {
+        throw new InvalidPinException("User not authenticated");
     }
 
-    @Transactional
-    public void resendResetPin(String sessionToken, String email) {
-        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(sessionToken)
-                .orElseThrow(() -> new InvalidPinException("Invalid session token"));
+    UserTable authenticatedUser = (UserTable) authentication.getPrincipal();
 
-        // Check if user email matches
-        if (!resetToken.getUser().getUsername().equals(email)) {
+    // Find any active reset token for this user (where PIN is null = verified)
+    PasswordResetToken resetToken = passwordResetTokenRepository
+            .findByUserAndPinIsNull(authenticatedUser)
+            .orElseThrow(() -> new InvalidPinException("Invalid verification token"));
+
+    // Check if token is expired
+    if (resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+        passwordResetTokenRepository.delete(resetToken);
+        throw new InvalidPinException("Verification token has expired");
+    }
+
+    // Update password
+    authenticatedUser.setPasswordHash(passwordEncoder.encode(newPassword));
+    userTableRepository.save(authenticatedUser);
+
+    // Clean up token
+    passwordResetTokenRepository.delete(resetToken);
+}
+
+
+    @Transactional
+    public void resendResetPin(String email) {
+        // Get authenticated user from Spring Security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserTable authenticatedUser = (UserTable) authentication.getPrincipal();
+
+        // Verify email matches authenticated user
+        if (!authenticatedUser.getUsername().equals(email)) {
             throw new InvalidPinException("Email mismatch");
         }
+
+        PasswordResetToken resetToken = passwordResetTokenRepository
+                .findByUser(authenticatedUser)
+                .orElseThrow(() -> new InvalidPinException("No active reset session"));
 
         // Generate new PIN
         String newPin = generateSixDigitPin();
@@ -165,5 +186,12 @@ public class PasswordResetService {
         Random random = new Random();
         int pin = 100000 + random.nextInt(900000);
         return String.valueOf(pin);
+    }
+
+    private String generateDummyJwtToken() {
+        // Create a dummy user for security purposes
+        UserTable dummyUser = new UserTable();
+        dummyUser.setUsername("dummy@example.com");
+        return jwtService.generateToken(dummyUser);
     }
 }

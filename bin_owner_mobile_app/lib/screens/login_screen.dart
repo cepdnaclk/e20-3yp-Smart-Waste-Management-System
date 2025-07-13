@@ -557,8 +557,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final url = Uri.parse('http://3.1.102.226:8080/api/auth/authenticate');
-
+      final url = Uri.parse('http://10.30.7.90:8080/api/auth/authenticate');
 
       try {
         final response = await http.post(

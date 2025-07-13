@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResetPasswordRequestDTO {
-    @NotBlank(message = "Verified token is required")
     private String verifiedToken;
 
     @NotBlank(message = "New password is required")

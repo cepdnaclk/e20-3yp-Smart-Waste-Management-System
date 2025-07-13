@@ -1,10 +1,13 @@
 package com.greenpulse.greenpulse_backend.controller;
 
 import com.greenpulse.greenpulse_backend.dto.*;
+import com.greenpulse.greenpulse_backend.exception.InvalidPinException;
+import com.greenpulse.greenpulse_backend.model.UserTable;
 import com.greenpulse.greenpulse_backend.service.AuthenticationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.greenpulse.greenpulse_backend.service.PasswordResetService;
@@ -56,10 +59,10 @@ public class AuthenticationController {
 
     @PostMapping("/verify-reset-pin")
     public ResponseEntity<ApiResponse<PasswordResetResponseDTO>> verifyResetPin(
+            @AuthenticationPrincipal UserTable user,
             @Valid @RequestBody VerifyResetPinRequestDTO request) {
 
         PasswordResetResponseDTO response = passwordResetService.verifyResetPin(
-                request.getSessionToken(),
                 request.getPin(),
                 request.getEmail()
         );
@@ -74,9 +77,14 @@ public class AuthenticationController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<Object>> resetPassword(
+            @AuthenticationPrincipal UserTable user,
             @Valid @RequestBody ResetPasswordRequestDTO request) {
 
-        passwordResetService.resetPassword(request.getVerifiedToken(), request.getNewPassword());
+        if (user == null) {
+            throw new InvalidPinException("User not authenticated");
+        }
+
+        passwordResetService.resetPassword(request.getNewPassword());
 
         return ResponseEntity.ok(ApiResponse.builder()
                 .success(true)
@@ -89,12 +97,10 @@ public class AuthenticationController {
 
     @PostMapping("/resend-reset-pin")
     public ResponseEntity<ApiResponse<Object>> resendResetPin(
+            @AuthenticationPrincipal UserTable user,
             @RequestBody Map<String, String> request) {
 
-        passwordResetService.resendResetPin(
-                request.get("sessionToken"),
-                request.get("email")
-        );
+        passwordResetService.resendResetPin(request.get("email"));
 
         return ResponseEntity.ok(ApiResponse.builder()
                 .success(true)
@@ -103,5 +109,6 @@ public class AuthenticationController {
                 .timestamp(LocalDateTime.now().toString())
                 .build());
     }
+
 
 }

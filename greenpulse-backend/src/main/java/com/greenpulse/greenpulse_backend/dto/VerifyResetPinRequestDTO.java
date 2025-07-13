@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VerifyResetPinRequestDTO {
-    @NotBlank(message = "Session token is required")
     private String sessionToken;
 
     @NotBlank(message = "PIN is required")
