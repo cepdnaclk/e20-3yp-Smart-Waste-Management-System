@@ -1,0 +1,21 @@
+package com.greenpulse.greenpulse_backend.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ResetPasswordRequestDTO {
+    @NotBlank(message = "Verified token is required")
+    private String verifiedToken;
+
+    @NotBlank(message = "New password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    private String newPassword;
+}
