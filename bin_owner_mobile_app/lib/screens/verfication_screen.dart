@@ -108,6 +108,7 @@
 // }
 
 import 'dart:convert';
+import 'package:bin_owner_mobile_app/config.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -217,9 +218,7 @@ class _VerificationScreenState extends State<VerificationScreen>
       _isVerifying = true;
     });
 
-    final url = Uri.parse(
-      'http://3.1.102.226:8080/api/email-verification/verify',
-    );
+    final url = Uri.parse('$baseUrl/email-verification/verify');
 
     try {
       final response = await http.post(
