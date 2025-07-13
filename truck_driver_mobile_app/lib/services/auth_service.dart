@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
-  final String baseUrl = 'http://3.1.102.226:8080/api/auth/authenticate';
+  // final String baseUrl = 'http://3.1.102.226:8080/api/auth/authenticate';
+  final String baseUrl = 'http://10.0.2.2:8080/api/auth/authenticate';
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   Future<bool> login(String id, String password) async {
