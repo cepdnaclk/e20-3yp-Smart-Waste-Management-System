@@ -763,3 +763,51 @@ footer {
                               The video will then shrink to fit the available width (max-width: 100%). */
     }
 }
+/*==================================================*/
+/* Testing Section Styles                           */
+/*==================================================*/
+
+.testing {
+    padding: 5rem 5%;
+    /* Use the standard background color for alternating sections */
+    background: var(--bg-color);
+}
+
+.testing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    /* Creates a responsive grid, automatically adjusting columns */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.testing-item {
+    background: var(--white);
+    padding: 2rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    /* Adds a distinctive colored border to the left of each card */
+    border-left: 5px solid var(--primary-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: left;
+}
+
+/* Hover effect consistent with other site elements */
+.testing-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.12);
+}
+
+.testing-item h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.testing-item p {
+    color: var(--text-color);
+    font-size: 1rem;
+    line-height: 1.6;
+}

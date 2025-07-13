@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:truck_driver_mobile_app/models/TruckAssignmentRequest.dart';
+import 'package:truck_driver_mobile_app/screens/truck_selection_page.dart';
 import 'package:truck_driver_mobile_app/services/truck_service.dart';
 import '../providers/user_provider.dart';
 
@@ -54,40 +55,47 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _handOverTruck() async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final String? registrationNumber = userProvider.truckId;
+Future<void> _handOverTruck() async {
+  final userProvider = Provider.of<UserProvider>(context, listen: false);
+  final String? registrationNumber = userProvider.truckId;
 
-    if (registrationNumber == null || registrationNumber.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No truck assigned to hand over.")),
-      );
-      return;
-    }
-    TruckAssignmentRequest request = TruckAssignmentRequest(
-      registrationNumber: registrationNumber,
+  if (registrationNumber == null || registrationNumber.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("No truck assigned to hand over.")),
     );
-    final success = await TruckService().handOverTruck(request);
-
-    if(success){
-      userProvider.clearAssignedTruck();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Truck $registrationNumber handed over successfully.")),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to hand over truck. Please try again.")),
-      );
-    }
-   
-
-    await Future.delayed(const Duration(milliseconds: 800));
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
-    
+    return;
   }
+
+  TruckAssignmentRequest request = TruckAssignmentRequest(
+    registrationNumber: registrationNumber,
+  );
+
+  final success = await TruckService().handOverTruck(request);
+
+  if (!mounted) return; // widget might have been disposed
+
+  if (success) {
+    userProvider.clearAssignedTruck();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Truck $registrationNumber handed over successfully.")),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Failed to hand over truck. Please try again.")),
+    );
+    return;  // Optional: Don't navigate if failure
+  }
+
+  await Future.delayed(const Duration(milliseconds: 800));
+
+  if (!mounted) return;  // Double check before navigation
+
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => const TruckSelectionPage()),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
