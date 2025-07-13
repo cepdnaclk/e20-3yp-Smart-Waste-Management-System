@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:bin_owner_mobile_app/theme/colors.dart';
+import 'package:bin_owner_mobile_app/config.dart';
 
 class NewPasswordScreen extends StatefulWidget {
   final String email;
@@ -78,7 +79,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final url = Uri.parse('http://10.30.7.90:8080/api/auth/reset-password');
+      final url = Uri.parse('$baseUrl/auth/reset-password');
 
       try {
         final response = await http.post(

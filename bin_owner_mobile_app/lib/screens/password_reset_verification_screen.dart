@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:bin_owner_mobile_app/theme/colors.dart';
+import 'package:bin_owner_mobile_app/config.dart';
 
 class PasswordResetVerificationScreen extends StatefulWidget {
   final String email;
@@ -54,7 +55,7 @@ class _PasswordResetVerificationScreenState
 
     setState(() => _isVerifying = true);
 
-    final url = Uri.parse('http://10.30.7.90:8080/api/auth/verify-reset-pin');
+    final url = Uri.parse('$baseUrl/auth/verify-reset-pin');
 
     try {
       final response = await http.post(

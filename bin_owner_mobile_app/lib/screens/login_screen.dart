@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:bin_owner_mobile_app/config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -557,7 +558,7 @@ class _LoginScreenState extends State<LoginScreen>
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final url = Uri.parse('http://10.30.7.90:8080/api/auth/authenticate');
+      final url = Uri.parse('$baseUrl/auth/authenticate');
 
       try {
         final response = await http.post(
