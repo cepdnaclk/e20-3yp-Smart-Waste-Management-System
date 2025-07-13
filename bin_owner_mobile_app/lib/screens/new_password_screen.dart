@@ -1,6 +1,4 @@
-import 'package:bin_owner_mobile_app/theme/colors.dart';
-
-// lib/screens/forgot_password_screen.dart
+// lib/screens/new_password_screen.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -8,28 +6,42 @@ import 'package:flutter/services.dart';
 import 'package:bin_owner_mobile_app/theme/colors.dart';
 import 'package:bin_owner_mobile_app/config.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+class NewPasswordScreen extends StatefulWidget {
+  final String email;
+  final String verifiedToken;
+
+  const NewPasswordScreen({
+    Key? key,
+    required this.email,
+    required this.verifiedToken,
+  }) : super(key: key);
+
   @override
-  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
+  _NewPasswordScreenState createState() => _NewPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _NewPasswordScreenState extends State<NewPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
   bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
-  // Future<void> _requestPasswordReset() async {
+  // Future<void> _resetPassword() async {
   //   if (_formKey.currentState!.validate()) {
   //     setState(() => _isLoading = true);
 
-  //     final url = Uri.parse('http://10.30.7.90:8080/api/auth/forgot-password');
+  //     final url = Uri.parse('http://10.30.7.90:8080/api/auth/reset-password');
 
   //     try {
   //       final response = await http.post(
   //         url,
   //         headers: {'Content-Type': 'application/json'},
-  //         body: jsonEncode({'email': _emailController.text.trim()}),
+  //         body: jsonEncode({
+  //           'verifiedToken': widget.verifiedToken,
+  //           'newPassword': _passwordController.text.trim(),
+  //         }),
   //       );
 
   //       setState(() => _isLoading = false);
@@ -37,27 +49,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   //       if (response.statusCode == 200) {
   //         final data = jsonDecode(response.body);
 
-  //         if (data['success'] && data['data'] != null) {
-  //           final sessionToken = data['data']['sessionToken'];
+  //         if (data['success']) {
+  //           _showSnackBar('Password reset successfully!', isError: false);
+  //           await Future.delayed(const Duration(milliseconds: 1500));
 
-  //           _showSnackBar('Reset PIN sent to your email!', isError: false);
-
-  //           // Navigate to verification screen
-  //           Navigator.pushNamed(
+  //           // Navigate back to login screen
+  //           Navigator.pushNamedAndRemoveUntil(
   //             context,
-  //             '/password-reset-verification',
-  //             arguments: {
-  //               'email': _emailController.text.trim(),
-  //               'token': sessionToken,
-  //             },
+  //             '/login',
+  //             (route) => false,
   //           );
   //         } else {
-  //           _showSnackBar('Failed to send reset code', isError: true);
+  //           _showSnackBar('Failed to reset password', isError: true);
   //         }
   //       } else {
   //         final error =
   //             jsonDecode(response.body)['message'] ??
-  //             'Failed to send reset code';
+  //             'Failed to reset password';
   //         _showSnackBar(error, isError: true);
   //       }
   //     } catch (e) {
@@ -66,17 +74,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   //     }
   //   }
   // }
-  Future<void> _requestPasswordReset() async {
+
+  Future<void> _resetPassword() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final url = Uri.parse('$baseUrl/auth/forgot-password');
+      final url = Uri.parse('$baseUrl/auth/reset-password');
 
       try {
         final response = await http.post(
           url,
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'email': _emailController.text.trim()}),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':
+                'Bearer ${widget.verifiedToken}', // Send token in header
+          },
+          body: jsonEncode({
+            'newPassword': _passwordController.text.trim(),
+            // Remove verifiedToken from body - it's now in the header
+          }),
         );
 
         setState(() => _isLoading = false);
@@ -84,28 +100,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
 
-          if (data['success'] && data['data'] != null) {
-            final sessionToken = data['data']['sessionToken'];
+          if (data['success']) {
+            _showSnackBar('Password reset successfully!', isError: false);
+            await Future.delayed(const Duration(milliseconds: 1500));
 
-            _showSnackBar('Reset PIN sent to your email!', isError: false);
-
-            // Navigate to verification screen
-            Navigator.pushNamed(
+            // Navigate back to login screen
+            Navigator.pushNamedAndRemoveUntil(
               context,
-              '/password-reset-verification',
-              arguments: {
-                'email': _emailController.text.trim(),
-                'sessionToken':
-                    sessionToken, // ✅ Change 'token' to 'sessionToken'
-              },
+              '/login',
+              (route) => false,
             );
           } else {
-            _showSnackBar('Failed to send reset code', isError: true);
+            _showSnackBar('Failed to reset password', isError: true);
           }
         } else {
           final error =
               jsonDecode(response.body)['message'] ??
-              'Failed to send reset code';
+              'Failed to reset password';
           _showSnackBar(error, isError: true);
         }
       } catch (e) {
@@ -144,7 +155,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text(
-          "Forgot Password",
+          "Set New Password",
           style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
         ),
         backgroundColor: Colors.transparent,
@@ -182,7 +193,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ],
                 ),
                 child: Icon(
-                  Icons.lock_reset_outlined,
+                  Icons.lock_outline,
                   size: 50,
                   color: Theme.of(context).primaryColor,
                 ),
@@ -192,7 +203,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               // Title
               const Text(
-                "Reset Password",
+                "Create New Password",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -205,15 +216,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 16),
 
               // Subtitle
-              const Text(
-                "Enter your email address and we'll send you a PIN to reset your password",
-                style: TextStyle(fontSize: 16, color: Colors.grey, height: 1.5),
+              Text(
+                "Create a strong password for ${widget.email}",
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                  height: 1.5,
+                ),
                 textAlign: TextAlign.center,
               ),
 
               const SizedBox(height: 40),
 
-              // Email input
+              // New Password input
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFF1E1E1E),
@@ -228,15 +243,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ],
                 ),
                 child: TextFormField(
-                  controller: _emailController,
+                  controller: _passwordController,
+                  obscureText: _obscurePassword,
                   style: const TextStyle(fontSize: 16, color: Colors.white),
-                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: "Enter your email address",
+                    hintText: "Enter new password",
                     hintStyle: TextStyle(color: Colors.grey[600]),
                     prefixIcon: Icon(
-                      Icons.email_outlined,
+                      Icons.lock_outline,
                       color: Colors.grey[600],
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey[600],
+                      ),
+                      onPressed:
+                          () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -258,12 +285,81 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return 'Please enter a password';
                     }
-                    if (!RegExp(
-                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                    ).hasMatch(value)) {
-                      return 'Please enter a valid email';
+                    if (value.length < 8) {
+                      return 'Password must be at least 8 characters';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Confirm Password input
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1E1E1E),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey[800]!, width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: TextFormField(
+                  controller: _confirmPasswordController,
+                  obscureText: _obscureConfirmPassword,
+                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: "Confirm new password",
+                    hintStyle: TextStyle(color: Colors.grey[600]),
+                    prefixIcon: Icon(
+                      Icons.lock_outline,
+                      color: Colors.grey[600],
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey[600],
+                      ),
+                      onPressed:
+                          () => setState(
+                            () =>
+                                _obscureConfirmPassword =
+                                    !_obscureConfirmPassword,
+                          ),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor,
+                        width: 2,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFF1E1E1E),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 20,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please confirm your password';
+                    }
+                    if (value != _passwordController.text) {
+                      return 'Passwords do not match';
                     }
                     return null;
                   },
@@ -272,12 +368,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               const SizedBox(height: 30),
 
-              // Send PIN button
+              // Reset Password button
               SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _requestPasswordReset,
+                  onPressed: _isLoading ? null : _resetPassword,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: Colors.white,
@@ -303,7 +399,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             ),
                           )
                           : const Text(
-                            "Send Reset PIN",
+                            "Reset Password",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -312,32 +408,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
               ),
 
-              const SizedBox(height: 24),
-
-              // Back to login
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Remember your password? ",
-                    style: TextStyle(color: Colors.grey, fontSize: 14),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -347,7 +418,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 }

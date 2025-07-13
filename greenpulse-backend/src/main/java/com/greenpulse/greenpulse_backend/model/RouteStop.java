@@ -39,5 +39,6 @@ public class RouteStop {
     @Column(name="longitude", nullable = false)
     private Double longitude;
 
+
 }
 

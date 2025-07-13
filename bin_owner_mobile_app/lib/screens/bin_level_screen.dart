@@ -2,6 +2,7 @@ import 'package:bin_owner_mobile_app/services/bin_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/bin.dart';
+import 'package:bin_owner_mobile_app/config.dart';
 
 class BinLevelScreen extends StatefulWidget {
   const BinLevelScreen({super.key});
@@ -12,7 +13,7 @@ class BinLevelScreen extends StatefulWidget {
 
 class _BinLevelScreenState extends State<BinLevelScreen> {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  final String _baseURL = 'http://3.1.102.226:8080';
+  final String _baseURL = '$baseUrl';
   final PageController _pageController = PageController(viewportFraction: 0.85);
 
   List<Bin> _bins = [];

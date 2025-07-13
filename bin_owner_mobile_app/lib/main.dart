@@ -6,6 +6,8 @@ import 'package:bin_owner_mobile_app/screens/profile_form_screen.dart';
 import 'package:bin_owner_mobile_app/theme/theme.dart';
 import 'package:bin_owner_mobile_app/providers/user_provider.dart';
 import 'package:bin_owner_mobile_app/providers/bin_provider.dart';
+import 'package:bin_owner_mobile_app/screens/new_password_screen.dart';
+import 'package:bin_owner_mobile_app/screens/password_reset_verification_screen.dart';
 
 void main() {
   runApp(
@@ -56,6 +58,46 @@ class MyApp extends StatelessWidget {
                   email: args['email'],
                   userId: args['userId'] ?? '',
                   token: args['token'],
+                ),
+          );
+        } else if (settings.name == '/password-reset-verification') {
+          final args = settings.arguments as Map<String, dynamic>?;
+          if (args == null ||
+              !args.containsKey('email') ||
+              !args.containsKey('sessionToken')) {
+            return MaterialPageRoute(
+              builder:
+                  (context) => const Scaffold(
+                    body: Center(
+                      child: Text('Missing password reset verification data'),
+                    ),
+                  ),
+            );
+          }
+          return MaterialPageRoute(
+            builder:
+                (context) => PasswordResetVerificationScreen(
+                  email: args['email'],
+                  sessionToken: args['sessionToken'],
+                ),
+          );
+        } else if (settings.name == '/reset-password-new') {
+          final args = settings.arguments as Map<String, dynamic>?;
+          if (args == null ||
+              !args.containsKey('email') ||
+              !args.containsKey('verifiedToken')) {
+            return MaterialPageRoute(
+              builder:
+                  (context) => const Scaffold(
+                    body: Center(child: Text('Missing password reset data')),
+                  ),
+            );
+          }
+          return MaterialPageRoute(
+            builder:
+                (context) => NewPasswordScreen(
+                  email: args['email'],
+                  verifiedToken: args['verifiedToken'],
                 ),
           );
         } else if (settings.name == '/profile') {

@@ -117,6 +117,12 @@
             <artifactId>aws-iot-device-sdk</artifactId>
             <version>1.23.0</version>
         </dependency>
+
+        <!-- validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

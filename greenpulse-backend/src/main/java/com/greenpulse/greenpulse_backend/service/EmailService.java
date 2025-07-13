@@ -22,4 +22,13 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendPasswordResetEmail(String to, String pin) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("GreenPulse Password Reset");
+        message.setText("Your password reset PIN is: " + pin + "\n\nThis code will expire in 10 minutes.");
+
+        mailSender.send(message);
+    }
 }
