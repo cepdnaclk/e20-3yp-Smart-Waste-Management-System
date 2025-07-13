@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Point;
+
+import java.math.BigInteger;
 
 @Entity
 @Table(name = "route_stop")
@@ -30,8 +33,11 @@ public class RouteStop {
     @Column(name = "stop_order")
     private Long stopOrder;
 
-    @Column(name = "location", columnDefinition = "GEOGRAPHY(POINT,4326)", nullable = false)
-    private Point location;
+    @Column(name="latitude", nullable = false)
+    private Double latitude;
+
+    @Column(name="longitude", nullable = false)
+    private Double longitude;
 
 
 }

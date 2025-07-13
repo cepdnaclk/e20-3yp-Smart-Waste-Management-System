@@ -15,5 +15,6 @@ public class BinInventoryResponseDTO {
     private String binId;
     private BinStatusEnum status;
     private LocalDate assignedDate;
-    private Point location;
+    private double latitude;
+    private double longitude;
 }

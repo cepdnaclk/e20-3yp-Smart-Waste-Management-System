@@ -18,10 +18,7 @@ const initialStops = [
   { lat: 7.2934, lng: 80.6414, label: "B" }, // Temple of the Tooth Relic
   { lat: 7.2714, lng: 80.6238, label: "C" }, // Peradeniya Botanical Gardens
   { lat: 7.2969, lng: 80.6384, label: "D" }, // Kandy View Point
-  { lat: 7.2915, lng: 80.6298, label: "E" }, // Bahirawakanda Vihara Buddha Statue
-  { lat: 7.2995, lng: 80.64},// Udawatta Kele Sanctuary
-  { lat: 7.2686, lng: 80.6328, label: "G" }, // Ceylon Tea Museum
-  { lat: 7.3005, lng: 80.3872, label: "H" }, // Pinnawala Elephant Orphanage
+  // Pinnawala Elephant Orphanage
 ];
 
 const Maps = () => {
@@ -123,12 +120,12 @@ const MapWithRoute = () => {
     fetchRoute();
   }, [geometry, stops, apiKey]);
 
-  // Handler for when a marker is dragged to a new position
-  const handleDragEnd = (idx, e) => {
-    const updated = [...stops];
-    updated[idx] = { ...updated[idx], lat: e.latLng.lat(), lng: e.latLng.lng() };
-    setOptimizedMarkers(updated);
-  };
+  // // Handler for when a marker is dragged to a new position
+  // const handleDragEnd = (idx, e) => {
+  //   const updated = [...stops];
+  //   updated[idx] = { ...updated[idx], lat: e.latLng.lat(), lng: e.latLng.lng() };
+  //   setOptimizedMarkers(updated);
+  // };
 
   if (!mapId) return <p>Error: Missing Map ID.</p>;
 
@@ -158,8 +155,7 @@ const MapWithRoute = () => {
           <AdvancedMarker
             key={`${s.label}-${i}`}
             position={{ lat: s.lat, lng: s.lng }}
-            draggable
-            onDragEnd={(e) => handleDragEnd(i, e)}
+    
           >
             <Pin background={"#4285F4"} borderColor={"white"} glyphColor={"white"}>
               {s.label}
@@ -183,9 +179,9 @@ function DirectionsPolyline({ path }) {
     const polyline = new google.maps.Polyline({
       path: path,
       map: map,
-      strokeColor: "#4285F4",
-      strokeOpacity: 0.8,
-      strokeWeight: 6,
+      strokeColor: "#000102ff",
+      strokeOpacity: 1,
+      strokeWeight: 4,
     });
 
     return () => {
