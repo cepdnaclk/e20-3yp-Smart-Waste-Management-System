@@ -78,17 +78,30 @@ public class TruckAssignmentService {
                 .build();
     }
 
-    public ApiResponse<String> handOverTruck(UUID collectorId,long truckId){
-        Optional<TruckInventory> optionalTruck = truckInventoryRepository.findById(truckId);
-        if(optionalTruck.isEmpty()){
-            return new ApiResponse<>(false,"Truck not found",null,LocalDateTime.now().toString());
+    public ApiResponse<String> handOverTruck(String registrationNumber, UUID collectorId) {
+        Optional<TruckInventory> optionalTruck = truckInventoryRepository.findByRegistrationNumber(registrationNumber);
+        if (optionalTruck.isEmpty()) {
+            return new ApiResponse<>(false, "Truck not found", null, LocalDateTime.now().toString());
         }
         TruckInventory truck = optionalTruck.get();
-        if(truck.getStatus() != TruckStatusEnum.IN_SERVICE){
-            return new ApiResponse<>(false,"Truck is not in service",null,LocalDateTime.now().toString());
+
+
+        Optional<TruckAssignment> optionalTruckAssignment = truckAssignmentRepository.findTopByTruckOrderByAssignedDateDesc(truck);
+        if (optionalTruckAssignment.isEmpty()) {
+            return new ApiResponse<>(false, "Truck Assignment not found", null, LocalDateTime.now().toString());
+        }
+        TruckAssignment truckAssignment = optionalTruckAssignment.get();
+
+        if (!truckAssignment.getCollector().getUserId().equals(collectorId)) {
+            return new ApiResponse<>(false, "Truck is not assigned to collector", null, LocalDateTime.now().toString());
+        }
+        if (truck.getStatus() != TruckStatusEnum.IN_SERVICE) {
+            return new ApiResponse<>(false, "Truck is not in service", null, LocalDateTime.now().toString());
         }
         truck.setStatus(TruckStatusEnum.AVAILABLE);
         truckInventoryRepository.save(truck);
-        return new ApiResponse<>(true,"Truck successfully handed over",null,LocalDateTime.now().toString());
+
+        return new ApiResponse<>(true, "Truck successfully handed over", null, LocalDateTime.now().toString());
     }
+
 }

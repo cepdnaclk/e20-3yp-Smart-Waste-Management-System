@@ -6,8 +6,10 @@ import com.greenpulse.greenpulse_backend.dto.BinStopDTO;
 import com.greenpulse.greenpulse_backend.dto.MarkBinCollectedRequestDTO;
 import com.greenpulse.greenpulse_backend.enums.RouteStatusEnum;
 import com.greenpulse.greenpulse_backend.model.BinStatus;
+import com.greenpulse.greenpulse_backend.model.CollectorProfile;
 import com.greenpulse.greenpulse_backend.model.Route;
 import com.greenpulse.greenpulse_backend.repository.BinStatusRepository;
+import com.greenpulse.greenpulse_backend.repository.CollectorProfileRepository;
 import com.greenpulse.greenpulse_backend.repository.RouteRepository;
 import com.greenpulse.greenpulse_backend.repository.RouteStopRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,21 +26,27 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final RouteStopRepository routeStopRepository;
     private final BinStatusRepository binStatusRepository;
+    private final CollectorProfileRepository collectorProfileRepository;
 
     @Autowired
     public RouteService(
             RouteRepository routeRepository,
             RouteStopRepository routeStopRepository,
-            BinStatusRepository binStatusRepository
-    ) {
+            BinStatusRepository binStatusRepository,
+            CollectorProfileRepository collectorProfileRepository) {
         this.routeRepository = routeRepository;
         this.routeStopRepository = routeStopRepository;
         this.binStatusRepository = binStatusRepository;
+        this.collectorProfileRepository = collectorProfileRepository;
     }
 
     public ApiResponse<AssignedRouteResponseDTO> getAssignedRoute(UUID collectorId) {
-        Optional<Route> optionalRoute = routeRepository
-                .findFirstByAssignedToAndStatusInOrderByDateCreatedDesc(collectorId, "Assigned");
+        Optional<CollectorProfile> optionalCollectorProfile = collectorProfileRepository.findById(collectorId);
+        if (optionalCollectorProfile.isEmpty()) {
+            return new ApiResponse<>(false,"Collector not found",null,LocalDateTime.now().toString());
+        }
+        CollectorProfile collectorProfile = optionalCollectorProfile.get();
+        Optional<Route> optionalRoute = routeRepository.findFirstByAssignedToAndStatusOrderByDateCreatedDesc(collectorProfile, RouteStatusEnum.ASSIGNED);
 
         if (optionalRoute.isEmpty()) {
             return new ApiResponse<>(
@@ -50,8 +58,7 @@ public class RouteService {
         }
 
         Route route = optionalRoute.get();
-
-        List<BinStopDTO> binStops = routeStopRepository.findByRoute(route.getRouteId())
+        List<BinStopDTO> binStops = routeStopRepository.findByRoute(route)
                 .stream()
                 .map(stop -> {
                     BinStatus status = stop.getBin();
@@ -115,6 +122,9 @@ public class RouteService {
         }
 
         Route route = optionalRoute.get();
+        if(!route.getAssignedTo().getUserId().equals(collectorId)) {
+            return new ApiResponse<>(false, "You are not authorized", null, LocalDateTime.now().toString());
+        }
         if (!route.getStatus().equals(RouteStatusEnum.IN_PROGRESS)) {
             return new ApiResponse<>(false, "Cannot collect bin: Route is not ongoing", null, LocalDateTime.now().toString());
         }
@@ -125,7 +135,6 @@ public class RouteService {
         var binStatus = binStatusRepository.findByBinId(request.getBinId())
                 .orElseThrow(() -> new RuntimeException("Bin status not found"));
 
-        // Reset levels and update last emptied timestamp
         binStatus.setPaperLevel(0L);
         binStatus.setPlasticLevel(0L);
         binStatus.setGlassLevel(0L);
@@ -142,6 +151,11 @@ public class RouteService {
             return new ApiResponse<>(false, "Route not found", null, LocalDateTime.now().toString());
         }
         Route route = optionalRoute.get();
+
+        if(!route.getAssignedTo().getUserId().equals(collectorId)) {
+            return new ApiResponse<>(false, "You are not authorized to stop this route", null, LocalDateTime.now().toString());
+        }
+
         if (!route.getStatus().equals(RouteStatusEnum.IN_PROGRESS)) {
             return new ApiResponse<>(false, "Cannot stop this route", null, LocalDateTime.now().toString());
         }

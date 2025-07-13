@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:truck_driver_mobile_app/models/TruckAssignmentRequest.dart';
 
 import '../models/Truck.dart';
 import '../services/truck_service.dart';
@@ -45,7 +46,9 @@ class _TruckSelectionPageState extends State<TruckSelectionPage> {
     setState(() => _isLoading = true);
 
     try {
-      final success = await _truckService.assignTruck(_selectedTruck!.registrationNumber);
+      final success = await _truckService.assignTruck(TruckAssignmentRequest(registrationNumber: _selectedTruck!.registrationNumber),);
+      if (!mounted) return; 
+
       if (success) {
         Provider.of<UserProvider>(context, listen: false)
             .assignTruck(_selectedTruck!.registrationNumber);
@@ -56,6 +59,8 @@ class _TruckSelectionPageState extends State<TruckSelectionPage> {
 
         await Future.delayed(const Duration(milliseconds: 800));
 
+        if (!mounted) return;
+
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomePage()),
         );
@@ -65,9 +70,10 @@ class _TruckSelectionPageState extends State<TruckSelectionPage> {
     } catch (e) {
       _showErrorSnackBar('Server error: ${e.toString()}');
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
+  
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(

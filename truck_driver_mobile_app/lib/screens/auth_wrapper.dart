@@ -16,9 +16,9 @@ class AuthWrapper extends StatelessWidget {
       return const LoginScreen();
     }
 
-    // if (userProvider.truckId == null) {
-    //   return const TruckSelectionPage();
-    // }
+    if (userProvider.truckId == null) {
+      return const TruckSelectionPage();
+    }
 
     return const HomePage();
   }
