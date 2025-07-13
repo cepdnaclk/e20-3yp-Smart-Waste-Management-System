@@ -52,7 +52,8 @@ public class BinInventoryService {
                     dto.setBinId(bin.getBinId());
                     dto.setStatus(bin.getStatus());
                     dto.setAssignedDate(bin.getAssignedDate());
-                    dto.setLocation(bin.getLocation());
+                    dto.setLatitude(bin.getLatitude());
+                    dto.setLongitude(bin.getLongitude());
                     return dto;
                 })
                 .toList();
@@ -74,7 +75,8 @@ public class BinInventoryService {
                     dto.setBinId(bin.getBinId());
                     dto.setStatus(bin.getStatus());
                     dto.setAssignedDate(bin.getAssignedDate());
-                    dto.setLocation(bin.getLocation());
+                    dto.setLatitude(bin.getLatitude());
+                    dto.setLongitude(bin.getLongitude());
                     return dto;
                 })
                 .toList();
@@ -98,7 +100,9 @@ public class BinInventoryService {
         binInventory.setBinId(binId);
         binInventory.setStatus(BinStatusEnum.AVAILABLE);
         binInventory.setAssignedDate(null);
-        binInventory.setLocation(null);
+        binInventory.setLatitude(null);
+        binInventory.setLongitude(null);
+
 
 
         BinStatus binStatus = new BinStatus();

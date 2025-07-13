@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 
@@ -32,8 +31,13 @@ public class BinInventory {
     @Column(name = "assigned_date")
     private LocalDate assignedDate;
 
-    @Column(name = "location", columnDefinition = "GEOGRAPHY(POINT,4326)")
-    private Point location;
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+
 
     @OneToOne(mappedBy = "bin", cascade = CascadeType.ALL, orphanRemoval = true)
     private BinStatus binStatus;
