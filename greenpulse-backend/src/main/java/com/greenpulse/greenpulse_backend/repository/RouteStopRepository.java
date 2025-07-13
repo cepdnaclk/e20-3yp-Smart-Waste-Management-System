@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface RouteStopRepository extends JpaRepository<RouteStop, Long> {
-    List<RouteStop> findByRoute(Long routeId);
+    List<RouteStop> findByRoute(Route route);
 
     boolean existsByRoute_RouteIdAndBin_BinId(long routeId, String binId);
 }
