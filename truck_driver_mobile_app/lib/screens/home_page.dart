@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:truck_driver_mobile_app/models/truck.dart';
+import 'package:truck_driver_mobile_app/models/Truck.dart';
 import 'package:truck_driver_mobile_app/providers/user_provider.dart';
 import 'package:truck_driver_mobile_app/screens/bin_level_page.dart';
 import 'package:truck_driver_mobile_app/screens/navigation_drawer.dart';
@@ -24,43 +24,60 @@ class _HomePageState extends State<HomePage> {
   Set<Polyline> _polylines = {};
   int _polylineIdCounter = 1;
 
+  String routeStatus = "Assigned"; // Possible values: Assigned, Active, Completed
+
   final CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(7.252320531045659, 80.59290477694601),
-    zoom: 16,
+    target: LatLng(7.2523, 80.5929),
+    zoom: 10,
   );
 
-  final List<Map<String, dynamic>> dummyBinStops = [
+  final List<Truck> dummyTrucks = [
+    Truck(id: "Truck 1", registrationNumber: 'LZ-1234', status: 'available'),
+    Truck(id: "Truck 2", registrationNumber: 'LZ-5678', status: 'available'),
+    Truck(id: "Truck 3", registrationNumber: 'LY-9101', status: 'available'),
+  ];
+
+  List<Map<String, dynamic>> dummyBins = [
     {
       'id': 'bin1',
-      'position': LatLng(7.2558, 80.5941), // Near Engineering Faculty
+      'position': LatLng(7.2558, 80.5941),
+      'location': 'Engineering Faculty',
+      'collected': false,
     },
     {
       'id': 'bin2',
-      'position': LatLng(7.2575, 80.5982), // Near Arts Theatre
+      'position': LatLng(7.2575, 80.5982),
+      'location': 'Arts Theatre',
+      'collected': false,
     },
     {
       'id': 'bin3',
-      'position': LatLng(7.2587, 80.5920), // Near Sarasavi Uyana Station
+      'position': LatLng(7.2587, 80.5920),
+      'location': 'Sarasavi Uyana',
+      'collected': false,
     },
     {
       'id': 'bin4',
-      'position': LatLng(7.2562, 80.5900), // Near Gymnasium
+      'position': LatLng(7.2562, 80.5900),
+      'location': 'Gymnasium',
+      'collected': false,
     },
   ];
 
-  final List<Truck> dummyTrucks = [
-    Truck(id: "Truck 1", registrationNumber: 'LZ-1234'),
-    Truck(id: "Truck 2", registrationNumber: 'LZ-5678'),
-    Truck(id: "Truck 3", registrationNumber: 'LY-9101'),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadBinMarkers();
+  }
 
   void _loadBinMarkers() {
-    final markers = dummyBinStops.map((bin) {
+    final markers = dummyBins.map((bin) {
       return Marker(
         markerId: MarkerId(bin['id']),
         position: bin['position'],
-        infoWindow: InfoWindow(title: bin['id']),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        infoWindow: InfoWindow(title: bin['location']),
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+            bin['collected'] ? BitmapDescriptor.hueGreen : BitmapDescriptor.hueRed),
       );
     }).toSet();
 
@@ -101,10 +118,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _getOptimizedRoute(Position truckPosition) async {
-    String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
-
+    final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
     final origin = '${truckPosition.latitude},${truckPosition.longitude}';
-    final waypoints = dummyBinStops.map((bin) {
+    final waypoints = dummyBins.map((bin) {
       final pos = bin['position'] as LatLng;
       return '${pos.latitude},${pos.longitude}';
     }).join('|');
@@ -118,8 +134,7 @@ class _HomePageState extends State<HomePage> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       if (data['routes'] == null || data['routes'].isEmpty) {
-        print(
-            "No routes found: ${data['status']}, ${data['error_message'] ?? 'No error message'}");
+        print("No routes found");
         return;
       }
 
@@ -141,121 +156,136 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadBinMarkers();
+  void _startRoute() async {
+    final position = await Geolocator.getCurrentPosition();
+    await _getOptimizedRoute(position);
+    setState(() => routeStatus = "Active");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Route Started")),
+    );
+  }
+
+  void _markBinCollected(String id) {
+    setState(() {
+      final bin = dummyBins.firstWhere((b) => b['id'] == id);
+      bin['collected'] = true;
+    });
+
+    _loadBinMarkers(); // Refresh marker colors
+
+    if (dummyBins.every((b) => b['collected'] == true)) {
+      setState(() => routeStatus = "Completed");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("All bins collected! Route completed.")),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final String? username = Provider.of<UserProvider>(context).username;
-    final String? assignedTruckId = Provider.of<UserProvider>(context).truckId;
-
-    final Truck? assignedTruck = assignedTruckId == null
+    final username = Provider.of<UserProvider>(context).username ?? "User";
+    final assignedTruckId = Provider.of<UserProvider>(context).truckId;
+    final assignedTruck = assignedTruckId == null
         ? null
         : dummyTrucks.firstWhere(
-            (truck) => truck.id == assignedTruckId,
-            orElse: () => Truck(id: '', registrationNumber: ''),
+            (t) => t.id == assignedTruckId,
+            orElse: () => Truck(id: '', registrationNumber: '', status: ''),
           );
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Home Page")),
+      appBar: AppBar(
+        title: const Text("Truck Driver Dashboard"),
+        backgroundColor: Colors.green[700],
+      ),
       drawer: const MyNavigationDrawer(),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Welcome $username!",
-                style:
-                    const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Welcome $username!",
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            if (assignedTruck != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Truck: ${assignedTruck.registrationNumber}",
+                      style: const TextStyle(fontSize: 18)),
+                  Text("Route Status: $routeStatus",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: routeStatus == "Completed"
+                            ? Colors.green
+                            : routeStatus == "Active"
+                                ? Colors.blue
+                                : Colors.orange,
+                      )),
+                ],
               ),
-              const SizedBox(height: 35),
-              assignedTruck == null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Select Your Truck",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        DropdownButton<Truck>(
-                          hint: const Text("Select a truck"),
-                          value: selectedTruck,
-                          isExpanded: true,
-                          items: dummyTrucks.map((truck) {
-                            return DropdownMenuItem<Truck>(
-                              value: truck,
-                              child: Text(truck.registrationNumber),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedTruck = value;
-                            });
-                          },
-                        ),
-                        ElevatedButton(
-                          onPressed: selectedTruck == null
-                              ? null
-                              : () {
-                                  Provider.of<UserProvider>(context,
-                                          listen: false)
-                                      .assignTruck(selectedTruck!.id);
-                                  setState(() {});
-                                },
-                          child: const Text("Assign Truck"),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Assigned Truck",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text(assignedTruck.registrationNumber,
-                            style: const TextStyle(fontSize: 20)),
-                      ],
-                    ),
-              const SizedBox(height: 40),
-              SizedBox(
-                height: 300,
-                child: GoogleMap(
-                  initialCameraPosition: _initialPosition,
-                  onMapCreated: (controller) {
-                    _controller = controller;
-                  },
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: true,
-                  markers: _binMarkers,
-                  polylines: _polylines,
+            const SizedBox(height: 20),
+
+            SizedBox(
+              height: 280,
+              child: GoogleMap(
+                initialCameraPosition: _initialPosition,
+                onMapCreated: (controller) => _controller = controller,
+                myLocationEnabled: true,
+                markers: _binMarkers,
+                polylines: _polylines,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            if (routeStatus == "Assigned")
+              ElevatedButton.icon(
+                onPressed: _startRoute,
+                icon: const Icon(Icons.play_arrow),
+                label: const Text("Start Route"),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  backgroundColor: Colors.green[700],
                 ),
               ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () async {
-                  final position = await Geolocator.getCurrentPosition();
-                  await _getOptimizedRoute(position);
-                },
-                child: const Text("Get Optimized Route"),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const BinLevelPage(),
+
+            if (routeStatus == "Active") ...[
+              const SizedBox(height: 20),
+              const Text("Bins to Collect:",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 10),
+              ...dummyBins.map((bin) => Card(
+                    child: ListTile(
+                      title: Text(bin['location']),
+                      subtitle: Text("ID: ${bin['id']}"),
+                      trailing: bin['collected']
+                          ? const Icon(Icons.check_circle, color: Colors.green)
+                          : ElevatedButton(
+                              onPressed: () => _markBinCollected(bin['id']),
+                              child: const Text("Mark Collected"),
+                            ),
                     ),
+                  )),
+            ],
+
+            if (routeStatus == "Completed") ...[
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Route closed")),
                   );
                 },
-                child: const Text("Next location"),
+                icon: const Icon(Icons.check),
+                label: const Text("Finish Route"),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  backgroundColor: Colors.grey[800],
+                ),
               ),
             ],
-          ),
+          ],
         ),
       ),
     );

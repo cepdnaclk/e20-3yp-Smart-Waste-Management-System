@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,7 +43,7 @@ public class TruckAssignmentService {
         return ApiResponse.<List<TruckAssignment>>builder()
                 .success(true)
                 .message("Trucks successfully retrieved")
-                .data(truckAssignment)  // Now correctly passing List to List field
+                .data(truckAssignment)
                 .timestamp(LocalDateTime.now().toString())
                 .build();
     }
@@ -75,5 +76,19 @@ public class TruckAssignmentService {
                 .data(null)
                 .timestamp(LocalDateTime.now().toString())
                 .build();
+    }
+
+    public ApiResponse<String> handOverTruck(UUID collectorId,long truckId){
+        Optional<TruckInventory> optionalTruck = truckInventoryRepository.findById(truckId);
+        if(optionalTruck.isEmpty()){
+            return new ApiResponse<>(false,"Truck not found",null,LocalDateTime.now().toString());
+        }
+        TruckInventory truck = optionalTruck.get();
+        if(truck.getStatus() != TruckStatusEnum.IN_SERVICE){
+            return new ApiResponse<>(false,"Truck is not in service",null,LocalDateTime.now().toString());
+        }
+        truck.setStatus(TruckStatusEnum.AVAILABLE);
+        truckInventoryRepository.save(truck);
+        return new ApiResponse<>(true,"Truck successfully handed over",null,LocalDateTime.now().toString());
     }
 }
