@@ -3,6 +3,7 @@ package com.greenpulse.greenpulse_backend.controller;
 import com.greenpulse.greenpulse_backend.dto.ApiResponse;
 import com.greenpulse.greenpulse_backend.dto.AssignedRouteResponseDTO;
 import com.greenpulse.greenpulse_backend.dto.MarkBinCollectedRequestDTO;
+import com.greenpulse.greenpulse_backend.model.Route;
 import com.greenpulse.greenpulse_backend.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,6 +35,22 @@ public class RouteController {
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<Route>>> getAllRoutes() {
+        ApiResponse<List<Route>> response = routeService.getAllRoutes();
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+//    @PostMapping
+//    @PreAuthorize("hasAnyRole('ADMIN')")
+//    public
+//
 
     // Start a route
     @PostMapping("/{routeId}/start")
@@ -75,4 +93,11 @@ public class RouteController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @PostMapping("/assign")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<String> assignRouteToCollector(@RequestParam String name, @RequestParam Long routeId) {
+        return routeService.assignRouteToCollector(name, routeId);
+    }
+
 }
