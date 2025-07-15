@@ -42,17 +42,20 @@ class TruckService {
       );
 
       if (apiResponse.success) {
-        return apiResponse.data.where((truck) => truck.status == 'AVAILABLE').toList();
+        return apiResponse.data
+            .where((truck) => truck.status == 'AVAILABLE')
+            .toList();
       } else {
         throw Exception('API error: ${apiResponse.message}');
       }
     } else {
-      throw Exception('Failed to load trucks. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to load trucks. Status code: ${response.statusCode}');
     }
   }
 
-  // Assign a truck 
-   Future<bool> assignTruck(TruckAssignmentRequest request) async {
+  // Assign a truck
+  Future<bool> assignTruck(TruckAssignmentRequest request) async {
     final token = await _getToken();
     if (token == null) {
       throw Exception('No JWT token found');
@@ -65,7 +68,6 @@ class TruckService {
         'Content-Type': 'application/json',
       },
       body: jsonEncode(request.toJson()),
-      
     );
 
     if (response.statusCode == 200) {
@@ -76,7 +78,8 @@ class TruckService {
         throw Exception('Assignment failed: ${jsonResponse['message']}');
       }
     } else {
-      throw Exception('Failed to assign truck. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to assign truck. Status code: ${response.statusCode}');
     }
   }
 
@@ -100,7 +103,8 @@ class TruckService {
       final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       return jsonResponse['success'] == true;
     } else {
-      throw Exception('Failed to hand over truck. Status code: ${response.statusCode}');
+      throw Exception(
+          'Failed to hand over truck. Status code: ${response.statusCode}');
     }
   }
 }

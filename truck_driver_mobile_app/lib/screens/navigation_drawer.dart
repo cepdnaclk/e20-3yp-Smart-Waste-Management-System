@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:truck_driver_mobile_app/screens/collection_map_page.dart';
 
 import '../providers/user_provider.dart';
 import '../services/auth_service.dart';
 import '../widgets/drawer_tiles.dart';
-import '../screens/bin_level_page.dart';
 import '../screens/home_page.dart';
 import '../screens/login_screen.dart';
-import '../screens/notification_page.dart';
 import '../screens/report_page.dart';
-import '../screens/route_list_page.dart';
 
 class MyNavigationDrawer extends StatelessWidget {
   const MyNavigationDrawer({super.key});
@@ -23,7 +21,6 @@ class MyNavigationDrawer extends StatelessWidget {
       backgroundColor: const Color(0xFF1E1E1E),
       child: Column(
         children: [
-          
           Container(
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).padding.top + 20,
@@ -71,7 +68,8 @@ class MyNavigationDrawer extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.lightGreen.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(6),
@@ -79,7 +77,8 @@ class MyNavigationDrawer extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.local_shipping_outlined, size: 16, color: Colors.lightGreen),
+                            const Icon(Icons.local_shipping_outlined,
+                                size: 16, color: Colors.lightGreen),
                             const SizedBox(width: 4),
                             Text(
                               vehicleId ?? "Not Assigned",
@@ -97,7 +96,6 @@ class MyNavigationDrawer extends StatelessWidget {
               ],
             ),
           ),
-
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -106,7 +104,10 @@ class MyNavigationDrawer extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   child: Text(
                     'MAIN MENU',
-                    style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
                 const DrawerTiles(
@@ -115,38 +116,24 @@ class MyNavigationDrawer extends StatelessWidget {
                   destinationPage: HomePage(),
                 ),
                 const DrawerTiles(
-                  title: "Bin Status",
-                  icon: Icons.delete_rounded,
-                  destinationPage: BinLevelPage(),
-                ),
-                const DrawerTiles(
-                  title: "Notifications",
-                  icon: Icons.notifications_outlined,
-                  destinationPage: NotificationPage(),
-                ),
-                const DrawerTiles(
-                  title: "Route List",
-                  icon: Icons.route_rounded,
-                  destinationPage: RouteListPage(),
-                ),
-                const DrawerTiles(
                   title: "Collection Map",
                   icon: Icons.map_rounded,
-                  destinationPage: HomePage(),
+                  destinationPage: CollectionMapPage(),
                 ),
-
                 const Divider(
                   color: Colors.grey,
                   height: 40,
                   indent: 24,
                   endIndent: 24,
                 ),
-
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   child: Text(
                     'SUPPORT',
-                    style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
                 const DrawerTiles(
@@ -156,7 +143,6 @@ class MyNavigationDrawer extends StatelessWidget {
                   color: Colors.orange,
                 ),
                 const SizedBox(height: 8),
-
                 DrawerTiles(
                   title: "Log Out",
                   icon: Icons.logout_rounded,
@@ -174,7 +160,6 @@ class MyNavigationDrawer extends StatelessWidget {
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(

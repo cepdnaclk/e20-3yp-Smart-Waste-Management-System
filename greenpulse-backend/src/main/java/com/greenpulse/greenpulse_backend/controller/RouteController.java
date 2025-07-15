@@ -3,12 +3,13 @@ package com.greenpulse.greenpulse_backend.controller;
 import com.greenpulse.greenpulse_backend.dto.ApiResponse;
 import com.greenpulse.greenpulse_backend.dto.AssignedRouteResponseDTO;
 import com.greenpulse.greenpulse_backend.dto.MarkBinCollectedRequestDTO;
+import com.greenpulse.greenpulse_backend.model.UserTable;
 import com.greenpulse.greenpulse_backend.model.Route;
 import com.greenpulse.greenpulse_backend.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/routes")
+
 public class RouteController {
 
     private final RouteService routeService;
@@ -25,16 +27,15 @@ public class RouteController {
         this.routeService = routeService;
     }
 
-    // Get assigned route for a collector
-    @GetMapping("/assigned/{collectorId}")
+    @GetMapping("/assigned")
     @PreAuthorize("hasRole('COLLECTOR')")
-    public ResponseEntity<ApiResponse<AssignedRouteResponseDTO>> getAssignedRoute(@PathVariable UUID collectorId) {
-        ApiResponse<AssignedRouteResponseDTO> response = routeService.getAssignedRoute(collectorId);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    public ResponseEntity<ApiResponse<AssignedRouteResponseDTO>> getAssignedRoute(
+            @AuthenticationPrincipal UserTable user
+    ) {
+        ApiResponse<AssignedRouteResponseDTO> response = routeService.getAssignedRoute(user.getId());
+        return ResponseEntity.ok(response);
     }
+
 
 
     @GetMapping
@@ -53,45 +54,35 @@ public class RouteController {
 //
 
     // Start a route
+
     @PostMapping("/{routeId}/start")
     @PreAuthorize("hasRole('COLLECTOR')")
     public ResponseEntity<ApiResponse<String>> startRoute(
-            @PathVariable long routeId,
-            @RequestParam UUID collectorId
+            @AuthenticationPrincipal UserTable user,
+            @PathVariable Long routeId
     ) {
-        ApiResponse<String> response = routeService.startRoute(collectorId, routeId);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        ApiResponse<String> response = routeService.startRoute(user.getId(), routeId);
+        return ResponseEntity.ok(response);
     }
 
-    // Mark bin as collected
     @PostMapping("/mark-collected")
     @PreAuthorize("hasRole('COLLECTOR')")
     public ResponseEntity<ApiResponse<String>> markAsCollected(
-            @RequestParam UUID collectorId,
+            @AuthenticationPrincipal UserTable user,
             @RequestBody MarkBinCollectedRequestDTO request
     ) {
-        ApiResponse<String> response = routeService.markAsCollected(collectorId, request);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        ApiResponse<String> response = routeService.markAsCollected(user.getId(), request);
+        return ResponseEntity.ok(response);
     }
 
-    // Stop a route
     @PostMapping("/{routeId}/stop")
     @PreAuthorize("hasRole('COLLECTOR')")
     public ResponseEntity<ApiResponse<String>> stopRoute(
-            @PathVariable long routeId,
-            @RequestParam UUID collectorId
+            @AuthenticationPrincipal UserTable user,
+            @PathVariable Long routeId
     ) {
-        ApiResponse<String> response = routeService.stopRoute(collectorId, routeId);
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        ApiResponse<String> response = routeService.stopRoute(user.getId(), routeId);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/assign")
@@ -101,3 +92,4 @@ public class RouteController {
     }
 
 }
+
