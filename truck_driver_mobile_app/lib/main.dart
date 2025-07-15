@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:truck_driver_mobile_app/providers/user_provider.dart';
 import 'package:truck_driver_mobile_app/screens/auth_wrapper.dart';
+import 'package:truck_driver_mobile_app/screens/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: Colors.greenAccent,
         brightness: Brightness.dark,
       ),
-      home: const AuthWrapper(),
+      home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

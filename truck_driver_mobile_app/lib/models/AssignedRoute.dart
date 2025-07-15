@@ -1,25 +1,30 @@
 import 'BinStop.dart';
 
 class AssignedRoute {
-  final String routeId;
-  final String status;
+  final int routeId;
+  final String routeStatus;
+  final String? routeStartTime;
+  final String? routeEndTime;
   final List<BinStop> stops;
 
   AssignedRoute({
     required this.routeId,
-    required this.status,
+    required this.routeStatus,
+    this.routeStartTime,
+    this.routeEndTime,
     required this.stops,
   });
 
   factory AssignedRoute.fromJson(Map<String, dynamic> json) {
-    final stops = (json['stops'] as List)
-        .map((stopJson) => BinStop.fromJson(stopJson))
-        .toList();
-
     return AssignedRoute(
       routeId: json['routeId'],
-      status: json['status'],
-      stops: stops,
+      routeStatus: json['routeStatus'],
+      routeStartTime: json['routeStartTime'],
+      routeEndTime: json['routeEndTime'],
+      stops: (json['stops'] as List)
+          .map((stopJson) => BinStop.fromJson(stopJson))
+          .toList(),
     );
   }
 }
+

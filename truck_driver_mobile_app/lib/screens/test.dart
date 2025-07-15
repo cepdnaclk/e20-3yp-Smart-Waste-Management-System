@@ -101,7 +101,7 @@
 //   }
 
 //   Future<void> _getOptimizedRoute(Position truckPosition) async {
-//     String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+//     String apiKey = \!;
 
 //     final origin = '${truckPosition.latitude},${truckPosition.longitude}';
 //     final waypoints = dummyBinStops.map((bin) {
