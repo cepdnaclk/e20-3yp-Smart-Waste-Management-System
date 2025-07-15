@@ -1,5 +1,6 @@
 package com.greenpulse.greenpulse_backend.model;
 
+import com.greenpulse.greenpulse_backend.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,4 +55,7 @@ public class UserTable implements UserDetails {
     public String getUsername() {
         return username;
     }
+
+    public UserRoleEnum getRole(){return   role.getRole();}
+
 }
