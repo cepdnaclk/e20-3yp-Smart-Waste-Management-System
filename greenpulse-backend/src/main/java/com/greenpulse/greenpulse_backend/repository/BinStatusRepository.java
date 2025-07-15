@@ -26,6 +26,14 @@ public interface BinStatusRepository extends JpaRepository<BinStatus, String> {
             @Param("level") Long level
     );
 
+    List<BinStatus> findByPlasticLevelGreaterThanEqual(Long threshold);
+    List<BinStatus> findByPaperLevelGreaterThanEqual(Long threshold);
+    List<BinStatus> findByGlassLevelGreaterThanEqual(Long threshold);
+
+    // Query to find bins not emptied for a certain period
+    @Query("SELECT b FROM BinStatus b WHERE b.lastEmptiedAt < :date OR b.lastEmptiedAt IS NULL")
+    List<BinStatus> findBinsNotEmptiedSince(@Param("date") LocalDateTime date);
+
 
 
 }

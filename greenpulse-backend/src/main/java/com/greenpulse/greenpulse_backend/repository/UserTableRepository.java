@@ -15,5 +15,7 @@ import java.util.UUID;
 public interface UserTableRepository extends JpaRepository<UserTable, UUID> {
     Optional<UserTable> findByUsername(String username);
     // In your UserTableRepository
+//    List<UserTable> findByRole(UserRoleEnum role);
 
+    List<UserTable> findByRole_Role(UserRoleEnum roleEnum);
 }
