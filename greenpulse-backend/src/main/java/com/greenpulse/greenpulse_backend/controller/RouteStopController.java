@@ -2,7 +2,6 @@ package com.greenpulse.greenpulse_backend.controller;
 
 
 import com.greenpulse.greenpulse_backend.dto.ApiResponse;
-import com.greenpulse.greenpulse_backend.dto.AssignRouteRequestDTO;
 import com.greenpulse.greenpulse_backend.dto.RouteStopDTO;
 import com.greenpulse.greenpulse_backend.model.RouteStop;
 import com.greenpulse.greenpulse_backend.service.RouteStopService;
@@ -34,10 +33,9 @@ public class RouteStopController {
 
     @PostMapping("/assignRouteToStops")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<RouteStop>> assignRouteToStops(@RequestBody AssignRouteRequestDTO request) {
+    public ResponseEntity<ApiResponse<RouteStop>> assignRouteToStops(@RequestBody List<Long> stopIds) {
         ApiResponse<RouteStop> response = routeStopService.assignRouteToStops(
-                request.getStopIds(),
-                request.getRouteId()
+                stopIds
         );
         return ResponseEntity.ok(response);
     }

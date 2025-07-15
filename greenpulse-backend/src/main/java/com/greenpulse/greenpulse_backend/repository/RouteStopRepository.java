@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RouteStopRepository extends JpaRepository<RouteStop, Long> {
+public interface RouteStopRepository extends JpaRepository<RouteStop,Long> {
     List<RouteStop> findByRoute(Route route);
 
     boolean existsByRoute_RouteIdAndBin_BinId(long routeId, String binId);
 
+    boolean existsRouteStopByBin_BinId(String binId);
 }

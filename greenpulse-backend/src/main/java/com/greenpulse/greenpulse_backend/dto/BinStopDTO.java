@@ -18,9 +18,10 @@ public class BinStopDTO {
     private Long routeStopId;
     private Long stopOrder;
     private String binId;
-    private Point location;
-    private Long plasticLevel;
+    private Double latitude;
+    private Double Longitude;
     private Long paperLevel;
+    private Long plasticLevel;
     private Long glassLevel;
     private LocalDateTime lastEmptiedAt;
 }

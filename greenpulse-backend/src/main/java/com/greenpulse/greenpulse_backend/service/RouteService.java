@@ -1,9 +1,6 @@
 package com.greenpulse.greenpulse_backend.service;
 
-import com.greenpulse.greenpulse_backend.dto.ApiResponse;
-import com.greenpulse.greenpulse_backend.dto.AssignedRouteResponseDTO;
-import com.greenpulse.greenpulse_backend.dto.BinStopDTO;
-import com.greenpulse.greenpulse_backend.dto.MarkBinCollectedRequestDTO;
+import com.greenpulse.greenpulse_backend.dto.*;
 import com.greenpulse.greenpulse_backend.enums.RouteStatusEnum;
 import com.greenpulse.greenpulse_backend.model.BinStatus;
 import com.greenpulse.greenpulse_backend.model.CollectorProfile;
@@ -13,6 +10,8 @@ import com.greenpulse.greenpulse_backend.repository.CollectorProfileRepository;
 import com.greenpulse.greenpulse_backend.repository.RouteRepository;
 import com.greenpulse.greenpulse_backend.repository.RouteStopRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,6 +38,40 @@ public class RouteService {
         this.binStatusRepository = binStatusRepository;
         this.collectorProfileRepository = collectorProfileRepository;
     }
+
+    public ApiResponse<List<Route>> getAllRoutes() {
+        List<Route> routes = routeRepository.findAll();
+        return ApiResponse.<List<Route>>builder()
+                .success(true)
+                .message("Route stops fetched successfully")
+                .data(routes)
+                .timestamp(LocalDateTime.now().toString())
+                .build();
+    }
+
+
+    public ResponseEntity<String> assignRouteToCollector(String name, Long routeId) {
+        CollectorProfile collectorProfile = collectorProfileRepository.findByName(name);
+        if (collectorProfile == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Collector with name '" + name + "' not found");
+        }
+
+        Route route = routeRepository.getRouteByRouteId(routeId);
+        if (route == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Route with ID '" + routeId + "' not found");
+        }
+
+        route.setStatus(RouteStatusEnum.ASSIGNED);
+        route.setAssignedTo(collectorProfile);
+        routeRepository.save(route);
+
+        return ResponseEntity.ok("Route " + routeId + " successfully assigned to " + name);
+    }
+
+
+
 
     public ApiResponse<AssignedRouteResponseDTO> getAssignedRoute(UUID collectorId) {
         Optional<CollectorProfile> optionalCollectorProfile = collectorProfileRepository.findById(collectorId);
@@ -67,7 +100,8 @@ public class RouteService {
                             stop.getId(),
                             stop.getStopOrder(),
                             status.getBinId(),
-                            stop.getLocation(),
+                            stop.getLatitude(),
+                            stop.getLongitude(),
                             status.getPaperLevel(),
                             status.getPlasticLevel(),
                             status.getGlassLevel(),

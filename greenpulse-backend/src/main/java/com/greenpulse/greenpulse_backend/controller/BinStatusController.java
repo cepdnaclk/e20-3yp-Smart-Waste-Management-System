@@ -8,11 +8,9 @@ import com.greenpulse.greenpulse_backend.service.BinStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -29,6 +27,18 @@ public class BinStatusController {
     @PreAuthorize("hasRole('BIN_OWNER')")
     public ApiResponse<BinStatusDTO> getBinStatus(@PathVariable String binId, @AuthenticationPrincipal UserTable userTable) {
         return binStatusService.getBinStatus(binId, userTable.getId());
+    }
+
+    @PostMapping("/check-notifications")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Object> checkAllBinsForHighLevels() {
+        binStatusService.checkAllBinsForHighLevels();
+
+        return ApiResponse.builder()
+                .success(true)
+                .message("Notification check completed")
+                .timestamp(LocalDateTime.now().toString())
+                .build();
     }
 
 }

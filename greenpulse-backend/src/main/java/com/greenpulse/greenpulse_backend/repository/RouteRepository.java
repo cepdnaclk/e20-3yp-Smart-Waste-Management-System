@@ -15,4 +15,6 @@ import java.util.UUID;
 public interface RouteRepository extends JpaRepository<Route, Long> {
     Optional<Route> findFirstByAssignedToAndStatusOrderByDateCreatedDesc(CollectorProfile collectorProfile, RouteStatusEnum status);
 
+    Route getRouteByRouteId(Long routeId);
+
 }

@@ -18,7 +18,6 @@ import java.math.BigInteger;
 @AllArgsConstructor
 public class RouteStop {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
