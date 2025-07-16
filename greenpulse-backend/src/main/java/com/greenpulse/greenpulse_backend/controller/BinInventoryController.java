@@ -72,4 +72,12 @@ public class BinInventoryController {
     public ApiResponse<BinInventory> assignBinToSelf(@PathVariable String binId, @AuthenticationPrincipal UserTable user) {
         return binService.assignBinToOwner(binId, user.getId());
     }
+
+//
+//    @GetMapping("/getAll")
+//    @PreAuthorize("hasAnyRole('ADMIN')")
+//    public ApiResponse<List<BinInventoryResponseDTO>> fetchAllBins() {
+//        return binService.fetchAllBins();
+//
+//    }
 }

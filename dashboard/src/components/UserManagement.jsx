@@ -23,9 +23,8 @@ const UserTable = ({ title, users, roleFilter, onAction, addUserType }) => (
       <table className="data-table">
         <thead>
           <tr>
-            <th>User Id</th>
-            <th>Role</th>
             <th>Username</th>
+            <th>Role</th>
             <th>Join Date</th>
             <th>Actions</th>
           </tr>
@@ -35,9 +34,8 @@ const UserTable = ({ title, users, roleFilter, onAction, addUserType }) => (
             .filter(user => user.role.role === roleFilter)
             .map(user => (
               <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.role.role.replace('ROLE_', '').replace('_', ' ')}</td>
                 <td>{user.username}</td>
+                <td>{user.role.role.replace('ROLE_', '').replace('_', ' ')}</td>
                 <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                 <td>
                   <div className="action-buttons">

@@ -33,6 +33,31 @@ public class BinInventoryService {
         this.binOwnerProfileRepository = binOwnerProfileRepository;
     }
 
+
+
+//    public ApiResponse<List<BinInventoryResponseDTO>> fetchAllBins() {
+//        List<BinInventory> binInventories = binInventoryRepository.findAll();
+//
+//        List<BinInventoryResponseDTO> binInventoryResponseDTOS = binInventories.stream()
+//                .map(bin -> {
+//                    BinInventoryResponseDTO dto = new BinInventoryResponseDTO();
+//                    dto.setBinId(bin.getBinId());
+//                    dto.setStatus(bin.getStatus());
+//                    dto.setAssignedDate(bin.getAssignedDate());
+//                    dto.setLatitude(bin.getLatitude());
+//                    dto.setLongitude(bin.getLongitude());
+//                    return dto;
+//                })
+//                .toList();
+//
+//        return ApiResponse.<List<BinInventoryResponseDTO>>builder()
+//                .success(true)
+//                .message("Bins are fetched successfully")
+//                .data(binInventoryResponseDTOS)
+//                .timestamp(LocalDateTime.now().toString())
+//                .build();
+//    }
+
     public ApiResponse<List<BinInventoryResponseDTO>> getBinsFiltered(BinStatusEnum status, UUID ownerId) {
         List<BinInventory> binInventories;
 
