@@ -27,12 +27,11 @@ const Settings = ({ user, onLogout }) => {
     <div className="settings-page-dark">
       <div className="settings-card-dark">
         
-        {/* User Avatar and Name */}
+        {/* User Avatar and Name
         <div className="profile-header">
-          <img src={user.avatar} alt="User Avatar" className="profile-avatar" />
           <h1 className="profile-name">{user.fullName}</h1>
           <p className="profile-email">{user.email}</p>
-        </div>
+        </div> */}
 
         {/* User Information Section */}
         <div className="info-section">

@@ -34,7 +34,6 @@ const Maps = () => {
   );
 };
 
-export default Maps;
 
 // This component contains the full logic for the map and route
 const MapWithRoute = () => {
@@ -120,13 +119,6 @@ const MapWithRoute = () => {
     fetchRoute();
   }, [geometry, stops, apiKey]);
 
-  // // Handler for when a marker is dragged to a new position
-  // const handleDragEnd = (idx, e) => {
-  //   const updated = [...stops];
-  //   updated[idx] = { ...updated[idx], lat: e.latLng.lat(), lng: e.latLng.lng() };
-  //   setOptimizedMarkers(updated);
-  // };
-
   if (!mapId) return <p>Error: Missing Map ID.</p>;
 
   return (
@@ -191,3 +183,9 @@ function DirectionsPolyline({ path }) {
 
   return null;
 }
+
+
+export default Maps;
+
+
+
