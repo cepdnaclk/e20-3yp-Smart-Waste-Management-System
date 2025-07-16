@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/bin.dart';
 import 'package:bin_owner_mobile_app/config.dart';
+import 'package:bin_owner_mobile_app/services/bin_status_websocket_service.dart';
+import 'package:bin_owner_mobile_app/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class BinLevelScreen extends StatefulWidget {
   const BinLevelScreen({super.key});
@@ -22,6 +25,8 @@ class _BinLevelScreenState extends State<BinLevelScreen> {
   String _errorMessage = '';
   int _currentPageIndex = 0;
 
+  late final BinStatusWebSocketService _webSocketService;
+
   // UI Constants
   static const Color backgroundColor = const Color.fromARGB(255, 34, 38, 41);
   static const Color surfaceColor = Color.fromARGB(255, 0, 0, 0);
@@ -31,72 +36,148 @@ class _BinLevelScreenState extends State<BinLevelScreen> {
   static const Color textSecondaryColor = Color(0xFFB0B0B0);
   static const Color errorColor = Color(0xFFFF5252);
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchBins();
+  // }
   @override
   void initState() {
     super.initState();
-    _fetchBins();
+    _webSocketService = BinStatusWebSocketService(
+      onStatusUpdate: _handleBinStatusUpdate, // Callback to handle updates
+    );
+    _initializeScreen();
   }
 
+  // @override
+  // void dispose() {
+  //   _pageController.dispose();
+  //   super.dispose();
+  // }
   @override
   void dispose() {
+    _webSocketService.disconnect(); // Disconnect WebSocket
     _pageController.dispose();
     super.dispose();
   }
+
+  Future<void> _initializeScreen() async {
+    await _fetchBins(); // Initial data load
+    if (_errorMessage.isEmpty) {
+      // Connect to WebSocket only after a successful fetch
+      final authProvider = context.read<AuthProvider>();
+      if (authProvider.isAuthenticated && authProvider.username != null) {
+        _webSocketService.connect(authProvider.username!);
+      }
+    }
+  }
+
+  // This method is called by the WebSocket service when a new message arrives
+  void _handleBinStatusUpdate(Map<String, dynamic> statusUpdate) {
+    final updatedBin = Bin.fromJson(statusUpdate);
+
+    // Update the UI without fetching from the database
+    setState(() {
+      final index = _bins.indexWhere((bin) => bin.binId == updatedBin.binId);
+      if (index != -1) {
+        // Replace the old bin data with the new real-time data
+        _bins[index] = updatedBin;
+        print('🔄 Real-time update for Bin ID: ${updatedBin.binId}');
+      }
+    });
+  }
+
+  // Future<void> _fetchBins() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //     _errorMessage = '';
+  //   });
+
+  //   try {
+  //     final token = await _storage.read(key: 'jwt_token');
+  //     if (token == null) {
+  //       setState(() {
+  //         _errorMessage = 'No authentication token found.';
+  //         _isLoading = false;
+  //       });
+  //       return;
+  //     }
+
+  //     final binService = BinService();
+  //     final isConnected = await binService.testConnection(_baseURL);
+
+  //     if (!isConnected) {
+  //       setState(() {
+  //         _errorMessage = 'Unable to connect to server.';
+  //         _isLoading = false;
+  //       });
+  //       return;
+  //     }
+
+  //     final fetchedBins = await binService.fetchBins(
+  //       baseURL: _baseURL,
+  //       token: token,
+  //     );
+  //     final List<Bin> binStatuses = [];
+
+  //     for (var bin in fetchedBins) {
+  //       try {
+  //         final status = await binService.getBinStatus(
+  //           baseURL: _baseURL,
+  //           token: token,
+  //           binId: bin.binId,
+  //         );
+  //         binStatuses.add(status);
+  //       } catch (_) {
+  //         binStatuses.add(bin); // Fallback
+  //       }
+  //     }
+
+  //     setState(() {
+  //       _bins = binStatuses;
+  //       _selectedBinId = _bins.isNotEmpty ? _bins[0].binId : null;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       _errorMessage = 'Error fetching bins: ${e.toString()}';
+  //     });
+  //   } finally {
+  //     setState(() => _isLoading = false);
+  //   }
+  // }
 
   Future<void> _fetchBins() async {
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
-
     try {
-      final token = await _storage.read(key: 'jwt_token');
-      if (token == null) {
-        setState(() {
-          _errorMessage = 'No authentication token found.';
-          _isLoading = false;
-        });
-        return;
-      }
+      final token = await const FlutterSecureStorage().read(key: 'auth_token');
+      if (token == null) throw Exception('Authentication token not found.');
 
       final binService = BinService();
-      final isConnected = await binService.testConnection(_baseURL);
-
-      if (!isConnected) {
-        setState(() {
-          _errorMessage = 'Unable to connect to server.';
-          _isLoading = false;
-        });
-        return;
-      }
-
       final fetchedBins = await binService.fetchBins(
         baseURL: _baseURL,
         token: token,
       );
       final List<Bin> binStatuses = [];
-
       for (var bin in fetchedBins) {
-        try {
-          final status = await binService.getBinStatus(
-            baseURL: _baseURL,
-            token: token,
-            binId: bin.binId,
-          );
-          binStatuses.add(status);
-        } catch (_) {
-          binStatuses.add(bin); // Fallback
-        }
+        final status = await binService.getBinStatus(
+          baseURL: _baseURL,
+          token: token,
+          binId: bin.binId,
+        );
+        binStatuses.add(status);
       }
-
       setState(() {
         _bins = binStatuses;
-        _selectedBinId = _bins.isNotEmpty ? _bins[0].binId : null;
+        if (_bins.isNotEmpty) {
+          _selectedBinId = _bins[0].binId;
+        }
       });
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Error fetching bins: ${e.toString()}';
-      });
+      setState(() => _errorMessage = e.toString());
     } finally {
       setState(() => _isLoading = false);
     }

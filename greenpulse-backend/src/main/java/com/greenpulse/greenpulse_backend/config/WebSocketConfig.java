@@ -32,7 +32,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
                 .setAllowedOrigins("*");// In production, specify allowed origins (e.g., "https://yourapp.com")
 
         registry.addHandler(notificationWebSocketHandler, "/ws/notifications")
-                .setAllowedOrigins("*")
-                .withSockJS();
+                .setAllowedOrigins("*");
     }
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor

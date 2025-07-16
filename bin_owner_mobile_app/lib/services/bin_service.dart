@@ -8,7 +8,7 @@ class BinService {
     required String baseURL,
     required String token,
   }) async {
-    final url = '$baseURL/api/bins/fetch';
+    final url = '$baseURL/bins/fetch';
     print('🔍 Fetching bins from: $url');
 
     try {
@@ -66,7 +66,7 @@ class BinService {
     required String token,
     required String binId,
   }) async {
-    final url = '$baseURL/api/bin/status/fetch/$binId';
+    final url = '$baseURL/bin/status/fetch/$binId';
     print('Fetching bin status from: $url');
 
     try {

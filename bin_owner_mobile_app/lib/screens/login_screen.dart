@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:bin_owner_mobile_app/config.dart';
+import 'package:bin_owner_mobile_app/providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -551,7 +552,67 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  // Define secure storage instance (ideally at class level or as a global singleton)
+  // // Define secure storage instance (ideally at class level or as a global singleton)
+  // final FlutterSecureStorage secureStorage = FlutterSecureStorage();
+
+  // Future<void> _handleLogin() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     setState(() => _isLoading = true);
+
+  //     final url = Uri.parse('$baseUrl/auth/authenticate');
+
+  //     try {
+  //       final response = await http.post(
+  //         url,
+  //         headers: {'Content-Type': 'application/json'},
+  //         body: jsonEncode({
+  //           'username': _emailController.text.trim(),
+  //           'password': _passwordController.text.trim(),
+  //         }),
+  //       );
+
+  //       setState(() => _isLoading = false);
+
+  //       if (response.statusCode == 200) {
+  //         final data = jsonDecode(response.body);
+  //         // final token = data['token'];
+  //         final token = data['data']['token'];
+  //         // final userId = data['userId'];
+  //         try {
+  //           await secureStorage.write(key: 'jwt_token', value: token);
+  //           print('Token saved successfully  ' + token);
+  //         } catch (e) {
+  //           print('Error saving token: $e');
+  //           _showSnackBar('Error saving token locally', isError: true);
+  //           // You can decide to rethrow or handle the error gracefully here
+  //         }
+
+  //         Map<String, dynamic> payload = Jwt.parseJwt(token);
+
+  //         // Print the payload to see its content
+  //         print("Decoded JWT Payload: $payload");
+
+  //         final userId = payload['sub'];
+  //         print("Extracted userId: $userId");
+
+  //         Provider.of<UserProvider>(context, listen: false).setUserId(userId);
+  //         _showSnackBar('Login successful!', isError: false);
+
+  //         // Small delay for better UX
+  //         await Future.delayed(const Duration(milliseconds: 500));
+
+  //         Navigator.pushReplacementNamed(context, '/layout');
+  //       } else {
+  //         final error = jsonDecode(response.body)['message'] ?? 'Login failed';
+  //         _showSnackBar(error, isError: true);
+  //       }
+  //     } catch (e) {
+  //       setState(() => _isLoading = false);
+  //       _showSnackBar('Failed to connect to the server', isError: true);
+  //     }
+  //   }
+  // }
+
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
 
   Future<void> _handleLogin() async {
@@ -574,33 +635,42 @@ class _LoginScreenState extends State<LoginScreen>
 
         if (response.statusCode == 200) {
           final data = jsonDecode(response.body);
-          // final token = data['token'];
           final token = data['data']['token'];
-          // final userId = data['userId'];
+
+          // Save token with correct key for AuthProvider
           try {
-            await secureStorage.write(key: 'jwt_token', value: token);
-            print('Token saved successfully  ' + token);
+            await secureStorage.write(key: 'auth_token', value: token);
+            print('Token saved successfully: ${token.substring(0, 20)}...');
           } catch (e) {
             print('Error saving token: $e');
             _showSnackBar('Error saving token locally', isError: true);
-            // You can decide to rethrow or handle the error gracefully here
+            return;
           }
 
+          // Extract username from JWT payload
           Map<String, dynamic> payload = Jwt.parseJwt(token);
-
-          // Print the payload to see its content
           print("Decoded JWT Payload: $payload");
 
-          final userId = payload['sub'];
-          print("Extracted userId: $userId");
+          final username = payload['sub'];
+          print("Extracted username: $username");
 
-          Provider.of<UserProvider>(context, listen: false).setUserId(userId);
+          // Use AuthProvider to handle login state management
+          await context.read<AuthProvider>().login(token);
+
+          // Update UserProvider if needed
+          Provider.of<UserProvider>(context, listen: false).setUserId(username);
+
           _showSnackBar('Login successful!', isError: false);
 
-          // Small delay for better UX
+          // Add manual navigation as a backup
           await Future.delayed(const Duration(milliseconds: 500));
 
-          Navigator.pushReplacementNamed(context, '/layout');
+          // ✅ Add this manual navigation
+          if (context.mounted) {
+            Navigator.pushReplacementNamed(context, '/layout');
+          }
+
+          print('🔍 Login successful - Manual navigation triggered');
         } else {
           final error = jsonDecode(response.body)['message'] ?? 'Login failed';
           _showSnackBar(error, isError: true);

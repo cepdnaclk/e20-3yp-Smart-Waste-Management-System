@@ -4,6 +4,7 @@ import 'package:bin_owner_mobile_app/screens/notification.dart';
 import 'package:bin_owner_mobile_app/screens/calendar.dart';
 import 'package:bin_owner_mobile_app/screens/problem_report_screen.dart';
 import 'package:bin_owner_mobile_app/screens/settings.dart';
+import 'package:bin_owner_mobile_app/screens/maintenance_requests_screen.dart';
 
 // Constants for better maintainability
 class AppConstants {
@@ -50,10 +51,15 @@ class _MainLayoutState extends State<MainLayout>
       title: 'Notifications',
       icon: Icons.notifications,
     ),
+    // ScreenConfig(
+    //   screen: const CollectionCalendarScreen(),
+    //   title: 'Calendar',
+    //   icon: Icons.calendar_today,
+    // ),
     ScreenConfig(
-      screen: const CollectionCalendarScreen(),
-      title: 'Calendar',
-      icon: Icons.calendar_today,
+      screen: const MaintenanceRequestsScreen(), // ✅ Add this
+      title: 'Maintenance',
+      icon: Icons.build,
     ),
     ScreenConfig(
       screen: const ProblemReportScreen(),
